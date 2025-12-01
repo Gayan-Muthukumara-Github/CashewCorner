@@ -1,0 +1,82 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/CashewCorner.Frontend/dist
+/CashewCorner.Frontend/tmp
+/CashewCorner.Frontend/out-tsc
+/CashewCorner.Frontend/bazel-out
+
+# Node
+/CashewCorner.Frontend/node_modules
+/CashewCorner.Frontend/npm-debug.log
+/CashewCorner.Frontend/yarn-error.log
+
+# IDEs and editors
+/CashewCorner.Frontend/.idea/
+/CashewCorner.Frontend/.project
+/CashewCorner.Frontend/.classpath
+/CashewCorner.Frontend/.c9/
+/CashewCorner.Frontend/*.launch
+/CashewCorner.Frontend/.settings/
+/CashewCorner.Frontend/*.sublime-workspace
+
+# Visual Studio Code
+/CashewCorner.Frontend/.vscode/*
+/CashewCorner.Frontend/!.vscode/settings.json
+/CashewCorner.Frontend/!.vscode/tasks.json
+/CashewCorner.Frontend/!.vscode/launch.json
+/CashewCorner.Frontend/!.vscode/extensions.json
+/CashewCorner.Frontend/.history/*
+
+# Miscellaneous
+/CashewCorner.Frontend/.angular/cache
+/CashewCorner.Frontend/.sass-cache/
+/CashewCorner.Frontend/connect.lock
+/CashewCorner.Frontend/coverage
+/CashewCorner.Frontend/libpeerconnection.log
+testem.log
+/CashewCorner.Frontend/typings
+
+# System files
+/CashewCorner.Frontend/.DS_Store
+/CashewCorner.Frontend/Thumbs.db
+
+
+
+/CashewCorner.BackendHELP.md
+/CashewCorner.Backend.gradle
+/CashewCorner.Backendbuild/
+/CashewCorner.Backend!gradle/wrapper/gradle-wrapper.jar
+/CashewCorner.Backend!**/src/main/**/build/
+/CashewCorner.Backend!**/src/test/**/build/
+
+### STS ###
+/CashewCorner.Backend.apt_generated
+/CashewCorner.Backend.classpath
+/CashewCorner.Backend.factorypath
+/CashewCorner.Backend.project
+/CashewCorner.Backend.settings
+/CashewCorner.Backend.springBeans
+/CashewCorner.Backend.sts4-cache
+/CashewCorner.Backendbin/
+/CashewCorner.Backend!**/src/main/**/bin/
+/CashewCorner.Backend!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+/CashewCorner.Backend.idea
+/CashewCorner.Backend*.iws
+/CashewCorner.Backend*.iml
+/CashewCorner.Backend*.ipr
+/CashewCorner.Backendout/
+/CashewCorner.Backend!**/src/main/**/out/
+/CashewCorner.Backend!**/src/test/**/out/
+
+### NetBeans ###
+/CashewCorner.Backend/nbproject/private/
+/CashewCorner.Backend/nbbuild/
+/CashewCorner.Backend/dist/
+/CashewCorner.Backend/nbdist/
+/CashewCorner.Backend/.nb-gradle/
+
+### VS Code ###
+/CashewCorner.Backend.vscode/

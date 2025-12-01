@@ -1,0 +1,60 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build outputs (exclude from Docker context to speed up builds)
+build/
+target/
+out/
+bin/
+*.jar
+*.war
+
+# Gradle (keep gradle.properties for build optimization)
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Logs
+*.log
+
+# Test outputs
+.test/
+test-results/
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Node modules (if any frontend)
+node_modules/
+

@@ -1,0 +1,75 @@
+<div class="admin-shell" [class.sidebar-collapsed]="!isSidebarOpen">
+  <aside class="sidebar" [class.open]="isSidebarOpen">
+    <div class="brand">
+      <span class="logo">CC</span>
+      <span class="name">Cashew Corner</span>
+    </div>
+    <nav class="nav">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="active">
+        <span class="icon">🧑‍💼</span>
+        <span>Users</span>
+      </a>
+      <a routerLink="/admin/transactions" routerLinkActive="active">
+        <span class="icon">💳</span>
+        <span>Transactions</span>
+      </a>
+      <a routerLink="/admin/customers" routerLinkActive="active">
+        <span class="icon">👥</span>
+        <span>Customers</span>
+      </a>
+      <a routerLink="/admin/reports" routerLinkActive="active">
+        <span class="icon">📈</span>
+        <span>Reports</span>
+      </a>
+      <a routerLink="/admin/settings" routerLinkActive="active">
+        <span class="icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <button class="hamburger" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="search">
+        <input type="text" placeholder="Search..." />
+      </div>
+      <div class="spacer"></div>
+      <div class="actions">
+        <button class="icon-btn" title="Notifications">🔔</button>
+        <button class="icon-btn" title="Help">❓</button>
+        <div class="user-menu-container">
+          <button class="user-menu-trigger" (click)="toggleUserMenu()" title="User Menu">
+            <div class="avatar">{{ adminUser.charAt(0).toUpperCase() }}</div>
+            <span class="username">{{ adminUser }}</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="user-menu" *ngIf="showUserMenu">
+            <div class="user-menu-header">
+              <div class="user-menu-avatar">{{ adminUser.charAt(0).toUpperCase() }}</div>
+              <div class="user-menu-info">
+                <div class="user-menu-name">{{ adminUser }}</div>
+                <div class="user-menu-role">Administrator</div>
+              </div>
+            </div>
+            <div class="user-menu-divider"></div>
+            <a href="#" class="user-menu-item">Profile Settings</a>
+            <a href="#" class="user-menu-item">Account Settings</a>
+            <div class="user-menu-divider"></div>
+            <button class="user-menu-item logout" (click)="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<section class="dashboard">
+  <h1>Dashboard</h1>
+
+  <div class="stats">
+    @for (s of stats; track s.label) {
+      <div class="card stat">
+        <div class="label">{{ s.label }}</div>
+        <div class="value">{{ s.value }}</div>
+        <div class="delta" [class.positive]="s.delta.startsWith('+')" [class.negative]="s.delta.startsWith('-')">
+          {{ s.delta }} vs last week
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="grid">
+    <div class="card chart">
+      <div class="card-header">
+        <h3>Transactions Overview</h3>
+        <select>
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>Last 12 months</option>
+        </select>
+      </div>
+      <div class="chart-placeholder">
+        <div class="sparkline"></div>
+      </div>
+    </div>
+
+    <div class="card list">
+      <div class="card-header">
+        <h3>Recent Activity</h3>
+        <a href="#">View all</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of activities; track a.id) {
+            <tr>
+              <td>{{ a.id }}</td>
+              <td>{{ a.customer }}</td>
+              <td>{{ a.amount }}</td>
+              <td><span class="badge" [class.completed]="a.status==='Completed'" [class.pending]="a.status==='Pending'" [class.failed]="a.status==='Failed'">{{ a.status }}</span></td>
+              <td>{{ a.time }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,78 @@
+<div class="users-page">
+  <div class="page-header">
+    <div>
+      <h1>User Management</h1>
+      <p class="subtitle">Create, update and manage system users.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New User
+    </button>
+  </div>
+
+  <section class="users-list">
+    <div *ngIf="isLoading" class="info">Loading users...</div>
+    <div *ngIf="!isLoading && users.length === 0" class="info">
+      No users found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && users.length > 0" class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.userId }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.roleName }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="user.isActive"
+              [class.inactive]="!user.isActive"
+            >
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ user.lastLogin ? (user.lastLogin | date:'short') : '—' }}</td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(user)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="toggleActive(user)"
+            >
+              {{ user.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-user-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [user]="selectedUser"
+    (close)="closeModal()"
+    (save)="onSaveUser($event)"
+  ></app-user-form-modal>
+</div>
+
+

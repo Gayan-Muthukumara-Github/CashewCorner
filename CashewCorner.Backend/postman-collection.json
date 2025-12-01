@@ -1,0 +1,1489 @@
+{
+  "info": {
+    "name": "Cashew Corner API",
+    "description": "Complete API collection for Cashew Corner management system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.refreshToken);",
+                  "    console.log('Access token saved:', jsonData.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@cashewcorner.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login with email and password to get JWT tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Logout and invalidate the current token"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\",\n  \"email\": \"newuser@cashewcorner.com\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"roleId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Create a new user (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Get list of all users (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"updated@cashewcorner.com\",\n  \"firstName\": \"Updated\",\n  \"lastName\": \"Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1"]
+            },
+            "description": "Update user information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1", "deactivate"]
+            },
+            "description": "Deactivate a user account (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Activate User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1/activate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1", "activate"]
+            },
+            "description": "Activate a user account (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customer Management",
+      "item": [
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Traders\",\n  \"phone\": \"0777654321\",\n  \"email\": \"abc@traders.lk\",\n  \"address\": \"123 Main Street, Colombo\",\n  \"type\": \"wholesale\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/customers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers"]
+            },
+            "description": "Create a new customer (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers"]
+            },
+            "description": "Get list of all active customers"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "1"]
+            },
+            "description": "Get customer details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers/search?name=ABC",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "ABC"
+                }
+              ]
+            },
+            "description": "Search customers by name or phone"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Traders Updated\",\n  \"phone\": \"0777654321\",\n  \"email\": \"abc.updated@traders.lk\",\n  \"address\": \"456 New Street, Colombo\",\n  \"type\": \"retail\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "1"]
+            },
+            "description": "Update customer information (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Customer",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "1"]
+            },
+            "description": "Delete (deactivate) a customer (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers/1/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "1", "orders"]
+            },
+            "description": "Get all orders for a specific customer"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Order Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/customers/1/orders/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customers", "1", "orders", "status"]
+            },
+            "description": "Get order status for a specific customer"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sales Order Management",
+      "item": [
+        {
+          "name": "Create Sales Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"orderDate\": \"2025-01-11\",\n  \"deliveryDate\": \"2025-01-18\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 50,\n      \"unitPrice\": 800.00\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 30,\n      \"unitPrice\": 450.00\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sales-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-orders"]
+            },
+            "description": "Create a new sales order (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Sales Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sales-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-orders"]
+            },
+            "description": "Get list of all sales orders"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sales Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sales-orders/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-orders", "1"]
+            },
+            "description": "Get sales order details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Sales Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sales-orders/search?orderNo=SO2025",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-orders", "search"],
+              "query": [
+                {
+                  "key": "orderNo",
+                  "value": "SO2025"
+                }
+              ]
+            },
+            "description": "Search sales orders by order number"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Supplier Management",
+      "item": [
+        {
+          "name": "Create Supplier",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sunshine Cashews\",\n  \"phone\": \"0771234567\",\n  \"email\": \"info@sunshine.lk\",\n  \"address\": \"789 Supplier Road, Galle\",\n  \"contactPerson\": \"John Supplier\",\n  \"paymentTerms\": \"Net 30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/suppliers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers"]
+            },
+            "description": "Create a new supplier (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Suppliers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers"]
+            },
+            "description": "Get list of all active suppliers"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplier by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "1"]
+            },
+            "description": "Get supplier details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Suppliers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/search?name=sunshine",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "sunshine"
+                }
+              ]
+            },
+            "description": "Search suppliers by name or phone"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Supplier",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sunshine Cashews Updated\",\n  \"phone\": \"0771234567\",\n  \"email\": \"info.updated@sunshine.lk\",\n  \"address\": \"New Address, Galle\",\n  \"contactPerson\": \"Jane Supplier\",\n  \"paymentTerms\": \"Net 45\",\n  \"isApproved\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "1"]
+            },
+            "description": "Update supplier information (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Supplier",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "1"]
+            },
+            "description": "Delete (deactivate) a supplier (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplier Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/1/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "1", "orders"]
+            },
+            "description": "Get all purchase orders for a specific supplier"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Supplier Ranking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suppliers/ranking?cashewType=W320&quantity=200",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suppliers", "ranking"],
+              "query": [
+                {
+                  "key": "cashewType",
+                  "value": "W320"
+                },
+                {
+                  "key": "quantity",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "Get supplier ranking by cost and reliability"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Purchase Order Management",
+      "item": [
+        {
+          "name": "Create Purchase Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplierId\": 1,\n  \"orderDate\": \"2025-01-11\",\n  \"expectedDate\": \"2025-01-25\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 100,\n      \"unitPrice\": 450.00\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 200,\n      \"unitPrice\": 300.00\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/purchase-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase-orders"]
+            },
+            "description": "Create a new purchase order (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Purchase Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/purchase-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase-orders"]
+            },
+            "description": "Get list of all purchase orders"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Purchase Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/purchase-orders/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase-orders", "1"]
+            },
+            "description": "Get purchase order details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Purchase Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/purchase-orders/search?orderNo=PO2025",
+              "host": ["{{base_url}}"],
+              "path": ["api", "purchase-orders", "search"],
+              "query": [
+                {
+                  "key": "orderNo",
+                  "value": "PO2025"
+                }
+              ]
+            },
+            "description": "Search purchase orders by order number"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Product Management",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Get all products (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "1"]
+            },
+            "description": "Get product details by ID (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/search?name=cashew",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "cashew"
+                }
+              ]
+            },
+            "description": "Search products by name (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/category/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "category", "1"]
+            },
+            "description": "Get products by category ID (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"RC-W320\",\n  \"name\": \"Raw Cashew W320\",\n  \"description\": \"Premium grade raw cashews\",\n  \"unit\": \"kg\",\n  \"costPrice\": 420.00,\n  \"sellPrice\": 520.00,\n  \"reorderLevel\": 50.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Create a new product (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Raw Cashew W320 Premium\",\n  \"costPrice\": 430.00,\n  \"sellPrice\": 530.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "1"]
+            },
+            "description": "Update product information (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "1"]
+            },
+            "description": "Delete (deactivate) a product (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Category to Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/products/1/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "1", "categories"]
+            },
+            "description": "Assign a category to a product (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Category from Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/1/categories/2",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "1", "categories", "2"]
+            },
+            "description": "Remove a category from a product (Admin/Manager)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Category Management",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories"]
+            },
+            "description": "Get all categories (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories", "1"]
+            },
+            "description": "Get category details by ID (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Categories",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/categories/search?name=raw",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "raw"
+                }
+              ]
+            },
+            "description": "Search categories by name (Public access)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Raw Cashews\",\n  \"description\": \"Raw unprocessed cashew nuts\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories"]
+            },
+            "description": "Create a new category (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Raw Cashews Premium\",\n  \"description\": \"Premium grade raw cashew nuts\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories", "1"]
+            },
+            "description": "Update category information (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/categories/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories", "1"]
+            },
+            "description": "Delete (deactivate) a category (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inventory Management",
+      "item": [
+        {
+          "name": "Receive Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"quantity\": 100,\n  \"location\": \"Warehouse 1\",\n  \"purchaseOrderId\": 1,\n  \"notes\": \"Received from PO-2025-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/inventory/receive",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "receive"]
+            },
+            "description": "Receive stock into inventory (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Adjust Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"quantity\": 10,\n  \"location\": \"Warehouse 1\",\n  \"adjustmentType\": \"ADD\",\n  \"notes\": \"Stock correction\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/inventory/adjust",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "adjust"]
+            },
+            "description": "Manual stock adjustment (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory"]
+            },
+            "description": "Get all inventory records"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/available",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "available"]
+            },
+            "description": "Get inventory with available stock"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Low Stock Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/low-stock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "low-stock"]
+            },
+            "description": "Get items below reorder level (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Inventory by Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/product/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "product", "1"]
+            },
+            "description": "Get inventory for a specific product"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Inventory by Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/location/Warehouse 1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "location", "Warehouse 1"]
+            },
+            "description": "Get inventory for a specific location"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/search?variety=W320&location=Warehouse 1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "search"],
+              "query": [
+                {
+                  "key": "variety",
+                  "value": "W320"
+                },
+                {
+                  "key": "location",
+                  "value": "Warehouse 1"
+                }
+              ]
+            },
+            "description": "Search inventory by criteria"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Inventory Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "summary"]
+            },
+            "description": "Get inventory summary for dashboard (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Stock Movements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/movements?productId=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "movements"],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get stock movement history (Admin/Manager)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employee Management",
+      "item": [
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"EMP001\",\n  \"firstName\": \"Nimal\",\n  \"lastName\": \"Silva\",\n  \"designation\": \"Sorter\",\n  \"department\": \"Production\",\n  \"phone\": \"0771234567\",\n  \"email\": \"nimal@cashewcorner.com\",\n  \"hireDate\": \"2025-01-01\",\n  \"salaryBase\": 25000.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/employees",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees"]
+            },
+            "description": "Create a new employee (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/employees",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees"]
+            },
+            "description": "Get all active employees"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/employees/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1"]
+            },
+            "description": "Get employee details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"designation\": \"Senior Sorter\",\n  \"salaryBase\": 28000.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/employees/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1"]
+            },
+            "description": "Update employee information (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/employees/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1"]
+            },
+            "description": "Delete (deactivate) an employee (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Duty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taskType\": \"Packaging\",\n  \"salesOrderId\": 1,\n  \"startDate\": \"2025-01-11T08:00:00\",\n  \"notes\": \"Package order for ABC Traders\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/employees/1/duties",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1", "duties"]
+            },
+            "description": "Assign a duty to an employee (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee Duties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/employees/1/duties",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1", "duties"]
+            },
+            "description": "Get all duties for an employee"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Duty Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/duties/1/status?status=completed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "duties", "1", "status"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed"
+                }
+              ]
+            },
+            "description": "Update duty status (Admin/Manager)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payroll Management",
+      "item": [
+        {
+          "name": "Generate Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"periodStart\": \"2025-01-01\",\n  \"periodEnd\": \"2025-01-31\",\n  \"grossPay\": 25000.00,\n  \"deductions\": 500.00,\n  \"paymentDate\": \"2025-02-01\",\n  \"paymentMethod\": \"Bank Transfer\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payrolls",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payrolls"]
+            },
+            "description": "Generate payroll for an employee (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Payrolls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payrolls",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payrolls"]
+            },
+            "description": "Get all payroll records (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payroll by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payrolls/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payrolls", "1"]
+            },
+            "description": "Get payroll details by ID (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee Payrolls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/employees/1/payrolls",
+              "host": ["{{base_url}}"],
+              "path": ["api", "employees", "1", "payrolls"]
+            },
+            "description": "Get all payrolls for an employee (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unpaid Payrolls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payrolls/unpaid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payrolls", "unpaid"]
+            },
+            "description": "Get unpaid payroll records (Admin/Manager)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reports & Analytics",
+      "item": [
+        {
+          "name": "Generate Inventory Summary Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"INVENTORY_SUMMARY\",\n  \"parameters\": {}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            },
+            "description": "Generate inventory summary report (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Sales Performance Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"SALES_PERFORMANCE\",\n  \"parameters\": {\n    \"startDate\": \"2025-01-01\",\n    \"endDate\": \"2025-01-31\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            },
+            "description": "Generate sales performance report (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Payroll Summary Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"PAYROLL_SUMMARY\",\n  \"parameters\": {\n    \"periodStart\": \"2025-01-01\",\n    \"periodEnd\": \"2025-01-31\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            },
+            "description": "Generate payroll summary report (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Low Stock Alert Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reportType\": \"LOW_STOCK_ALERT\",\n  \"parameters\": {}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            },
+            "description": "Generate low stock alert report (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            },
+            "description": "Get all generated reports (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Report by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "1"]
+            },
+            "description": "Get report details by ID (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Download Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/1/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "1", "download"]
+            },
+            "description": "Download/view report (Admin/Manager)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
