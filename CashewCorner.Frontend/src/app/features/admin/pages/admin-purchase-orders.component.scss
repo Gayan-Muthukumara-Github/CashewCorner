@@ -1,0 +1,276 @@
+.purchase-orders-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+  }
+}
+
+.subtitle {
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.success-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.875rem;
+  border: 1px solid #6ee7b7;
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 0.875rem;
+  border: 1px solid #fca5a5;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.purchase-order-list {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.search-bar {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+
+  input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+  }
+
+  button {
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+.purchase-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  th {
+    font-weight: 600;
+    color: #4b5563;
+    background: #f9fafb;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: #f9fafb;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+
+    li {
+      margin-bottom: 0.25rem;
+      color: #6b7280;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.processing {
+    background: #e0e7ff;
+    color: #4338ca;
+  }
+
+  &.delivered {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.primary,
+.secondary,
+.link {
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  padding: 0.5rem 1rem;
+  background: #4f46e5;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: #4338ca;
+  }
+}
+
+.secondary {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #111827;
+
+  &:hover:not(:disabled) {
+    background: #e5e7eb;
+  }
+}
+
+.link {
+  background: transparent;
+  color: #2563eb;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+  }
+
+  &.danger {
+    color: #dc2626;
+
+    &:hover {
+      color: #b91c1c;
+    }
+  }
+}
+
+.info {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+@media (max-width: 1024px) {
+  .purchase-orders-table {
+    font-size: 0.85rem;
+
+    th,
+    td {
+      padding: 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .search-bar {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .purchase-orders-table {
+    display: block;
+    overflow-x: auto;
+
+    th,
+    td {
+      white-space: nowrap;
+    }
+  }
+}

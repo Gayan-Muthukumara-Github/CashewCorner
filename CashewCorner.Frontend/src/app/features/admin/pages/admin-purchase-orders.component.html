@@ -1,0 +1,92 @@
+<div class="purchase-orders-page">
+  <div class="page-header">
+    <div>
+      <h1>Purchase Order Management</h1>
+      <p class="subtitle">Create and manage supplier purchase orders.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + Create Purchase Order
+    </button>
+  </div>
+
+  <section class="purchase-order-list">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search by PO number..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading purchase orders...</div>
+    <div *ngIf="!isLoading && purchaseOrders.length === 0" class="info">
+      No purchase orders found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && purchaseOrders.length > 0" class="purchase-orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>PO Number</th>
+          <th>Supplier</th>
+          <th>Order Date</th>
+          <th>Expected Date</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th>Items</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let purchaseOrder of purchaseOrders">
+          <td>{{ purchaseOrder.purchaseOrderId }}</td>
+          <td>{{ purchaseOrder.poNumber }}</td>
+          <td>{{ purchaseOrder.supplierName }}</td>
+          <td>{{ purchaseOrder.orderDate | date:'shortDate' }}</td>
+          <td>{{ purchaseOrder.expectedDate | date:'shortDate' }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.pending]="purchaseOrder.status === 'pending'"
+              [class.confirmed]="purchaseOrder.status === 'confirmed'"
+              [class.processing]="purchaseOrder.status === 'processing'"
+              [class.delivered]="purchaseOrder.status === 'delivered'"
+              [class.cancelled]="purchaseOrder.status === 'cancelled'"
+            >
+              {{ purchaseOrder.status | titlecase }}
+            </span>
+          </td>
+          <td>{{ purchaseOrder.totalAmount | currency }}</td>
+          <td>
+            <ul *ngIf="purchaseOrder.items.length > 0">
+              <li *ngFor="let item of purchaseOrder.items">
+                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency }})
+              </li>
+            </ul>
+            <span *ngIf="purchaseOrder.items.length === 0">No items</span>
+          </td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openDetailsModal(purchaseOrder)">
+              Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-purchase-order-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [purchaseOrder]="selectedPurchaseOrder"
+    [allSuppliers]="suppliers"
+    [allProducts]="products"
+    (close)="closeModal()"
+    (save)="onCreatePurchaseOrder($event)"
+  ></app-purchase-order-form-modal>
+</div>

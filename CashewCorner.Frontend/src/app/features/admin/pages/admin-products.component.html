@@ -1,0 +1,100 @@
+<div class="products-page">
+  <div class="page-header">
+    <div>
+      <h1>Product Management</h1>
+      <p class="subtitle">Create, update and manage products.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Product
+    </button>
+  </div>
+
+  <section class="product-list">
+    <div class="filter-bar">
+      <input
+        type="text"
+        placeholder="Search by name..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+      <select [(ngModel)]="selectedCategoryId" (ngModelChange)="onCategoryChange()">
+        <option [value]="null">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category.categoryId">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading products...</div>
+    <div *ngIf="!isLoading && products.length === 0" class="info">
+      No products found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && products.length > 0" class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>SKU</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Unit</th>
+          <th>Cost Price</th>
+          <th>Sell Price</th>
+          <th>Reorder Level</th>
+          <th>Categories</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.productId }}</td>
+          <td>{{ product.sku }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.unit }}</td>
+          <td>{{ product.costPrice | currency }}</td>
+          <td>{{ product.sellPrice | currency }}</td>
+          <td>{{ product.reorderLevel }}</td>
+          <td>
+            <div *ngIf="product.categories.length > 0">
+              <span *ngFor="let category of product.categories" class="category-tag">
+                {{ category.name }}
+                <button type="button" class="remove-category-btn" (click)="removeCategory(product.productId, category.categoryId)">
+                  ×
+                </button>
+              </span>
+            </div>
+            <div *ngIf="product.categories.length === 0">—</div>
+          </td>
+          <!--td class="actions"-->
+          <td>
+            <button type="button" class="link" (click)="openEditModal(product)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteProduct(product.productId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-product-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [product]="selectedProduct"
+    [allCategories]="categories"
+    (close)="closeModal()"
+    (save)="onSaveProduct($event)"
+    (assignCategory)="assignCategory($event.productId, $event.categoryId)"
+  ></app-product-form-modal>
+</div>

@@ -1,0 +1,143 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="employeeCode">Employee Code</label>
+            <input
+              id="employeeCode"
+              type="text"
+              formControlName="employeeCode"
+              [class.error]="employeeCode?.invalid && employeeCode?.touched"
+              [readonly]="mode === 'edit'"
+            />
+            <small *ngIf="employeeCode?.invalid && employeeCode?.touched" class="error">
+              Employee Code is required (min 3 characters).
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="firstName">First Name</label>
+            <input
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              [class.error]="firstName?.invalid && firstName?.touched"
+            />
+            <small *ngIf="firstName?.invalid && firstName?.touched" class="error">
+              First Name is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="lastName">Last Name</label>
+            <input
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              [class.error]="lastName?.invalid && lastName?.touched"
+            />
+            <small *ngIf="lastName?.invalid && lastName?.touched" class="error">
+              Last Name is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="designation">Designation</label>
+            <input
+              id="designation"
+              type="text"
+              formControlName="designation"
+              [class.error]="designation?.invalid && designation?.touched"
+            />
+            <small *ngIf="designation?.invalid && designation?.touched" class="error">
+              Designation is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="department">Department</label>
+            <input
+              id="department"
+              type="text"
+              formControlName="department"
+              [class.error]="department?.invalid && department?.touched"
+            />
+            <small *ngIf="department?.invalid && department?.touched" class="error">
+              Department is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="phone">Phone</label>
+            <input
+              id="phone"
+              type="text"
+              formControlName="phone"
+              [class.error]="phone?.invalid && phone?.touched"
+            />
+            <small *ngIf="phone?.invalid && phone?.touched" class="error">
+              Phone number is required (10 digits).
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              [class.error]="email?.invalid && email?.touched"
+            />
+            <small *ngIf="email?.invalid && email?.touched" class="error">
+              Enter a valid email address.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="hireDate">Hire Date</label>
+            <input
+              id="hireDate"
+              type="date"
+              formControlName="hireDate"
+              [class.error]="hireDate?.invalid && hireDate?.touched"
+            />
+            <small *ngIf="hireDate?.invalid && hireDate?.touched" class="error">
+              Hire Date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="salaryBase">Salary Base</label>
+            <input
+              id="salaryBase"
+              type="number"
+              formControlName="salaryBase"
+              [class.error]="salaryBase?.invalid && salaryBase?.touched"
+            />
+            <small *ngIf="salaryBase?.invalid && salaryBase?.touched" class="error">
+              Salary Base is required and must be a positive number.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="employeeForm.invalid">
+            {{ mode === 'create' ? 'Create Employee' : 'Save Changes' }}
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

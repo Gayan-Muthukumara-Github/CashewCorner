@@ -1,0 +1,100 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="customerId">Customer</label>
+            <select id="customerId" formControlName="customerId" [class.error]="customerId?.invalid && customerId?.touched">
+              <option [value]="null" disabled>Select a customer</option>
+              <option *ngFor="let customer of allCustomers" [value]="customer.customerId">
+                {{ customer.name }}
+              </option>
+            </select>
+            <small *ngIf="customerId?.invalid && customerId?.touched" class="error">
+              Customer is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="orderDate">Order Date</label>
+            <input
+              id="orderDate"
+              type="date"
+              formControlName="orderDate"
+              [class.error]="orderDate?.invalid && orderDate?.touched"
+            />
+            <small *ngIf="orderDate?.invalid && orderDate?.touched" class="error">
+              Order Date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="status">Status</label>
+            <select id="status" formControlName="status">
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="orderForm.invalid">
+            {{ mode === 'create' ? 'Create Order' : 'Save Changes' }}
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="mode === 'edit' && order" class="order-items-section">
+        <h3>Order Items</h3>
+        <div class="order-item-list">
+          <div *ngIf="order.items.length === 0" class="info">No items in this order.</div>
+          <div *ngFor="let item of order.items" class="order-item">
+            <span>{{ item.productName }}</span>
+            <input
+              type="number"
+              [value]="item.quantity"
+              min="1"
+              (change)="onUpdateQuantity(item, $event)"
+            />
+            <span>x {{ item.unitPrice | currency }} = {{ item.subtotal | currency }}</span>
+            <button type="button" class="remove-item-btn" (click)="removeProduct.emit({ orderId: order.orderId, orderItemId: item.orderItemId })">
+              ×
+            </button>
+          </div>
+        </div>
+
+        <div class="assign-product-controls">
+          <select [(ngModel)]="selectedProductToAssign">
+            <option [value]="null" disabled>Select a product</option>
+            <option *ngFor="let product of getAvailableProducts()" [value]="product.productId">
+              {{ product.name }} ({{ product.sellPrice | currency }})
+            </option>
+          </select>
+          <input
+            type="number"
+            [(ngModel)]="quantityToAssign"
+            min="1"
+            placeholder="Quantity"
+          />
+          <button type="button" class="primary" [disabled]="!selectedProductToAssign || quantityToAssign <= 0" (click)="onAssignProduct()">
+            Add Product
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

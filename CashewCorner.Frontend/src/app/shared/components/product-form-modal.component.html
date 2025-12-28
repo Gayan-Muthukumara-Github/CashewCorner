@@ -1,0 +1,131 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="sku">SKU</label>
+            <input
+              id="sku"
+              type="text"
+              formControlName="sku"
+              [class.error]="sku?.invalid && sku?.touched"
+            />
+            <small *ngIf="sku?.invalid && sku?.touched" class="error">
+              SKU is required (min 3 characters).
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="name">Product Name</label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [class.error]="name?.invalid && name?.touched"
+            />
+            <small *ngIf="name?.invalid && name?.touched" class="error">
+              Product name is required (min 3 characters).
+            </small>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              [class.error]="description?.invalid && description?.touched"
+            ></textarea>
+            <small *ngIf="description?.invalid && description?.touched" class="error">
+              Description is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="unit">Unit</label>
+            <input
+              id="unit"
+              type="text"
+              formControlName="unit"
+              [class.error]="unit?.invalid && unit?.touched"
+            />
+            <small *ngIf="unit?.invalid && unit?.touched" class="error">
+              Unit is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="costPrice">Cost Price</label>
+            <input
+              id="costPrice"
+              type="number"
+              formControlName="costPrice"
+              [class.error]="costPrice?.invalid && costPrice?.touched"
+            />
+            <small *ngIf="costPrice?.invalid && costPrice?.touched" class="error">
+              Cost Price is required and must be a positive number.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="sellPrice">Sell Price</label>
+            <input
+              id="sellPrice"
+              type="number"
+              formControlName="sellPrice"
+              [class.error]="sellPrice?.invalid && sellPrice?.touched"
+            />
+            <small *ngIf="sellPrice?.invalid && sellPrice?.touched" class="error">
+              Sell Price is required and must be a positive number.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="reorderLevel">Reorder Level</label>
+            <input
+              id="reorderLevel"
+              type="number"
+              formControlName="reorderLevel"
+              [class.error]="reorderLevel?.invalid && reorderLevel?.touched"
+            />
+            <small *ngIf="reorderLevel?.invalid && reorderLevel?.touched" class="error">
+              Reorder Level is required and must be a positive number.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="productForm.invalid">
+            {{ mode === 'create' ? 'Create Product' : 'Save Changes' }}
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="mode === 'edit' && product" class="assign-category-section">
+        <h3>Assign Categories</h3>
+        <div class="assign-category-controls">
+          <select [(ngModel)]="selectedCategoryToAssign">
+            <option [value]="null" disabled>Select a category</option>
+            <option *ngFor="let category of allCategories" [value]="category.categoryId">
+              {{ category.name }}
+            </option>
+          </select>
+
+          <button type="button" class="primary" [disabled]="!selectedCategoryToAssign" (click)="onAssignCategory()">
+            Assign
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

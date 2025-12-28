@@ -1,0 +1,129 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="payrollForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="employeeId">Employee</label>
+            <select id="employeeId" formControlName="employeeId" [class.error]="employeeId?.invalid && employeeId?.touched">
+              <option [ngValue]="null" disabled>Select an employee</option>
+              <option *ngFor="let employee of allEmployees" [ngValue]="employee.employeeId">
+                {{ employee.fullName }}
+              </option>
+            </select>
+            <small *ngIf="employeeId?.invalid && employeeId?.touched" class="error">
+              Employee is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="periodStart">Period Start</label>
+            <input
+              id="periodStart"
+              type="date"
+              formControlName="periodStart"
+              [class.error]="periodStart?.invalid && periodStart?.touched"
+            />
+            <small *ngIf="periodStart?.invalid && periodStart?.touched" class="error">
+              Period Start date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="periodEnd">Period End</label>
+            <input
+              id="periodEnd"
+              type="date"
+              formControlName="periodEnd"
+              [class.error]="periodEnd?.invalid && periodEnd?.touched"
+            />
+            <small *ngIf="periodEnd?.invalid && periodEnd?.touched" class="error">
+              Period End date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="grossPay">Gross Pay</label>
+            <input
+              id="grossPay"
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="grossPay"
+              [class.error]="grossPay?.invalid && grossPay?.touched"
+              placeholder="0.00"
+            />
+            <small *ngIf="grossPay?.invalid && grossPay?.touched" class="error">
+              Gross Pay is required and must be a positive number.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="deductions">Deductions</label>
+            <input
+              id="deductions"
+              type="number"
+              step="0.01"
+              min="0"
+              formControlName="deductions"
+              [class.error]="deductions?.invalid && deductions?.touched"
+              placeholder="0.00"
+            />
+            <small *ngIf="deductions?.invalid && deductions?.touched" class="error">
+              Deductions is required and must be a non-negative number.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="paymentDate">Payment Date</label>
+            <input
+              id="paymentDate"
+              type="date"
+              formControlName="paymentDate"
+              [class.error]="paymentDate?.invalid && paymentDate?.touched"
+            />
+            <small *ngIf="paymentDate?.invalid && paymentDate?.touched" class="error">
+              Payment Date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" formControlName="paymentMethod">
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Cash">Cash</option>
+              <option value="Check">Check</option>
+            </select>
+          </div>
+
+          <!-- Net Pay Display (Calculated) -->
+          <div class="form-field full-width" *ngIf="netPay !== null">
+            <label>Net Pay (Calculated)</label>
+            <div class="net-pay-display">
+              {{ netPay | currency }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="payrollForm.invalid" *ngIf="mode === 'create'">
+            Generate Payroll
+          </button>
+          <button type="button" class="primary" (click)="onClose()" *ngIf="mode === 'edit'">
+            Close Details
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

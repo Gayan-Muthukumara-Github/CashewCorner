@@ -1,7 +1,6 @@
 package com.example.cashewcorner.controller;
 
 import com.example.cashewcorner.dto.*;
-import com.example.cashewcorner.service.ProductCategoryService;
 import com.example.cashewcorner.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * REST Controller for product and category management endpoints.
- * Handles product catalog and category operations.
+ * REST Controller for product management endpoints.
+ * Handles product catalog operations.
  */
 @Slf4j
 @RestController
@@ -23,11 +22,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductCategoryService categoryService;
 
-    public ProductController(ProductService productService, ProductCategoryService categoryService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.categoryService = categoryService;
     }
 
     // ==================== Product Endpoints ====================
@@ -134,74 +131,5 @@ public class ProductController {
         log.info("Removing category from product - [productId={}, categoryId={}]", productId, categoryId);
         ProductDto product = productService.removeCategory(productId, categoryId);
         return ResponseEntity.ok(product);
-    }
-
-    // ==================== Category Endpoints ====================
-
-    /**
-     * Get all categories (public access).
-     */
-    @GetMapping("/categories")
-    public ResponseEntity<List<ProductCategoryDto>> getAllCategories() {
-        log.info("Fetching all categories");
-        List<ProductCategoryDto> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok(categories);
-    }
-
-    /**
-     * Get category by ID (public access).
-     */
-    @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<ProductCategoryDto> getCategoryById(@PathVariable Long categoryId) {
-        log.info("Fetching category - [categoryId={}]", categoryId);
-        ProductCategoryDto category = categoryService.getCategoryById(categoryId);
-        return ResponseEntity.ok(category);
-    }
-
-    /**
-     * Search categories by name (public access).
-     */
-    @GetMapping("/categories/search")
-    public ResponseEntity<List<ProductCategoryDto>> searchCategories(@RequestParam String name) {
-        log.info("Searching categories - [name={}]", name);
-        List<ProductCategoryDto> categories = categoryService.searchCategories(name);
-        return ResponseEntity.ok(categories);
-    }
-
-    /**
-     * Create a new category.
-     * Accessible by ADMIN and MANAGER roles.
-     */
-    @PostMapping("/categories")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<ProductCategoryDto> createCategory(@Valid @RequestBody CreateProductCategoryRequestDto request) {
-        log.info("Category creation request - [name={}]", request.getName());
-        ProductCategoryDto category = categoryService.createCategory(request);
-        return new ResponseEntity<>(category, HttpStatus.CREATED);
-    }
-
-    /**
-     * Update category information.
-     * Accessible by ADMIN and MANAGER roles.
-     */
-    @PutMapping("/categories/{categoryId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<ProductCategoryDto> updateCategory(@PathVariable Long categoryId,
-                                                             @Valid @RequestBody CreateProductCategoryRequestDto request) {
-        log.info("Category update request - [categoryId={}]", categoryId);
-        ProductCategoryDto category = categoryService.updateCategory(categoryId, request);
-        return ResponseEntity.ok(category);
-    }
-
-    /**
-     * Delete (deactivate) a category.
-     * Only accessible by ADMIN role.
-     */
-    @DeleteMapping("/categories/{categoryId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
-        log.info("Category deletion request - [categoryId={}]", categoryId);
-        categoryService.deleteCategory(categoryId);
-        return ResponseEntity.noContent().build();
     }
 }

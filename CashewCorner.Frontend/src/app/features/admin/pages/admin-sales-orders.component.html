@@ -1,0 +1,89 @@
+<div class="sales-orders-page">
+  <div class="page-header">
+    <div>
+      <h1>Sales Order Management</h1>
+      <p class="subtitle">Create and manage customer sales orders.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + Create Sales Order
+    </button>
+  </div>
+
+  <section class="sales-order-list">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search by order number..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading sales orders...</div>
+    <div *ngIf="!isLoading && salesOrders.length === 0" class="info">
+      No sales orders found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && salesOrders.length > 0" class="sales-orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>SO Number</th>
+          <th>Customer</th>
+          <th>Order Date</th>
+          <th>Delivery Date</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th>Items</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let salesOrder of salesOrders">
+          <td>{{ salesOrder.salesOrderId }}</td>
+          <td>{{ salesOrder.soNumber }}</td>
+          <td>{{ salesOrder.customerName }}</td>
+          <td>{{ salesOrder.orderDate | date:'shortDate' }}</td>
+          <td>{{ salesOrder.deliveryDate | date:'shortDate' }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="salesOrder.status === 'completed'"
+              [class.inactive]="salesOrder.status === 'cancelled'"
+            >
+              {{ salesOrder.status | titlecase }}
+            </span>
+          </td>
+          <td>{{ salesOrder.totalAmount | currency }}</td>
+          <td>
+            <ul *ngIf="salesOrder.items.length > 0">
+              <li *ngFor="let item of salesOrder.items">
+                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency }})
+              </li>
+            </ul>
+            <span *ngIf="salesOrder.items.length === 0">No items</span>
+          </td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openDetailsModal(salesOrder)">
+              Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-sales-order-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [salesOrder]="selectedSalesOrder"
+    [allCustomers]="customers"
+    [allProducts]="products"
+    (close)="closeModal()"
+    (save)="onCreateSalesOrder($event)"
+  ></app-sales-order-form-modal>
+</div>

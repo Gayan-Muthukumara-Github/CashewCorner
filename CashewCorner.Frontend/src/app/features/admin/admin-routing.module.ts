@@ -4,9 +4,18 @@ import { AdminLayoutComponent } from './pages/admin-layout.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard.component';
 import { AdminLoginComponent } from './pages/admin-login.component';
 import { AdminUsersComponent } from './pages/admin-users.component';
+import { AdminSuppliersComponent } from './pages/admin-suppliers.component';
+import { AdminCustomersComponent } from './pages/admin-customers.component';
+import { AdminCategoriesComponent } from './pages/admin-categories.component';
+import { AdminProductsComponent } from './pages/admin-products.component';
+import { AdminOrdersComponent } from './pages/admin-orders.component';
 import { PlaceholderComponent } from '../../shared/components/placeholder.component';
 import { AuthGuard } from '../../core/guards/auth.guard';
 import { LoginGuard } from '../../core/guards/login.guard';
+import { AdminEmployeesComponent } from './pages/admin-employees.component';
+import { AdminPayrollsComponent } from './pages/admin-payrolls.component';
+import { AdminSalesOrdersComponent } from './pages/admin-sales-orders.component';
+import { AdminPurchaseOrdersComponent } from './pages/admin-purchase-orders.component';
 
 const routes: Routes = [
   {
@@ -21,10 +30,15 @@ const routes: Routes = [
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'users', component: AdminUsersComponent },
-      { path: 'transactions', component: PlaceholderComponent },
-      { path: 'customers', component: PlaceholderComponent },
-      { path: 'reports', component: PlaceholderComponent },
-      { path: 'settings', component: PlaceholderComponent },
+      { path: 'suppliers', component: AdminSuppliersComponent },
+      { path: 'categories', component: AdminCategoriesComponent },
+      { path: 'products', component: AdminProductsComponent },
+      { path: 'transactions', component: AdminOrdersComponent },
+      { path: 'customers', component: AdminCustomersComponent },
+      { path: 'reports', component: AdminEmployeesComponent },
+      { path: 'settings', component: AdminPayrollsComponent },
+      { path: 'sales-orders', component: AdminSalesOrdersComponent },
+      { path: 'purchase-orders', component: AdminPurchaseOrdersComponent },
     ]
   }
 ];

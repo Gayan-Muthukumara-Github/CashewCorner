@@ -1,0 +1,87 @@
+<div class="suppliers-page">
+  <div class="page-header">
+    <div>
+      <h1>Supplier Management</h1>
+      <p class="subtitle">Create, update and manage system suppliers.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Supplier
+    </button>
+  </div>
+
+  <section class="supplier-list">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search by name..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading suppliers...</div>
+    <div *ngIf="!isLoading && suppliers.length === 0" class="info">
+      No suppliers found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && suppliers.length > 0" class="suppliers-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Contact Person</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Payment Terms</th>
+          <th>Approved</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let supplier of suppliers">
+          <td>{{ supplier.supplierId }}</td>
+          <td>{{ supplier.name }}</td>
+          <td>{{ supplier.contactPerson }}</td>
+          <td>{{ supplier.email }}</td>
+          <td>{{ supplier.phone }}</td>
+          <td>{{ supplier.address }}</td>
+          <td>{{ supplier.paymentTerms }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="supplier.isApproved"
+              [class.inactive]="!supplier.isApproved"
+            >
+              {{ supplier.isApproved ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(supplier)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteSupplier(supplier.supplierId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-supplier-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [supplier]="selectedSupplier"
+    (close)="closeModal()"
+    (save)="onSaveSupplier($event)"
+  ></app-supplier-form-modal>
+</div>

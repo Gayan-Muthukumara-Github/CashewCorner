@@ -1,0 +1,84 @@
+<div class="payrolls-page">
+  <div class="page-header">
+    <div>
+      <h1>Payroll Management</h1>
+      <p class="subtitle">Generate and manage employee payrolls.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + Generate Payroll
+    </button>
+  </div>
+
+  <section class="payroll-list">
+    <div class="filter-bar">
+      <select [(ngModel)]="filterMode" (ngModelChange)="onFilterChange()">
+        <option value="all">All Payrolls</option>
+        <option value="unpaid">Unpaid Payrolls</option>
+        <option value="employee">By Employee</option>
+      </select>
+      <select *ngIf="filterMode === 'employee'" [(ngModel)]="selectedEmployeeId" (ngModelChange)="onFilterChange()">
+        <option [value]="null" disabled>Select an employee</option>
+        <option *ngFor="let employee of employees" [value]="employee.employeeId">
+          {{ employee.fullName }}
+        </option>
+      </select>
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading payrolls...</div>
+    <div *ngIf="!isLoading && payrolls.length === 0" class="info">
+      No payrolls found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && payrolls.length > 0" class="payrolls-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Employee</th>
+          <th>Period Start</th>
+          <th>Period End</th>
+          <th>Gross Pay</th>
+          <th>Deductions</th>
+          <th>Net Pay</th>
+          <th>Payment Date</th>
+          <th>Payment Method</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payroll of payrolls">
+          <td>{{ payroll.payrollId }}</td>
+          <td>{{ payroll.employeeName }}</td>
+          <td>{{ payroll.periodStart | date:'shortDate' }}</td>
+          <td>{{ payroll.periodEnd | date:'shortDate' }}</td>
+          <td>{{ payroll.grossPay | currency }}</td>
+          <td>{{ payroll.deductions | currency }}</td>
+          <td>{{ payroll.netPay | currency }}</td>
+          <td>{{ payroll.paymentDate | date:'shortDate' }}</td>
+          <td>{{ payroll.paymentMethod }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="payroll.isPaid"
+              [class.inactive]="!payroll.isPaid"
+            >
+              {{ payroll.isPaid ? 'Paid' : 'Unpaid' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-payroll-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [payroll]="selectedPayroll"
+    [allEmployees]="employees"
+    (close)="closeModal()"
+    (save)="onGeneratePayroll($event)"
+  ></app-payroll-form-modal>
+</div>

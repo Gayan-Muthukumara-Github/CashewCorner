@@ -1,7 +1,11 @@
 package com.example.cashewcorner.controller;
 
+import com.example.cashewcorner.dto.CategoryFinancialSummaryDto;
+import com.example.cashewcorner.dto.CategoryVolumeReportDto;
 import com.example.cashewcorner.dto.GenerateReportRequestDto;
 import com.example.cashewcorner.dto.ReportDto;
+import com.example.cashewcorner.dto.SellingPriceFluctuationDto;
+import com.example.cashewcorner.dto.TransactionSummaryDto;
 import com.example.cashewcorner.service.ReportService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +100,83 @@ public class ReportController {
         ReportDto report = reportService.getReportById(reportId);
         // In a real implementation, this would return a file download
         // For now, returning the report data as JSON
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get selling price fluctuation report for a specific product.
+     * Returns monthly aggregated selling price statistics (average, highest, lowest).
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param productId the product ID to filter by (required)
+     * @param year optional year filter (defaults to current year if not provided)
+     * @return list of monthly price fluctuation data
+     */
+    @GetMapping("/selling-price-fluctuation")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<SellingPriceFluctuationDto>> getSellingPriceFluctuation(
+            @RequestParam Long productId,
+            @RequestParam(required = false) Integer year) {
+        log.info("Selling price fluctuation report request - [productId={}, year={}]", productId, year);
+        List<SellingPriceFluctuationDto> report = reportService.getSellingPriceFluctuation(productId, year);
+        log.info("Selling price fluctuation report generated - [productId={}, year={}, recordsCount={}]",
+                productId, year, report.size());
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get transaction summary report.
+     * Returns monthly aggregated sales and purchase data with profit calculation.
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param year optional year filter (defaults to current year if not provided)
+     * @return list of monthly transaction summaries
+     */
+    @GetMapping("/transaction-summary")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<TransactionSummaryDto>> getTransactionSummary(
+            @RequestParam(required = false) Integer year) {
+        log.info("Transaction summary report request - [year={}]", year);
+        List<TransactionSummaryDto> report = reportService.getTransactionSummary(year);
+        log.info("Transaction summary report generated - [year={}, recordsCount={}]", year, report.size());
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get category-based financial summary report.
+     * Returns aggregated sales and purchase data by product category with profit calculation.
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param year optional year filter (defaults to current year if not provided)
+     * @return list of category financial summaries
+     */
+    @GetMapping("/category-financial-summary")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<CategoryFinancialSummaryDto>> getCategoryFinancialSummary(
+            @RequestParam(required = false) Integer year) {
+        log.info("Category financial summary report request - [year={}]", year);
+        List<CategoryFinancialSummaryDto> report = reportService.getCategoryFinancialSummary(year);
+        log.info("Category financial summary report generated - [year={}, recordsCount={}]", year, report.size());
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get category volume report.
+     * Returns monthly aggregated quantity and value data by product category.
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param year optional year filter (defaults to current year if not provided)
+     * @param type the type of report: "SALES" or "PURCHASE" (defaults to "SALES")
+     * @return list of category volume data
+     */
+    @GetMapping("/category-volume-report")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<CategoryVolumeReportDto>> getCategoryVolumeReport(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) String type) {
+        log.info("Category volume report request - [year={}, type={}]", year, type);
+        List<CategoryVolumeReportDto> report = reportService.getCategoryVolumeReport(year, type);
+        log.info("Category volume report generated - [year={}, type={}, recordsCount={}]", year, type, report.size());
         return ResponseEntity.ok(report);
     }
 }

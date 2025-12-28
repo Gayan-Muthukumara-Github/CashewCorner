@@ -1,0 +1,97 @@
+<div class="orders-page">
+  <div class="page-header">
+    <div>
+      <h1>Order Management</h1>
+      <p class="subtitle">Create, update and manage customer orders.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Order
+    </button>
+  </div>
+
+  <section class="order-list">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search by customer name..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading orders...</div>
+    <div *ngIf="!isLoading && orders.length === 0" class="info">
+      No orders found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && orders.length > 0" class="orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Order Date</th>
+          <th>Status</th>
+          <th>Total Amount</th>
+          <th>Items</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.orderId }}</td>
+          <td>{{ order.customerName }}</td>
+          <td>{{ order.orderDate | date:'shortDate' }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="order.status === 'Completed'"
+              [class.inactive]="order.status === 'Cancelled'"
+            >
+              {{ order.status }}
+            </span>
+          </td>
+          <td>{{ order.totalAmount | currency }}</td>
+          <td>
+            <ul *ngIf="order.items.length > 0">
+              <li *ngFor="let item of order.items">
+                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency }})
+                <button type="button" class="remove-item-btn" (click)="removeProduct(order.orderId, item.orderItemId)">
+                  ×
+                </button>
+              </li>
+            </ul>
+            <span *ngIf="order.items.length === 0">No items</span>
+          </td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(order)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteOrder(order.orderId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-order-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [order]="selectedOrder"
+    [allCustomers]="customers"
+    [allProducts]="products"
+    (close)="closeModal()"
+    (save)="onSaveOrder($event)"
+    (assignProduct)="assignProduct($event.orderId, $event.productId, $event.quantity, $event.unitPrice)"
+    (updateProductQuantity)="updateProductQuantity($event.orderId, $event.orderItemId, $event.quantity)"
+  ></app-order-form-modal>
+</div>

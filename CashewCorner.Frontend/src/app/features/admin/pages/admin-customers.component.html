@@ -1,0 +1,75 @@
+<div class="customers-page">
+  <div class="page-header">
+    <div>
+      <h1>Customer Management</h1>
+      <p class="subtitle">Create, update and manage system customers.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Customer
+    </button>
+  </div>
+
+  <section class="customer-list">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search by name..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearch()"
+      />
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading customers...</div>
+    <div *ngIf="!isLoading && customers.length === 0" class="info">
+      No customers found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && customers.length > 0" class="customers-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of customers">
+          <td>{{ customer.customerId }}</td>
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.address }}</td>
+          <td>{{ customer.type }}</td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(customer)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteCustomer(customer.customerId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-customer-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [customer]="selectedCustomer"
+    (close)="closeModal()"
+    (save)="onSaveCustomer($event)"
+  ></app-customer-form-modal>
+</div>

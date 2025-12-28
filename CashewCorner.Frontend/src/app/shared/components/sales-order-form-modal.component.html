@@ -1,0 +1,129 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="salesOrderForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="customerId">Customer</label>
+            <select id="customerId" formControlName="customerId" [class.error]="customerId?.invalid && customerId?.touched">
+              <option [value]="null" disabled>Select a customer</option>
+              <option *ngFor="let customer of allCustomers" [value]="customer.customerId">
+                {{ customer.name }}
+              </option>
+            </select>
+            <small *ngIf="customerId?.invalid && customerId?.touched" class="error">
+              Customer is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="orderDate">Order Date</label>
+            <input
+              id="orderDate"
+              type="date"
+              formControlName="orderDate"
+              [class.error]="orderDate?.invalid && orderDate?.touched"
+            />
+            <small *ngIf="orderDate?.invalid && orderDate?.touched" class="error">
+              Order Date is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="deliveryDate">Delivery Date</label>
+            <input
+              id="deliveryDate"
+              type="date"
+              formControlName="deliveryDate"
+              [class.error]="deliveryDate?.invalid && deliveryDate?.touched"
+            />
+            <small *ngIf="deliveryDate?.invalid && deliveryDate?.touched" class="error">
+              Delivery Date is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="order-items-section">
+          <h3>Order Items</h3>
+          
+          <!-- Add Product Controls at Top -->
+          <div *ngIf="mode === 'create'" class="assign-product-controls">
+            <div class="product-input-row">
+              <select 
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="selectedProductToAssign"
+                (ngModelChange)="onProductSelectionChange($event)">
+                <option [ngValue]="null" disabled>Select a product</option>
+                <option *ngFor="let product of allProducts" [ngValue]="product.productId">
+                  {{ product.name }} ({{ product.sellPrice | currency }})
+                </option>
+              </select>
+              <input
+                type="number"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="quantityToAssign"
+                min="1"
+                placeholder="Quantity"
+                (ngModelChange)="onQuantityChange($event)"
+              />
+            </div>
+            <button type="button" class="add-product-btn" [disabled]="!selectedProductToAssign || quantityToAssign <= 0" (click)="onAddItem()">
+              + Add Product
+            </button>
+          </div>
+
+          <!-- Added Items List -->
+          <div class="order-item-list">
+            <div *ngIf="currentItems.length === 0" class="no-items-message">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <p>No items added yet</p>
+              <small>Select a product and quantity above to add items</small>
+            </div>
+            
+            <div *ngIf="currentItems.length > 0" class="items-container">
+              <div *ngFor="let item of currentItems; let i = index" class="order-item">
+                <div class="item-details">
+                  <span class="item-name">{{ getProductName(item.productId) }}</span>
+                  <span class="item-info">{{ item.quantity }} × {{ getProductUnitPrice(item.productId) | currency }} = {{ (item.quantity * getProductUnitPrice(item.productId)) | currency }}</span>
+                </div>
+                <button type="button" class="remove-item-btn" (click)="onRemoveItem(i)" title="Remove item">
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Amount Display -->
+          <div *ngIf="currentItems.length > 0" class="order-summary">
+            <span>Total Amount:</span>
+            <strong>{{ getTotalAmount() | currency }}</strong>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="!isFormValid() || currentItems.length === 0"
+            *ngIf="mode === 'create'">
+            Create Sales Order
+          </button>
+          <button type="button" class="primary" (click)="onClose()" *ngIf="mode === 'edit'">
+            Close Details
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

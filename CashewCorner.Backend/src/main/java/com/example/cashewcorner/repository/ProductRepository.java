@@ -12,16 +12,19 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.isActive = true")
     List<Product> findByIsActiveTrue();
 
-    Optional<Product> findByProductIdAndIsActiveTrue(Long productId);
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.productId = :productId AND p.isActive = true")
+    Optional<Product> findByProductIdAndIsActiveTrue(@Param("productId") Long productId);
 
     Optional<Product> findBySku(String sku);
 
-    @Query("SELECT p FROM Product p WHERE p.isActive = true AND " +
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.isActive = true AND " +
            "LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Product> searchByName(@Param("searchTerm") String searchTerm);
 
-    @Query("SELECT p FROM Product p JOIN p.categories c WHERE c.categoryId = :categoryId AND p.isActive = true")
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.productId IN " +
+           "(SELECT p2.productId FROM Product p2 JOIN p2.categories c WHERE c.categoryId = :categoryId AND p2.isActive = true)")
     List<Product> findByCategoryId(@Param("categoryId") Long categoryId);
 }

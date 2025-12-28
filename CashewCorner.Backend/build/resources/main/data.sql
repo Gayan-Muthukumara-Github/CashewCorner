@@ -13,7 +13,7 @@ VALUES ('admin', '$2a$10$z3R1nDm.9RE44GsLfY8x/OgeD5WvvgqwLmEZPUM47dP45/q7O02SW',
 
 -- Password: cashew@123 (BCrypt hashed with strength 10)
 INSERT INTO users (username, password_hash, email, first_name, last_name, role_id, is_active, created_at, updated_at)
-VALUES ('techadmin', '$2a$10$nVBoYrdpnbpsz9tvtblxzO.LK.xNGU4VgrvH5FLAqaB1ViooXjNsS', 'techadmin@cashewcorner.com', 'Tech', 'Admin', 1, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('techadmin', '$2a$10$adn.i02TUql1eCCmSLTBlOqKSbHWOaYR/Uzv1rlCri4w0wfasNi1q', 'techadmin@cashewcorner.com', 'Tech', 'Admin', 1, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Password: user123 (BCrypt hashed with strength 10)
 INSERT INTO users (username, password_hash, email, first_name, last_name, role_id, is_active, created_at, updated_at)

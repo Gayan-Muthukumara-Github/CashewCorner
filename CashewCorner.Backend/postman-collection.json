@@ -1482,6 +1482,200 @@
             "description": "Download/view report (Admin/Manager)"
           },
           "response": []
+        },
+        {
+          "name": "Get Selling Price Fluctuation (Default Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/selling-price-fluctuation?productId=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "selling-price-fluctuation"],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get selling price fluctuation report for a product. Returns monthly aggregated selling price statistics (average, highest, lowest). Defaults to current year. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Selling Price Fluctuation (Specific Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/selling-price-fluctuation?productId=1&year=2024",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "selling-price-fluctuation"],
+              "query": [
+                {
+                  "key": "productId",
+                  "value": "1"
+                },
+                {
+                  "key": "year",
+                  "value": "2024"
+                }
+              ]
+            },
+            "description": "Get selling price fluctuation report for a product for a specific year. Returns monthly aggregated selling price statistics (average, highest, lowest). (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Summary (Default Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/transaction-summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "transaction-summary"]
+            },
+            "description": "Get transaction summary report. Returns monthly aggregated sales and purchase data with profit calculation. Defaults to current year. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Summary (Specific Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/transaction-summary?year=2024",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "transaction-summary"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                }
+              ]
+            },
+            "description": "Get transaction summary report for a specific year. Returns monthly aggregated sales and purchase data with profit calculation. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Financial Summary (Default Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-financial-summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-financial-summary"]
+            },
+            "description": "Get category-based financial summary report. Returns aggregated sales and purchase data by product category with profit calculation. Defaults to current year. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Financial Summary (Specific Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-financial-summary?year=2024",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-financial-summary"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                }
+              ]
+            },
+            "description": "Get category-based financial summary report for a specific year. Returns aggregated sales and purchase data by product category with profit calculation. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Volume Report - Sales (Default Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-volume-report",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-volume-report"]
+            },
+            "description": "Get category volume report for sales. Returns monthly aggregated quantity and value data by product category. Defaults to current year and SALES type. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Volume Report - Sales (Specific Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-volume-report?year=2024&type=SALES",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-volume-report"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                },
+                {
+                  "key": "type",
+                  "value": "SALES"
+                }
+              ]
+            },
+            "description": "Get category volume report for sales for a specific year. Returns monthly aggregated quantity and value data by product category. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Volume Report - Purchase (Default Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-volume-report?type=PURCHASE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-volume-report"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "PURCHASE"
+                }
+              ]
+            },
+            "description": "Get category volume report for purchases. Returns monthly aggregated quantity and value data by product category. Defaults to current year. (Admin/Manager)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category Volume Report - Purchase (Specific Year)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/category-volume-report?year=2024&type=PURCHASE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "category-volume-report"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                },
+                {
+                  "key": "type",
+                  "value": "PURCHASE"
+                }
+              ]
+            },
+            "description": "Get category volume report for purchases for a specific year. Returns monthly aggregated quantity and value data by product category. (Admin/Manager)"
+          },
+          "response": []
         }
       ]
     }

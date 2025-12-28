@@ -1,0 +1,72 @@
+<div class="employees-page">
+  <div class="page-header">
+    <div>
+      <h1>Employee Management</h1>
+      <p class="subtitle">Create, update and manage company employees.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Employee
+    </button>
+  </div>
+
+  <section class="employee-list">
+    <div *ngIf="isLoading" class="info">Loading employees...</div>
+    <div *ngIf="!isLoading && employees.length === 0" class="info">
+      No employees found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && employees.length > 0" class="employees-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Code</th>
+          <th>Full Name</th>
+          <th>Designation</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Hire Date</th>
+          <th>Salary Base</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <td>{{ employee.employeeId }}</td>
+          <td>{{ employee.employeeCode }}</td>
+          <td>{{ employee.fullName }}</td>
+          <td>{{ employee.designation }}</td>
+          <td>{{ employee.department }}</td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.phone }}</td>
+          <td>{{ employee.hireDate | date:'shortDate' }}</td>
+          <td>{{ employee.salaryBase | currency }}</td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(employee)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteEmployee(employee.employeeId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-employee-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [employee]="selectedEmployee"
+    (close)="closeModal()"
+    (save)="onSaveEmployee($event)"
+  ></app-employee-form-modal>
+</div>
