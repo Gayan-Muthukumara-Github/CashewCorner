@@ -1,60 +1,191 @@
 <section class="dashboard">
-  <h1>Dashboard</h1>
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Welcome back! Here's what's happening with your business.</p>
+    </div>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="loading">
+      <span class="icon">🔄</span> Refresh
+    </button>
+  </div>
 
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </div>
+  }
+
+  <!-- Stats Cards -->
   <div class="stats">
     @for (s of stats; track s.label) {
-      <div class="card stat">
-        <div class="label">{{ s.label }}</div>
-        <div class="value">{{ s.value }}</div>
-        <div class="delta" [class.positive]="s.delta.startsWith('+')" [class.negative]="s.delta.startsWith('-')">
-          {{ s.delta }} vs last week
+      <div class="card stat" [style.border-left-color]="s.color">
+        <div class="stat-icon" [style.background]="s.color + '20'" [style.color]="s.color">
+          {{ s.icon }}
+        </div>
+        <div class="stat-content">
+          <div class="label">{{ s.label }}</div>
+          <div class="value">{{ s.value }}</div>
+          <div class="delta" [class.positive]="s.delta.startsWith('+')" [class.negative]="s.delta.startsWith('-')">
+            {{ s.delta }} vs last month
+          </div>
         </div>
       </div>
     }
   </div>
 
-  <div class="grid">
-    <div class="card chart">
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="actions-grid">
+      @for (action of quickActions; track action.label) {
+        <a [routerLink]="action.route" class="action-card" [style.--action-color]="action.color">
+          <span class="action-icon">{{ action.icon }}</span>
+          <span class="action-label">{{ action.label }}</span>
+        </a>
+      }
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid main-grid">
+    <!-- Sales Chart -->
+    <div class="card chart-card">
       <div class="card-header">
-        <h3>Transactions Overview</h3>
-        <select>
-          <option>Last 7 days</option>
-          <option>Last 30 days</option>
-          <option>Last 12 months</option>
-        </select>
+        <h3>📈 Weekly Sales Overview</h3>
+        <span class="badge info">Last 7 Days</span>
       </div>
-      <div class="chart-placeholder">
-        <div class="sparkline"></div>
+      <div class="chart-container">
+        <div class="bar-chart">
+          @for (day of weeklyData; track day.day) {
+            <div class="bar-wrapper">
+              <div class="bar-value">{{ day.sales | number:'1.0-0' }}</div>
+              <div class="bar" [style.height.%]="getBarHeight(day.sales)"></div>
+              <div class="bar-label">{{ day.day }}</div>
+              <div class="bar-orders">{{ day.orders }} orders</div>
+            </div>
+          }
+        </div>
       </div>
     </div>
 
-    <div class="card list">
+    <!-- Recent Orders -->
+    <div class="card list-card">
       <div class="card-header">
-        <h3>Recent Activity</h3>
-        <a href="#">View all</a>
+        <h3>📋 Recent Orders</h3>
+        <a routerLink="/admin/sales-orders" class="view-all">View All →</a>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (a of activities; track a.id) {
-            <tr>
-              <td>{{ a.id }}</td>
-              <td>{{ a.customer }}</td>
-              <td>{{ a.amount }}</td>
-              <td><span class="badge" [class.completed]="a.status==='Completed'" [class.pending]="a.status==='Pending'" [class.failed]="a.status==='Failed'">{{ a.status }}</span></td>
-              <td>{{ a.time }}</td>
-            </tr>
+      @if (recentOrders.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📭</span>
+          <p>No orders yet</p>
+        </div>
+      } @else {
+        <div class="orders-list">
+          @for (order of recentOrders; track order.salesOrderId) {
+            <div class="order-item">
+              <div class="order-info">
+                <span class="order-id">#{{ order.soNumber || order.salesOrderId }}</span>
+                <span class="order-customer">{{ order.customerName || 'Customer' }}</span>
+              </div>
+              <div class="order-meta">
+                <span class="order-amount">{{ formatCurrency(order.totalAmount || 0) }}</span>
+                <span class="badge" [class]="getStatusClass(order.status || '')">{{ order.status }}</span>
+              </div>
+              <span class="order-time">{{ getTimeAgo(order.createdAt || '') }}</span>
+            </div>
           }
-        </tbody>
-      </table>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Secondary Grid -->
+  <div class="grid secondary-grid">
+    <!-- Low Stock Alerts -->
+    <div class="card alert-card">
+      <div class="card-header">
+        <h3>⚠️ Low Stock Alerts</h3>
+        <a routerLink="/admin/inventory" class="view-all">View Inventory →</a>
+      </div>
+      @if (lowStockItems.length === 0) {
+        <div class="empty-state success">
+          <span class="empty-icon">✅</span>
+          <p>All stock levels are healthy!</p>
+        </div>
+      } @else {
+        <div class="stock-list">
+          @for (item of lowStockItems; track item.inventoryId) {
+            <div class="stock-item">
+              <div class="stock-info">
+                <span class="stock-name">{{ item.productName || 'Product' }}</span>
+                <span class="stock-location">{{ item.location || 'Main Warehouse' }}</span>
+              </div>
+              <div class="stock-qty" [class.critical]="(item.quantityOnHand || 0) < 10">
+                {{ item.quantityOnHand || 0 }} units
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Top Products -->
+    <div class="card products-card">
+      <div class="card-header">
+        <h3>🏆 Top Products</h3>
+        <a routerLink="/admin/products" class="view-all">View All →</a>
+      </div>
+      @if (topProducts.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📦</span>
+          <p>No product data available</p>
+        </div>
+      } @else {
+        <div class="products-list">
+          @for (item of topProducts; track item.product.productId; let i = $index) {
+            <div class="product-item">
+              <span class="product-rank" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">
+                {{ i + 1 }}
+              </span>
+              <div class="product-info">
+                <span class="product-name">{{ item.product.name }}</span>
+                <span class="product-orders">{{ item.orderCount }} orders</span>
+              </div>
+              <span class="product-revenue">{{ formatCurrency(item.revenue) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Recent Customers -->
+    <div class="card customers-card">
+      <div class="card-header">
+        <h3>👥 Recent Customers</h3>
+        <a routerLink="/admin/customers" class="view-all">View All →</a>
+      </div>
+      @if (recentCustomers.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">👤</span>
+          <p>No customers yet</p>
+        </div>
+      } @else {
+        <div class="customers-list">
+          @for (customer of recentCustomers; track customer.customerId) {
+            <div class="customer-item">
+              <div class="customer-avatar">
+                {{ (customer.name || 'C').charAt(0).toUpperCase() }}
+              </div>
+              <div class="customer-info">
+                <span class="customer-name">{{ customer.name }}</span>
+                <span class="customer-contact">{{ customer.email || customer.phone || 'No contact' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
   </div>
 </section>

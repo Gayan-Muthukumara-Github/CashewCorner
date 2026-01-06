@@ -8,8 +8,29 @@
   &.sidebar-collapsed {
     grid-template-columns: 72px 1fr;
 
-    .sidebar .name { display: none; }
-    .sidebar .nav a span.icon { margin-right: 0; }
+    .sidebar {
+      padding: 16px 8px;
+      
+      .brand {
+        justify-content: center;
+        padding: 8px 0;
+        
+        .name { display: none; }
+        .brand-icon { width: 36px; height: 36px; }
+      }
+      
+      .nav a {
+        justify-content: center;
+        padding: 12px;
+        
+        span.icon { 
+          margin-right: 0;
+          font-size: 18px;
+        }
+        
+        span:not(.icon) { display: none; }
+      }
+    }
   }
 }
 
