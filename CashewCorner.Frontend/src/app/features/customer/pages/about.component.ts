@@ -33,7 +33,7 @@ import { Component } from '@angular/core';
             
             <div class="story-image">
               <div class="image-placeholder">
-                <span>🌰</span>
+                <img src="https://imgs.search.brave.com/rN_3lmsO2B6-KLn0SjLQIQiSrmDnUKbp8XT-E4PxK-I/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNjcv/OTA1LzY1OS9zbWFs/bC9hLWJvd2wtb2Yt/cm9hc3RlZC1jYXNo/ZXdzLXJlYWR5LXRv/LWVhdC1hLWhlYWx0/aHktc25hY2stcG5n/LnBuZw" alt="Cashew Corner" class="brand-icon" />
                 <p>Premium Cashews</p>
               </div>
             </div>
@@ -70,6 +70,12 @@ import { Component } from '@angular/core';
       background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     }
     
+    .brand-icon {
+      width: 400px;
+      height: 400px;
+      object-fit: contain;
+    }
+
     .hero-section {
       background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
       color: white;

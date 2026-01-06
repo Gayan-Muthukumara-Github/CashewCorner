@@ -1,0 +1,192 @@
+<div class="inventory-page">
+  <div class="page-header">
+    <div>
+      <h1>Inventory Management</h1>
+      <p class="subtitle">Monitor and manage stock levels across locations</p>
+    </div>
+    <div class="header-actions">
+      <button class="primary" (click)="openReceiveStockModal()">
+        📥 Receive Stock
+      </button>
+      <button class="secondary" (click)="openAdjustStockModal()">
+        📊 Adjust Stock
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  @if (successMessage) {
+    <div class="success-banner">
+      {{ successMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="error-banner">
+      {{ errorMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+  }
+
+  <!-- Inventory Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-icon blue">📦</div>
+      <div class="card-content">
+        <span class="card-value">{{ summary?.totalProducts || 0 }}</span>
+        <span class="card-label">Total Products</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon orange">⚠️</div>
+      <div class="card-content">
+        <span class="card-value">{{ summary?.lowStockItems || 0 }}</span>
+        <span class="card-label">Low Stock Items</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon green">💰</div>
+      <div class="card-content">
+        <span class="card-value">{{ summary?.totalInventoryValue | number:'1.2-2' }}</span>
+        <span class="card-label">Total Value (LKR)</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon purple">📍</div>
+      <div class="card-content">
+        <span class="card-value">{{ summary?.locationsCount || 0 }}</span>
+        <span class="card-label">Locations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeFilter === 'all'"
+      (click)="setFilter('all')">
+      All Inventory
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeFilter === 'available'"
+      (click)="setFilter('available')">
+      Available Stock
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeFilter === 'low-stock'"
+      (click)="setFilter('low-stock')">
+      Low Stock
+    </button>
+  </div>
+
+  <!-- Inventory List -->
+  <div class="inventory-list">
+    <div class="filter-bar">
+      <input 
+        type="text" 
+        placeholder="Search by product name or SKU..." 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+      />
+      <select [(ngModel)]="selectedLocation" (change)="onLocationChange()">
+        <option value="">All Locations</option>
+        @for (location of locations; track location) {
+          <option [value]="location">{{ location }}</option>
+        }
+      </select>
+      <button class="secondary" (click)="refreshInventory()">🔄 Refresh</button>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading">Loading inventory...</div>
+    } @else if (filteredInventory.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <p>No inventory items found</p>
+        <span class="empty-hint">Try adjusting your filters or receive new stock</span>
+      </div>
+    } @else {
+      <div class="table-container">
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Location</th>
+              <th class="text-right">On Hand</th>
+              <th class="text-right">Reserved</th>
+              <th class="text-right">Available</th>
+              <th>Last Updated</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredInventory; track item.inventoryId) {
+              <tr>
+                <td>
+                  <div class="product-info">
+                    <span class="product-name">{{ item.productName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="sku-tag">{{ item.productSku }}</span>
+                </td>
+                <td>
+                  <span class="location-tag">📍 {{ item.location }}</span>
+                </td>
+                <td class="text-right">
+                  <span class="quantity">{{ item.quantityOnHand | number:'1.0-2' }}</span>
+                  <span class="unit">{{ item.unit }}</span>
+                </td>
+                <td class="text-right">
+                  <span class="reserved">{{ item.reservedQuantity | number:'1.0-2' }}</span>
+                  <span class="unit">{{ item.unit }}</span>
+                </td>
+                <td class="text-right">
+                  <span class="available" [class.low]="item.availableQuantity < 50">
+                    {{ item.availableQuantity | number:'1.0-2' }}
+                  </span>
+                  <span class="unit">{{ item.unit }}</span>
+                </td>
+                <td>
+                  <span class="date">{{ item.lastUpdated | date:'short' }}</span>
+                </td>
+                <td>
+                  @if (item.availableQuantity <= 0) {
+                    <span class="status-badge out-of-stock">Out of Stock</span>
+                  } @else if (item.availableQuantity < 50) {
+                    <span class="status-badge low-stock">Low Stock</span>
+                  } @else {
+                    <span class="status-badge in-stock">In Stock</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Receive Stock Modal -->
+<app-receive-stock-modal
+  [isOpen]="receiveStockModalOpen"
+  [products]="products"
+  (close)="closeReceiveStockModal()"
+  (save)="onReceiveStock($event)"
+></app-receive-stock-modal>
+
+<!-- Adjust Stock Modal -->
+<app-adjust-stock-modal
+  [isOpen]="adjustStockModalOpen"
+  [products]="products"
+  [inventory]="inventory"
+  (close)="closeAdjustStockModal()"
+  (save)="onAdjustStock($event)"
+></app-adjust-stock-modal>

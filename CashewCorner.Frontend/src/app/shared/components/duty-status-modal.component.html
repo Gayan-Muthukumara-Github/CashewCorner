@@ -1,0 +1,82 @@
+<div class="modal-overlay" *ngIf="isOpen && duty" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Update Duty Status</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="duty-info">
+        <div class="info-row">
+          <span class="label">Task Type:</span>
+          <span class="value">{{ duty.taskType }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Current Status:</span>
+          <span class="value status" [ngClass]="'status-' + duty.status">{{ duty.status | titlecase }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Start Date:</span>
+          <span class="value">{{ duty.startDate | date:'short' }}</span>
+        </div>
+      </div>
+
+      <div class="status-selector">
+        <h3>Change Status To:</h3>
+        <div class="status-options">
+          <button 
+            type="button"
+            class="status-option"
+            [class.active]="selectedStatus === 'assigned'"
+            (click)="selectStatus('assigned')"
+          >
+            <span class="badge assigned"></span>
+            Assigned
+          </button>
+          <button 
+            type="button"
+            class="status-option"
+            [class.active]="selectedStatus === 'in-progress'"
+            (click)="selectStatus('in-progress')"
+          >
+            <span class="badge in-progress"></span>
+            In Progress
+          </button>
+          <button 
+            type="button"
+            class="status-option"
+            [class.active]="selectedStatus === 'completed'"
+            (click)="selectStatus('completed')"
+          >
+            <span class="badge completed"></span>
+            Completed
+          </button>
+          <button 
+            type="button"
+            class="status-option"
+            [class.active]="selectedStatus === 'cancelled'"
+            (click)="selectStatus('cancelled')"
+          >
+            <span class="badge cancelled"></span>
+            Cancelled
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="primary" [disabled]="!selectedStatus || isUpdating" (click)="updateStatus()">
+          {{ isUpdating ? 'Updating...' : 'Update Status' }}
+        </button>
+        <button type="button" class="secondary" (click)="onClose()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

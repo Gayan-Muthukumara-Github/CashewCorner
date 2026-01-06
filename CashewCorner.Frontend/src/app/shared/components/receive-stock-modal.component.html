@@ -1,0 +1,99 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>📥 Receive Stock</h2>
+      <button class="close-btn" (click)="onClose()">×</button>
+    </div>
+
+    <form [formGroup]="receiveForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="productId">Product *</label>
+          <select id="productId" formControlName="productId">
+            <option [ngValue]="null">Select a product...</option>
+            @for (product of products; track product.productId) {
+              <option [ngValue]="product.productId">
+                {{ product.name }} ({{ product.sku }})
+              </option>
+            }
+          </select>
+          @if (receiveForm.get('productId')?.invalid && receiveForm.get('productId')?.touched) {
+            <span class="error-text">Product is required</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quantity">Quantity *</label>
+            <input
+              type="number"
+              id="quantity"
+              formControlName="quantity"
+              placeholder="Enter quantity"
+              min="0.01"
+              step="0.01"
+            />
+            @if (receiveForm.get('quantity')?.invalid && receiveForm.get('quantity')?.touched) {
+              <span class="error-text">Valid quantity is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location *</label>
+            <input
+              type="text"
+              id="location"
+              formControlName="location"
+              placeholder="e.g., Warehouse A"
+              list="locationList"
+            />
+            <datalist id="locationList">
+              <option value="Warehouse A"></option>
+              <option value="Warehouse B"></option>
+              <option value="Warehouse C"></option>
+              <option value="Warehouse D"></option>
+            </datalist>
+            @if (receiveForm.get('location')?.invalid && receiveForm.get('location')?.touched) {
+              <span class="error-text">Location is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="purchaseOrderId">Purchase Order (Optional)</label>
+          <input
+            type="number"
+            id="purchaseOrderId"
+            formControlName="purchaseOrderId"
+            placeholder="Enter PO ID if applicable"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea
+            id="notes"
+            formControlName="notes"
+            placeholder="Add any notes about this stock receipt..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="secondary" (click)="onClose()">Cancel</button>
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="receiveForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span>Receiving...</span>
+          } @else {
+            <span>📥 Receive Stock</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

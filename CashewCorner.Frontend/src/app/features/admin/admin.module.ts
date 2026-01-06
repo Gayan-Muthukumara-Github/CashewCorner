@@ -23,6 +23,10 @@ import { AdminSalesOrdersComponent } from './pages/admin-sales-orders.component'
 import { SalesOrderFormModalComponent } from '../../shared/components/sales-order-form-modal.component';
 import { AdminPurchaseOrdersComponent } from './pages/admin-purchase-orders.component';
 import { PurchaseOrderFormModalComponent } from '../../shared/components/purchase-order-form-modal.component';
+import { AdminInventoryComponent } from './pages/admin-inventory.component';
+import { ReceiveStockModalComponent } from '../../shared/components/receive-stock-modal.component';
+import { AdjustStockModalComponent } from '../../shared/components/adjust-stock-modal.component';
+import { AdminReportsComponent } from './pages/admin-reports.component';
 
 @NgModule({
   declarations: [],
@@ -50,7 +54,11 @@ import { PurchaseOrderFormModalComponent } from '../../shared/components/purchas
     AdminSalesOrdersComponent,
     SalesOrderFormModalComponent,
     AdminPurchaseOrdersComponent,
-    PurchaseOrderFormModalComponent
+    PurchaseOrderFormModalComponent,
+    AdminInventoryComponent,
+    ReceiveStockModalComponent,
+    AdjustStockModalComponent,
+    AdminReportsComponent
   ]
 })
 export class AdminModule { }

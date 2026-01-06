@@ -12,24 +12,19 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <div class="header-content">
             <div class="brand">
               <a routerLink="/customer" class="brand-link">
-                <span class="brand-icon">🌰</span>
+                <img src="https://imgs.search.brave.com/rN_3lmsO2B6-KLn0SjLQIQiSrmDnUKbp8XT-E4PxK-I/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNjcv/OTA1LzY1OS9zbWFs/bC9hLWJvd2wtb2Yt/cm9hc3RlZC1jYXNo/ZXdzLXJlYWR5LXRv/LWVhdC1hLWhlYWx0/aHktc25hY2stcG5n/LnBuZw" alt="Cashew Corner" class="brand-icon" />
                 <span class="brand-text">Cashew Corner</span>
               </a>
             </div>
             
             <nav class="nav">
               <a routerLink="/customer/about" routerLinkActive="active" class="nav-link">About</a>
+              <a routerLink="/customer/products" routerLinkActive="active" class="nav-link">Products</a>
               <a routerLink="/customer/contact" routerLinkActive="active" class="nav-link">Contact</a>
               <a routerLink="/customer/track-order" routerLinkActive="active" class="nav-link">Track Order</a>
-              <a routerLink="/admin/login" class="nav-link admin-link">Admin</a>
+              <!--a routerLink="/admin/login" class="nav-link admin-link">Admin</a-->
             </nav>
             
-            <div class="header-actions">
-              <button class="cart-btn">
-                <span class="cart-icon">🛒</span>
-                <span class="cart-count">0</span>
-              </button>
-            </div>
           </div>
         </div>
       </header>
@@ -56,10 +51,9 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
               <h4>Quick Links</h4>
               <ul class="footer-links">
                 <li><a routerLink="/customer/about">About Us</a></li>
+                <li><a routerLink="/customer/products">Products</a></li>
                 <li><a routerLink="/customer/contact">Contact</a></li>
                 <li><a routerLink="/customer/track-order">Track Order</a></li>
-                <li><a href="#">Shipping Info</a></li>
-                <li><a href="#">Returns</a></li>
               </ul>
             </div>
             
@@ -149,7 +143,9 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     }
     
     .brand-icon {
-      font-size: 2rem;
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
     }
     
     .brand-text {

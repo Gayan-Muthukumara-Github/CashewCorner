@@ -19,6 +19,10 @@
       {{ errorMessage }}
     </div>
 
+    <div *ngIf="successMessage" class="success-banner">
+      {{ successMessage }}
+    </div>
+
     <table *ngIf="!isLoading && employees.length > 0" class="employees-table">
       <thead>
         <tr>
@@ -46,6 +50,9 @@
           <td>{{ employee.hireDate | date:'shortDate' }}</td>
           <td>{{ employee.salaryBase | currency }}</td>
           <td class="actions">
+            <button type="button" class="link" (click)="openEmployeeDetails(employee)">
+              View
+            </button>
             <button type="button" class="link" (click)="openEditModal(employee)">
               Edit
             </button>
@@ -62,6 +69,68 @@
     </table>
   </section>
 
+  <!-- Employee Details Modal with Duties -->
+  <div class="detail-modal-overlay" *ngIf="showDetailsModal && selectedEmployee" (click)="closeDetailsModal()">
+    <div class="detail-modal-content" (click)="$event.stopPropagation()">
+      <div class="detail-modal-header">
+        <h2>{{ selectedEmployee.fullName }}</h2>
+        <button type="button" class="close-btn" (click)="closeDetailsModal()">×</button>
+      </div>
+
+      <div class="detail-modal-body">
+        <!-- Employee Info Tab -->
+        <div class="employee-info-section">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Employee Code:</span>
+              <span class="value">{{ selectedEmployee.employeeCode }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Full Name:</span>
+              <span class="value">{{ selectedEmployee.fullName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Designation:</span>
+              <span class="value">{{ selectedEmployee.designation }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Department:</span>
+              <span class="value">{{ selectedEmployee.department }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Email:</span>
+              <span class="value">{{ selectedEmployee.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Phone:</span>
+              <span class="value">{{ selectedEmployee.phone }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Hire Date:</span>
+              <span class="value">{{ selectedEmployee.hireDate | date:'shortDate' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Salary Base:</span>
+              <span class="value">{{ selectedEmployee.salaryBase | currency }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duties Section -->
+        <app-employee-duties-list
+          [duties]="employeeDuties"
+          [salesOrders]="salesOrders"
+          [purchaseOrders]="purchaseOrders"
+          [isLoading]="dutiesLoading"
+          (assignDutyClick)="openAssignDutyModal()"
+          (updateStatusClick)="openDutyStatusModal($event)"
+          (dutiesChanged)="loadEmployeeDuties(selectedEmployee!.employeeId)"
+        ></app-employee-duties-list>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
   <app-employee-form-modal
     [isOpen]="isModalOpen"
     [mode]="modalMode"
@@ -69,4 +138,20 @@
     (close)="closeModal()"
     (save)="onSaveEmployee($event)"
   ></app-employee-form-modal>
+
+  <app-assign-duty-modal
+    [isOpen]="assignDutyModalOpen"
+    [employeeName]="selectedEmployee?.fullName || ''"
+    [salesOrders]="salesOrders"
+    [purchaseOrders]="purchaseOrders"
+    (close)="closeAssignDutyModal()"
+    (save)="onAssignDuty($event)"
+  ></app-assign-duty-modal>
+
+  <app-duty-status-modal
+    [isOpen]="dutyStatusModalOpen"
+    [duty]="selectedDuty"
+    (close)="closeDutyStatusModal()"
+    (statusUpdated)="onDutyStatusUpdated($event)"
+  ></app-duty-status-modal>
 </div>

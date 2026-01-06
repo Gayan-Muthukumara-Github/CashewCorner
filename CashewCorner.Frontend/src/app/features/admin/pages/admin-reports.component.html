@@ -1,0 +1,743 @@
+<div class="reports-page">
+  <div class="page-header">
+    <div>
+      <h1>Reports & Analytics</h1>
+      <p class="subtitle">Generate and view business reports</p>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  @if (successMessage) {
+    <div class="success-banner">
+      {{ successMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="error-banner">
+      {{ errorMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+  }
+
+  <!-- Report Generation Cards -->
+  <div class="report-cards">
+    <div class="report-card inventory">
+      <div class="card-icon">📦</div>
+      <div class="card-content">
+        <h3>Inventory Summary</h3>
+        <p>Overview of current stock levels, values, and locations</p>
+      </div>
+      <button 
+        class="generate-btn" 
+        (click)="generateInventorySummary()"
+        [disabled]="isGenerating">
+        @if (generatingType === 'INVENTORY_SUMMARY') {
+          <span>Generating...</span>
+        } @else {
+          <span>📊 Generate</span>
+        }
+      </button>
+    </div>
+
+    <div class="report-card sales">
+      <div class="card-icon">💰</div>
+      <div class="card-content">
+        <h3>Sales Performance</h3>
+        <p>Revenue, orders, and top customers analysis</p>
+        <div class="date-inputs">
+          <input type="date" [(ngModel)]="salesStartDate" placeholder="Start Date" />
+          <input type="date" [(ngModel)]="salesEndDate" placeholder="End Date" />
+        </div>
+      </div>
+      <button 
+        class="generate-btn" 
+        (click)="generateSalesPerformance()"
+        [disabled]="isGenerating || !salesStartDate || !salesEndDate">
+        @if (generatingType === 'SALES_PERFORMANCE') {
+          <span>Generating...</span>
+        } @else {
+          <span>📊 Generate</span>
+        }
+      </button>
+    </div>
+
+    <div class="report-card payroll">
+      <div class="card-icon">👥</div>
+      <div class="card-content">
+        <h3>Payroll Summary</h3>
+        <p>Employee compensation and payment status</p>
+        <div class="date-inputs">
+          <input type="date" [(ngModel)]="payrollStartDate" placeholder="Period Start" />
+          <input type="date" [(ngModel)]="payrollEndDate" placeholder="Period End" />
+        </div>
+      </div>
+      <button 
+        class="generate-btn" 
+        (click)="generatePayrollSummary()"
+        [disabled]="isGenerating || !payrollStartDate || !payrollEndDate">
+        @if (generatingType === 'PAYROLL_SUMMARY') {
+          <span>Generating...</span>
+        } @else {
+          <span>📊 Generate</span>
+        }
+      </button>
+    </div>
+
+    <div class="report-card alert">
+      <div class="card-icon">⚠️</div>
+      <div class="card-content">
+        <h3>Low Stock Alert</h3>
+        <p>Items below reorder level requiring attention</p>
+      </div>
+      <button 
+        class="generate-btn" 
+        (click)="generateLowStockAlert()"
+        [disabled]="isGenerating">
+        @if (generatingType === 'LOW_STOCK_ALERT') {
+          <span>Generating...</span>
+        } @else {
+          <span>📊 Generate</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Analytics Dashboard Section -->
+  <div class="analytics-section">
+    <div class="section-header">
+      <h2>📈 Analytics Dashboard</h2>
+    </div>
+
+    <!-- Analytics Tabs -->
+    <div class="analytics-tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeAnalyticsTab === 'transaction'"
+        (click)="setAnalyticsTab('transaction')">
+        💹 Transaction Summary
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeAnalyticsTab === 'category'"
+        (click)="setAnalyticsTab('category')">
+        📂 Category Financial
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeAnalyticsTab === 'volume'"
+        (click)="setAnalyticsTab('volume')">
+        📊 Category Volume
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeAnalyticsTab === 'price'"
+        (click)="setAnalyticsTab('price')">
+        📉 Price Fluctuation
+      </button>
+    </div>
+
+    <!-- Transaction Summary Tab -->
+    @if (activeAnalyticsTab === 'transaction') {
+      <div class="analytics-panel">
+        <div class="panel-header">
+          <h3>💹 Transaction Summary</h3>
+          <div class="panel-controls">
+            <select [(ngModel)]="transactionYear" (change)="loadTransactionSummary()">
+              <option [ngValue]="null">Current Year</option>
+              @for (year of availableYears; track year) {
+                <option [ngValue]="year">{{ year }}</option>
+              }
+            </select>
+            <button class="refresh-btn" (click)="loadTransactionSummary()" [disabled]="isLoadingTransactionSummary">
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        @if (isLoadingTransactionSummary) {
+          <div class="loading">Loading transaction summary...</div>
+        } @else if (transactionSummaryData.length === 0) {
+          <div class="empty-state">
+            <p>No transaction data available for the selected year</p>
+          </div>
+        } @else {
+          <!-- Summary Cards -->
+          <div class="summary-stats horizontal">
+            <div class="stat-card success">
+              <span class="stat-value">{{ getTransactionTotals().sales | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Sales (LKR)</span>
+            </div>
+            <div class="stat-card warning">
+              <span class="stat-value">{{ getTransactionTotals().purchases | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Purchases (LKR)</span>
+            </div>
+            <div class="stat-card" [class.success]="getTransactionTotals().profit >= 0" [class.danger]="getTransactionTotals().profit < 0">
+              <span class="stat-value">{{ getTransactionTotals().profit | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Profit (LKR)</span>
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th class="text-right">Total Sales</th>
+                  <th class="text-right">Total Purchases</th>
+                  <th class="text-right">Income</th>
+                  <th class="text-right">Expenses</th>
+                  <th class="text-right">Profit</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of transactionSummaryData; track item.month) {
+                  <tr>
+                    <td>
+                      <strong>{{ getMonthName(item.month) }} {{ item.year }}</strong>
+                    </td>
+                    <td class="text-right success-text">{{ item.totalSales | number:'1.2-2' }}</td>
+                    <td class="text-right warning-text">{{ item.totalPurchases | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ item.income | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ item.expenses | number:'1.2-2' }}</td>
+                    <td class="text-right" [class.success-text]="item.profit >= 0" [class.danger-text]="item.profit < 0">
+                      {{ item.profit | number:'1.2-2' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Category Financial Summary Tab -->
+    @if (activeAnalyticsTab === 'category') {
+      <div class="analytics-panel">
+        <div class="panel-header">
+          <h3>📂 Category Financial Summary</h3>
+          <div class="panel-controls">
+            <select [(ngModel)]="categoryFinancialYear" (change)="loadCategoryFinancialSummary()">
+              <option [ngValue]="null">Current Year</option>
+              @for (year of availableYears; track year) {
+                <option [ngValue]="year">{{ year }}</option>
+              }
+            </select>
+            <button class="refresh-btn" (click)="loadCategoryFinancialSummary()" [disabled]="isLoadingCategoryFinancial">
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        @if (isLoadingCategoryFinancial) {
+          <div class="loading">Loading category financial summary...</div>
+        } @else if (categoryFinancialData.length === 0) {
+          <div class="empty-state">
+            <p>No category financial data available for the selected year</p>
+          </div>
+        } @else {
+          <!-- Summary Cards -->
+          <div class="summary-stats horizontal">
+            <div class="stat-card success">
+              <span class="stat-value">{{ getCategoryFinancialTotals().sales | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Sales (LKR)</span>
+            </div>
+            <div class="stat-card warning">
+              <span class="stat-value">{{ getCategoryFinancialTotals().purchases | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Purchases (LKR)</span>
+            </div>
+            <div class="stat-card" [class.success]="getCategoryFinancialTotals().profit >= 0" [class.danger]="getCategoryFinancialTotals().profit < 0">
+              <span class="stat-value">{{ getCategoryFinancialTotals().profit | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Profit (LKR)</span>
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th class="text-right">Total Sales</th>
+                  <th class="text-right">Total Purchases</th>
+                  <th class="text-right">Income</th>
+                  <th class="text-right">Expenses</th>
+                  <th class="text-right">Profit</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of categoryFinancialData; track item.categoryId) {
+                  <tr>
+                    <td>
+                      <strong>{{ item.categoryName }}</strong>
+                    </td>
+                    <td class="text-right success-text">{{ item.totalSales | number:'1.2-2' }}</td>
+                    <td class="text-right warning-text">{{ item.totalPurchases | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ item.income | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ item.expenses | number:'1.2-2' }}</td>
+                    <td class="text-right" [class.success-text]="item.profit >= 0" [class.danger-text]="item.profit < 0">
+                      {{ item.profit | number:'1.2-2' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Category Volume Report Tab -->
+    @if (activeAnalyticsTab === 'volume') {
+      <div class="analytics-panel">
+        <div class="panel-header">
+          <h3>📊 Category Volume Report</h3>
+          <div class="panel-controls">
+            <select [(ngModel)]="volumeReportType" (change)="loadCategoryVolumeReport()">
+              <option value="SALES">Sales</option>
+              <option value="PURCHASE">Purchases</option>
+            </select>
+            <select [(ngModel)]="volumeReportYear" (change)="loadCategoryVolumeReport()">
+              <option [ngValue]="null">Current Year</option>
+              @for (year of availableYears; track year) {
+                <option [ngValue]="year">{{ year }}</option>
+              }
+            </select>
+            <button class="refresh-btn" (click)="loadCategoryVolumeReport()" [disabled]="isLoadingCategoryVolume">
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        @if (isLoadingCategoryVolume) {
+          <div class="loading">Loading category volume report...</div>
+        } @else if (categoryVolumeData.length === 0) {
+          <div class="empty-state">
+            <p>No volume data available for the selected filters</p>
+          </div>
+        } @else {
+          <!-- Summary Cards -->
+          <div class="summary-stats horizontal">
+            <div class="stat-card">
+              <span class="stat-value">{{ getVolumeTotals().quantity | number:'1.4-4' }}</span>
+              <span class="stat-label">Total Quantity</span>
+            </div>
+            <div class="stat-card success">
+              <span class="stat-value">{{ getVolumeTotals().value | number:'1.2-2' }}</span>
+              <span class="stat-label">Total Value (LKR)</span>
+            </div>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Month</th>
+                  <th class="text-right">Quantity {{ volumeReportType === 'SALES' ? 'Sold' : 'Purchased' }}</th>
+                  <th class="text-right">Avg Unit Price</th>
+                  <th class="text-right">Total Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of categoryVolumeData; track item.categoryId + '-' + item.month) {
+                  <tr>
+                    <td><strong>{{ item.categoryName }}</strong></td>
+                    <td>{{ getMonthName(item.month) }}</td>
+                    <td class="text-right">{{ item.quantitySoldOrPurchased | number:'1.4-4' }}</td>
+                    <td class="text-right">{{ item.averageUnitPrice | number:'1.2-2' }}</td>
+                    <td class="text-right success-text">{{ item.totalValue | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Price Fluctuation Tab -->
+    @if (activeAnalyticsTab === 'price') {
+      <div class="analytics-panel">
+        <div class="panel-header">
+          <h3>📉 Selling Price Fluctuation</h3>
+          <div class="panel-controls">
+            <select [(ngModel)]="selectedProductId">
+              <option [ngValue]="null" disabled>Select Product</option>
+              @for (product of products; track product.productId) {
+                <option [ngValue]="product.productId">{{ product.name }}</option>
+              }
+            </select>
+            <select [(ngModel)]="priceFluctuationYear">
+              <option [ngValue]="null">Current Year</option>
+              @for (year of availableYears; track year) {
+                <option [ngValue]="year">{{ year }}</option>
+              }
+            </select>
+            <button 
+              class="refresh-btn" 
+              (click)="loadPriceFluctuation()" 
+              [disabled]="isLoadingPriceFluctuation || !selectedProductId">
+              📊 Load Data
+            </button>
+          </div>
+        </div>
+
+        @if (isLoadingPriceFluctuation) {
+          <div class="loading">Loading price fluctuation data...</div>
+        } @else if (!selectedProductId) {
+          <div class="empty-state">
+            <p>Select a product to view price fluctuation data</p>
+          </div>
+        } @else if (priceFluctuationData.length === 0) {
+          <div class="empty-state">
+            <p>No price fluctuation data available for the selected product and year</p>
+          </div>
+        } @else {
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th class="text-right">Average Price</th>
+                  <th class="text-right">Highest Price</th>
+                  <th class="text-right">Lowest Price</th>
+                  <th class="text-right">Variance</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of priceFluctuationData; track item.month) {
+                  <tr>
+                    <td>
+                      <strong>{{ getMonthName(item.month) }} {{ item.year }}</strong>
+                    </td>
+                    <td class="text-right">{{ item.averageSellingPrice | number:'1.2-2' }}</td>
+                    <td class="text-right success-text">{{ item.highestPrice | number:'1.2-2' }}</td>
+                    <td class="text-right warning-text">{{ item.lowestPrice | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ (item.highestPrice - item.lowestPrice) | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Report History -->
+  <div class="reports-history">
+    <div class="section-header">
+      <h2>📋 Report History</h2>
+      <button class="secondary" (click)="loadReports()">🔄 Refresh</button>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading">Loading reports...</div>
+    } @else if (reports.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p>No reports generated yet</p>
+        <span class="empty-hint">Generate your first report using the cards above</span>
+      </div>
+    } @else {
+      <div class="reports-table-container">
+        <table class="reports-table">
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Type</th>
+              <th>Parameters</th>
+              <th>Generated By</th>
+              <th>Generated At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (report of reports; track report.reportId) {
+              <tr>
+                <td>
+                  <span class="report-id">#{{ report.reportId }}</span>
+                </td>
+                <td>
+                  <span class="report-type-badge" [class]="getReportTypeClass(report.reportType)">
+                    {{ getReportTypeIcon(report.reportType) }} {{ formatReportType(report.reportType) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="parameters">{{ formatParameters(report.parameters) }}</span>
+                </td>
+                <td>{{ report.generatedBy }}</td>
+                <td>{{ report.generatedAt | date:'medium' }}</td>
+                <td class="actions">
+                  <button class="link" (click)="viewReport(report)">👁️ View</button>
+                  <button class="link danger" (click)="deleteReport(report.reportId)">🗑️ Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Report Viewer Modal -->
+@if (showReportModal && selectedReport) {
+  <div class="modal-overlay" (click)="onBackdropClick($event)">
+    <div class="modal-container report-modal">
+      <div class="modal-header" [class]="getReportTypeClass(selectedReport.reportType)">
+        <h2>{{ getReportTypeIcon(selectedReport.reportType) }} {{ formatReportType(selectedReport.reportType) }}</h2>
+        <button class="close-btn" (click)="closeReportModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        @if (isLoadingReport) {
+          <div class="loading">Loading report data...</div>
+        } @else if (selectedReport.data) {
+          <!-- Report Meta Info -->
+          <div class="report-meta">
+            <div class="meta-item">
+              <span class="meta-label">Report ID:</span>
+              <span class="meta-value">#{{ selectedReport.reportId }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Generated By:</span>
+              <span class="meta-value">{{ selectedReport.generatedBy }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Generated At:</span>
+              <span class="meta-value">{{ selectedReport.generatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+
+          <!-- Inventory Summary Report -->
+          @if (selectedReport.reportType === 'INVENTORY_SUMMARY') {
+            <div class="report-content">
+              <div class="summary-stats">
+                <div class="stat-card">
+                  <span class="stat-value">{{ getInventoryData()?.totalProducts }}</span>
+                  <span class="stat-label">Total Products</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value">{{ getInventoryData()?.locationsCount }}</span>
+                  <span class="stat-label">Locations</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value warning">{{ getInventoryData()?.lowStockItems }}</span>
+                  <span class="stat-label">Low Stock Items</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value">{{ getInventoryData()?.totalInventoryValue | number:'1.2-2' }}</span>
+                  <span class="stat-label">Total Value (LKR)</span>
+                </div>
+              </div>
+
+              @if (getInventoryData()?.inventoryItems?.length) {
+                <h4>Inventory Items</h4>
+                <div class="data-table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Location</th>
+                        <th class="text-right">On Hand</th>
+                        <th class="text-right">Available</th>
+                        <th class="text-right">Reorder Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of getInventoryData()?.inventoryItems; track item.inventoryId) {
+                        <tr>
+                          <td>{{ item.productName }}</td>
+                          <td><span class="sku">{{ item.productSku }}</span></td>
+                          <td>{{ item.location }}</td>
+                          <td class="text-right">{{ item.quantityOnHand | number:'1.0-2' }} {{ item.unit }}</td>
+                          <td class="text-right">{{ item.availableQuantity | number:'1.0-2' }} {{ item.unit }}</td>
+                          <td class="text-right">{{ item.reorderLevel | number:'1.0-2' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Sales Performance Report -->
+          @if (selectedReport.reportType === 'SALES_PERFORMANCE') {
+            <div class="report-content">
+              <div class="period-info">
+                <span>📅 Period: {{ getSalesData()?.periodStart }} to {{ getSalesData()?.periodEnd }}</span>
+              </div>
+              <div class="summary-stats">
+                <div class="stat-card">
+                  <span class="stat-value">{{ getSalesData()?.totalOrders }}</span>
+                  <span class="stat-label">Total Orders</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value success">{{ getSalesData()?.totalRevenue | number:'1.2-2' }}</span>
+                  <span class="stat-label">Total Revenue (LKR)</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value">{{ getSalesData()?.averageOrderValue | number:'1.2-2' }}</span>
+                  <span class="stat-label">Avg Order Value</span>
+                </div>
+              </div>
+
+              @if (getSalesData()?.topCustomers?.length) {
+                <h4>Top Customers</h4>
+                <div class="data-table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Customer</th>
+                        <th class="text-right">Orders</th>
+                        <th class="text-right">Total Spent</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (customer of getSalesData()?.topCustomers; track customer.customerId) {
+                        <tr>
+                          <td>{{ customer.customerName }}</td>
+                          <td class="text-right">{{ customer.totalOrders }}</td>
+                          <td class="text-right">{{ customer.totalSpent | number:'1.2-2' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <div class="no-data">No sales data for this period</div>
+              }
+            </div>
+          }
+
+          <!-- Payroll Summary Report -->
+          @if (selectedReport.reportType === 'PAYROLL_SUMMARY') {
+            <div class="report-content">
+              <div class="period-info">
+                <span>📅 Period: {{ getPayrollData()?.periodStart }} to {{ getPayrollData()?.periodEnd }}</span>
+              </div>
+              <div class="summary-stats">
+                <div class="stat-card">
+                  <span class="stat-value">{{ getPayrollData()?.totalEmployees }}</span>
+                  <span class="stat-label">Total Employees</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value">{{ getPayrollData()?.totalGrossPay | number:'1.2-2' }}</span>
+                  <span class="stat-label">Gross Pay (LKR)</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value warning">{{ getPayrollData()?.totalDeductions | number:'1.2-2' }}</span>
+                  <span class="stat-label">Deductions (LKR)</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-value success">{{ getPayrollData()?.totalNetPay | number:'1.2-2' }}</span>
+                  <span class="stat-label">Net Pay (LKR)</span>
+                </div>
+              </div>
+
+              @if (getPayrollData()?.unpaidCount) {
+                <div class="alert-box">
+                  ⚠️ {{ getPayrollData()?.unpaidCount }} employee(s) have unpaid payroll
+                </div>
+              }
+
+              @if (getPayrollData()?.payrollRecords?.length) {
+                <h4>Payroll Records</h4>
+                <div class="data-table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Employee</th>
+                        <th class="text-right">Gross Pay</th>
+                        <th class="text-right">Deductions</th>
+                        <th class="text-right">Net Pay</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (record of getPayrollData()?.payrollRecords; track record.payrollId) {
+                        <tr>
+                          <td>{{ record.employeeName }}</td>
+                          <td class="text-right">{{ record.grossPay | number:'1.2-2' }}</td>
+                          <td class="text-right">{{ record.deductions | number:'1.2-2' }}</td>
+                          <td class="text-right">{{ record.netPay | number:'1.2-2' }}</td>
+                          <td>
+                            <span class="status-badge" [class]="record.status.toLowerCase()">
+                              {{ record.status }}
+                            </span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <div class="no-data">No payroll records for this period</div>
+              }
+            </div>
+          }
+
+          <!-- Low Stock Alert Report -->
+          @if (selectedReport.reportType === 'LOW_STOCK_ALERT') {
+            <div class="report-content">
+              <div class="summary-stats">
+                <div class="stat-card">
+                  <span class="stat-value" [class.warning]="getLowStockData()?.lowStockCount! > 0">
+                    {{ getLowStockData()?.lowStockCount }}
+                  </span>
+                  <span class="stat-label">Low Stock Items</span>
+                </div>
+              </div>
+
+              @if (getLowStockData()?.items?.length) {
+                <h4>Items Requiring Attention</h4>
+                <div class="data-table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Location</th>
+                        <th class="text-right">Current Stock</th>
+                        <th class="text-right">Reorder Level</th>
+                        <th class="text-right">Shortage</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of getLowStockData()?.items; track item.productId) {
+                        <tr class="low-stock-row">
+                          <td>{{ item.productName }}</td>
+                          <td><span class="sku">{{ item.productSku }}</span></td>
+                          <td>{{ item.location }}</td>
+                          <td class="text-right danger">{{ item.currentStock | number:'1.0-2' }} {{ item.unit }}</td>
+                          <td class="text-right">{{ item.reorderLevel | number:'1.0-2' }}</td>
+                          <td class="text-right danger">{{ (item.reorderLevel - item.currentStock) | number:'1.0-2' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              } @else {
+                <div class="success-box">
+                  ✅ All items are above reorder levels. No action required.
+                </div>
+              }
+            </div>
+          }
+        } @else {
+          <div class="no-data">No data available for this report</div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="secondary" (click)="closeReportModal()">Close</button>
+      </div>
+    </div>
+  </div>
+}

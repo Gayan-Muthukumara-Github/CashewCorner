@@ -1,7 +1,7 @@
 <div class="admin-shell" [class.sidebar-collapsed]="!isSidebarOpen">
   <aside class="sidebar" [class.open]="isSidebarOpen">
     <div class="brand">
-      <span class="logo">CC</span>
+      <img src="https://imgs.search.brave.com/rN_3lmsO2B6-KLn0SjLQIQiSrmDnUKbp8XT-E4PxK-I/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNjcv/OTA1LzY1OS9zbWFs/bC9hLWJvd2wtb2Yt/cm9hc3RlZC1jYXNo/ZXdzLXJlYWR5LXRv/LWVhdC1hLWhlYWx0/aHktc25hY2stcG5n/LnBuZw" alt="Cashew Corner" class="brand-icon" />
       <span class="name">Cashew Corner</span>
     </div>
     <nav class="nav">
@@ -29,25 +29,29 @@
         <span class="icon">📦</span>
         <span>Products</span>
       </a>
-      <a routerLink="/admin/transactions" routerLinkActive="active">
-        <span class="icon">🛒</span>
-        <span>Orders</span>
-      </a>
-      <a routerLink="/admin/reports" routerLinkActive="active">
-        <span class="icon">👨‍💼</span>
-        <span>Employees</span>
-      </a>
-      <a routerLink="/admin/settings" routerLinkActive="active">
-        <span class="icon">💰</span>
-        <span>Payroll Management</span>
+      <a routerLink="/admin/inventory" routerLinkActive="active">
+        <span class="icon">📋</span>
+        <span>Inventory</span>
       </a>
       <a routerLink="/admin/sales-orders" routerLinkActive="active">
         <span class="icon">📝</span>
         <span>Sales Orders</span>
       </a>
       <a routerLink="/admin/purchase-orders" routerLinkActive="active">
-        <span class="icon">📦</span>
+        <span class="icon">🛒</span>
         <span>Purchase Orders</span>
+      </a>
+      <a routerLink="/admin/employees" routerLinkActive="active">
+        <span class="icon">👨‍💼</span>
+        <span>Employees</span>
+      </a>
+      <a routerLink="/admin/payrolls" routerLinkActive="active">
+        <span class="icon">💰</span>
+        <span>Payroll</span>
+      </a>
+      <a routerLink="/admin/analytics" routerLinkActive="active">
+        <span class="icon">📊</span>
+        <span>Reports & Analytics</span>
       </a>
     </nav>
   </aside>

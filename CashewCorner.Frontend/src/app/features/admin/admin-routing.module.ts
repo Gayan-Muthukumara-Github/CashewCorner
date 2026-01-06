@@ -16,6 +16,8 @@ import { AdminEmployeesComponent } from './pages/admin-employees.component';
 import { AdminPayrollsComponent } from './pages/admin-payrolls.component';
 import { AdminSalesOrdersComponent } from './pages/admin-sales-orders.component';
 import { AdminPurchaseOrdersComponent } from './pages/admin-purchase-orders.component';
+import { AdminInventoryComponent } from './pages/admin-inventory.component';
+import { AdminReportsComponent } from './pages/admin-reports.component';
 
 const routes: Routes = [
   {
@@ -35,10 +37,12 @@ const routes: Routes = [
       { path: 'products', component: AdminProductsComponent },
       { path: 'transactions', component: AdminOrdersComponent },
       { path: 'customers', component: AdminCustomersComponent },
-      { path: 'reports', component: AdminEmployeesComponent },
-      { path: 'settings', component: AdminPayrollsComponent },
+      { path: 'employees', component: AdminEmployeesComponent },
+      { path: 'payrolls', component: AdminPayrollsComponent },
       { path: 'sales-orders', component: AdminSalesOrdersComponent },
       { path: 'purchase-orders', component: AdminPurchaseOrdersComponent },
+      { path: 'inventory', component: AdminInventoryComponent },
+      { path: 'analytics', component: AdminReportsComponent },
     ]
   }
 ];

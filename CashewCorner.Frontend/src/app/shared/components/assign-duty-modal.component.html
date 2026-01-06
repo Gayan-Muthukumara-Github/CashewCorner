@@ -1,0 +1,91 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Assign Duty to {{ employeeName }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="dutyForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field full-width">
+            <label for="taskType">Task Type</label>
+            <select 
+              id="taskType" 
+              formControlName="taskType"
+              [class.error]="taskType?.invalid && taskType?.touched">
+              <option [value]="null" disabled>Select task type</option>
+              <option value="Packaging">Packaging</option>
+              <option value="Quality Check">Quality Check</option>
+              <option value="Delivery">Delivery</option>
+              <option value="Inventory">Inventory</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Other">Other</option>
+            </select>
+            <small *ngIf="taskType?.invalid && taskType?.touched" class="error">
+              Task Type is required.
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="salesOrderId">Sales Order (Optional)</label>
+            <select id="salesOrderId" formControlName="salesOrderId">
+              <option [value]="null">-- None --</option>
+              <option *ngFor="let order of salesOrders" [value]="order.salesOrderId">
+                {{ order.soNumber }} - {{ order.customerName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="purchaseOrderId">Purchase Order (Optional)</label>
+            <select id="purchaseOrderId" formControlName="purchaseOrderId">
+              <option [value]="null">-- None --</option>
+              <option *ngFor="let order of purchaseOrders" [value]="order.purchaseOrderId">
+                {{ order.poNumber }} - {{ order.supplierName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="startDate">Start Date</label>
+            <input
+              id="startDate"
+              type="datetime-local"
+              formControlName="startDate"
+              [class.error]="startDate?.invalid && startDate?.touched"
+            />
+            <small *ngIf="startDate?.invalid && startDate?.touched" class="error">
+              Start Date is required.
+            </small>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="notes">Notes</label>
+            <textarea
+              id="notes"
+              formControlName="notes"
+              rows="4"
+              placeholder="Enter task details or notes..."
+              [class.error]="notes?.invalid && notes?.touched"
+            ></textarea>
+            <small *ngIf="notes?.invalid && notes?.touched" class="error">
+              Notes are required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="dutyForm.invalid">
+            Assign Duty
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

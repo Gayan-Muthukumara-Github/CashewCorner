@@ -4,6 +4,7 @@ import { CustomerLayoutComponent } from './pages/customer-layout.component';
 import { AboutComponent } from './pages/about.component';
 import { ContactComponent } from './pages/contact.component';
 import { TrackOrderComponent } from './pages/track-order.component';
+import { ProductsComponent } from './pages/products.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'about', pathMatch: 'full' },
       { path: 'about', component: AboutComponent },
+      { path: 'products', component: ProductsComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'track-order', component: TrackOrderComponent }
     ]

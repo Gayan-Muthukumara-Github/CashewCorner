@@ -1,0 +1,129 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>📊 Adjust Stock</h2>
+      <button class="close-btn" (click)="onClose()">×</button>
+    </div>
+
+    <form [formGroup]="adjustForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="productId">Product *</label>
+          <select id="productId" formControlName="productId" (change)="onProductChange()">
+            <option [ngValue]="null">Select a product...</option>
+            @for (product of products; track product.productId) {
+              <option [ngValue]="product.productId">
+                {{ product.name }} ({{ product.sku }})
+              </option>
+            }
+          </select>
+          @if (adjustForm.get('productId')?.invalid && adjustForm.get('productId')?.touched) {
+            <span class="error-text">Product is required</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location *</label>
+          <select id="location" formControlName="location" (change)="onLocationChange()">
+            <option value="">Select a location...</option>
+            @for (loc of availableLocations; track loc) {
+              <option [value]="loc">{{ loc }}</option>
+            }
+          </select>
+          @if (adjustForm.get('location')?.invalid && adjustForm.get('location')?.touched) {
+            <span class="error-text">Location is required</span>
+          }
+          @if (selectedInventory) {
+            <div class="current-stock-info">
+              <span class="info-label">Current Stock:</span>
+              <span class="info-value">{{ selectedInventory.quantityOnHand | number:'1.0-2' }} {{ selectedInventory.unit }}</span>
+              <span class="info-separator">|</span>
+              <span class="info-label">Available:</span>
+              <span class="info-value available">{{ selectedInventory.availableQuantity | number:'1.0-2' }} {{ selectedInventory.unit }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adjustmentType">Adjustment Type *</label>
+            <div class="adjustment-type-selector">
+              <button
+                type="button"
+                class="type-btn add"
+                [class.active]="adjustForm.get('adjustmentType')?.value === 'ADD'"
+                (click)="setAdjustmentType('ADD')"
+              >
+                ➕ Add Stock
+              </button>
+              <button
+                type="button"
+                class="type-btn subtract"
+                [class.active]="adjustForm.get('adjustmentType')?.value === 'SUBTRACT'"
+                (click)="setAdjustmentType('SUBTRACT')"
+              >
+                ➖ Subtract Stock
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Quantity *</label>
+            <input
+              type="number"
+              id="quantity"
+              formControlName="quantity"
+              placeholder="Enter quantity"
+              min="0.01"
+              step="0.01"
+            />
+            @if (adjustForm.get('quantity')?.invalid && adjustForm.get('quantity')?.touched) {
+              <span class="error-text">Valid quantity is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Reason / Notes *</label>
+          <textarea
+            id="notes"
+            formControlName="notes"
+            placeholder="Provide a reason for this stock adjustment..."
+            rows="3"
+          ></textarea>
+          @if (adjustForm.get('notes')?.invalid && adjustForm.get('notes')?.touched) {
+            <span class="error-text">Please provide a reason for the adjustment</span>
+          }
+        </div>
+
+        @if (adjustForm.get('adjustmentType')?.value && adjustForm.get('quantity')?.value && selectedInventory) {
+          <div class="preview-box" [class.add]="adjustForm.get('adjustmentType')?.value === 'ADD'" [class.subtract]="adjustForm.get('adjustmentType')?.value === 'SUBTRACT'">
+            <div class="preview-title">Preview</div>
+            <div class="preview-content">
+              <span>{{ selectedInventory.quantityOnHand | number:'1.0-2' }}</span>
+              <span class="operator">{{ adjustForm.get('adjustmentType')?.value === 'ADD' ? '+' : '-' }}</span>
+              <span>{{ adjustForm.get('quantity')?.value | number:'1.0-2' }}</span>
+              <span class="operator">=</span>
+              <span class="result">{{ calculateNewQuantity() | number:'1.0-2' }} {{ selectedInventory.unit }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="secondary" (click)="onClose()">Cancel</button>
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="adjustForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span>Adjusting...</span>
+          } @else {
+            <span>📊 Adjust Stock</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
