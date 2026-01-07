@@ -54,11 +54,11 @@
               {{ order.status }}
             </span>
           </td>
-          <td>{{ order.totalAmount | currency }}</td>
+          <td>{{ order.totalAmount | currency:'Rs. ' }}</td>
           <td>
             <ul *ngIf="order.items.length > 0">
               <li *ngFor="let item of order.items">
-                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency }})
+                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency:'Rs. ' }})
                 <button type="button" class="remove-item-btn" (click)="removeProduct(order.orderId, item.orderItemId)">
                   ×
                 </button>

@@ -56,8 +56,8 @@
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.unit }}</td>
-          <td>{{ product.costPrice | currency }}</td>
-          <td>{{ product.sellPrice | currency }}</td>
+          <td>{{ product.costPrice | currency:'Rs. ' }}</td>
+          <td>{{ product.sellPrice | currency:'Rs. ' }}</td>
           <td>{{ product.reorderLevel }}</td>
           <td>
             <div *ngIf="product.categories.length > 0">

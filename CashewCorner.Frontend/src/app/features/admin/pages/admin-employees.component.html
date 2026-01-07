@@ -48,7 +48,7 @@
           <td>{{ employee.email }}</td>
           <td>{{ employee.phone }}</td>
           <td>{{ employee.hireDate | date:'shortDate' }}</td>
-          <td>{{ employee.salaryBase | currency }}</td>
+          <td>{{ employee.salaryBase | currency:'Rs. ' }}</td>
           <td class="actions">
             <button type="button" class="link" (click)="openEmployeeDetails(employee)">
               View
@@ -111,7 +111,7 @@
             </div>
             <div class="info-item">
               <span class="label">Salary Base:</span>
-              <span class="value">{{ selectedEmployee.salaryBase | currency }}</span>
+              <span class="value">{{ selectedEmployee.salaryBase | currency:'Rs. ' }}</span>
             </div>
           </div>
         </div>

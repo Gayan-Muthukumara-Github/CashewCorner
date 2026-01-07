@@ -58,11 +58,11 @@
               {{ salesOrder.status | titlecase }}
             </span>
           </td>
-          <td>{{ salesOrder.totalAmount | currency }}</td>
+          <td>{{ salesOrder.totalAmount | currency:'Rs. ' }}</td>
           <td>
             <ul *ngIf="salesOrder.items.length > 0">
               <li *ngFor="let item of salesOrder.items">
-                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency }})
+                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency:'Rs. ' }})
               </li>
             </ul>
             <span *ngIf="salesOrder.items.length === 0">No items</span>

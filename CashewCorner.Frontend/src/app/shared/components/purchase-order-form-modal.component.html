@@ -62,7 +62,7 @@
                 (ngModelChange)="onProductSelectionChange($event)">
                 <option [ngValue]="null" disabled>Select a product</option>
                 <option *ngFor="let product of allProducts" [ngValue]="product.productId">
-                  {{ product.name }} ({{ product.sellPrice | currency }})
+                  {{ product.name }} ({{ product.sellPrice | currency:'Rs. ' }})
                 </option>
               </select>
               <input
@@ -105,7 +105,7 @@
               <div *ngFor="let item of currentItems; let i = index" class="order-item">
                 <div class="item-details">
                   <span class="item-name">{{ getProductName(item.productId) }}</span>
-                  <span class="item-info">{{ item.quantity }} × {{ item.unitPrice | currency }} = {{ (item.quantity * item.unitPrice) | currency }}</span>
+                  <span class="item-info">{{ item.quantity }} × {{ item.unitPrice | currency:'Rs. ' }} = {{ (item.quantity * item.unitPrice) | currency:'Rs. ' }}</span>
                 </div>
                 <button type="button" class="remove-item-btn" (click)="onRemoveItem(i)" title="Remove item">
                   ×
@@ -117,7 +117,7 @@
           <!-- Total Amount Display -->
           <div *ngIf="currentItems.length > 0" class="order-summary">
             <span>Total Amount:</span>
-            <strong>{{ getTotalAmount() | currency }}</strong>
+            <strong>{{ getTotalAmount() | currency:'Rs. ' }}</strong>
           </div>
         </div>
 

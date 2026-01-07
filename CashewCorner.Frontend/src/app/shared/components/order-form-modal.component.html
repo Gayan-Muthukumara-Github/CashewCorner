@@ -70,7 +70,7 @@
               min="1"
               (change)="onUpdateQuantity(item, $event)"
             />
-            <span>x {{ item.unitPrice | currency }} = {{ item.subtotal | currency }}</span>
+            <span>x {{ item.unitPrice | currency:'Rs. ' }} = {{ item.subtotal | currency:'Rs. ' }}</span>
             <button type="button" class="remove-item-btn" (click)="removeProduct.emit({ orderId: order.orderId, orderItemId: item.orderItemId })">
               ×
             </button>
@@ -81,7 +81,7 @@
           <select [(ngModel)]="selectedProductToAssign">
             <option [value]="null" disabled>Select a product</option>
             <option *ngFor="let product of getAvailableProducts()" [value]="product.productId">
-              {{ product.name }} ({{ product.sellPrice | currency }})
+              {{ product.name }} ({{ product.sellPrice | currency:'Rs. ' }})
             </option>
           </select>
           <input

@@ -54,9 +54,9 @@
           <td>{{ payroll.employeeName }}</td>
           <td>{{ payroll.periodStart | date:'shortDate' }}</td>
           <td>{{ payroll.periodEnd | date:'shortDate' }}</td>
-          <td>{{ payroll.grossPay | currency }}</td>
-          <td>{{ payroll.deductions | currency }}</td>
-          <td>{{ payroll.netPay | currency }}</td>
+          <td>{{ payroll.grossPay | currency:'Rs. ' }}</td>
+          <td>{{ payroll.deductions | currency:'Rs. ' }}</td>
+          <td>{{ payroll.netPay | currency:'Rs. ' }}</td>
           <td>{{ payroll.paymentDate | date:'shortDate' }}</td>
           <td>{{ payroll.paymentMethod }}</td>
           <td>

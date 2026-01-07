@@ -107,7 +107,7 @@
           <div class="form-field full-width" *ngIf="netPay !== null">
             <label>Net Pay (Calculated)</label>
             <div class="net-pay-display">
-              {{ netPay | currency }}
+              {{ netPay | currency:'Rs. ' }}
             </div>
           </div>
         </div>
