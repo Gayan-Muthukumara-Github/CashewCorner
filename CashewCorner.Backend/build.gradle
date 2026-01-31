@@ -33,7 +33,10 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web'
   implementation 'org.springframework.boot:spring-boot-starter-actuator'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
+  
+  // Database Drivers
   runtimeOnly 'com.mysql:mysql-connector-j'
+  // implementation 'com.h2database:h2'  // DISABLED - Using MySQL
 
   // JWT and Security
   implementation 'io.jsonwebtoken:jjwt-api:0.12.3'

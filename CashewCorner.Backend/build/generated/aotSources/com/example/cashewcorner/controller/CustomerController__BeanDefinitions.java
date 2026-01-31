@@ -1,7 +1,6 @@
 package com.example.cashewcorner.controller;
 
 import com.example.cashewcorner.service.CustomerService;
-import com.example.cashewcorner.service.SalesOrderService;
 import org.springframework.aot.generate.Generated;
 import org.springframework.beans.factory.aot.BeanInstanceSupplier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -16,8 +15,8 @@ public class CustomerController__BeanDefinitions {
    * Get the bean instance supplier for 'customerController'.
    */
   private static BeanInstanceSupplier<CustomerController> getCustomerControllerInstanceSupplier() {
-    return BeanInstanceSupplier.<CustomerController>forConstructor(CustomerService.class, SalesOrderService.class)
-            .withGenerator((registeredBean, args) -> new CustomerController(args.get(0), args.get(1)));
+    return BeanInstanceSupplier.<CustomerController>forConstructor(CustomerService.class)
+            .withGenerator((registeredBean, args) -> new CustomerController(args.get(0)));
   }
 
   /**

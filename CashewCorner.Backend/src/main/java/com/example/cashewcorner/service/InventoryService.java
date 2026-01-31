@@ -163,13 +163,14 @@ public class InventoryService {
 
     @Transactional(readOnly = true)
     public List<InventoryDto> searchInventory(String variety, Long supplierId, String location, String productName) {
-        log.info("Searching inventory - [variety={}, supplierId={}, location={}, productName={}]", 
+        log.info("Searching inventory - [variety={}, supplierId={}, location={}, productName={}]",
                 variety, supplierId, location, productName);
 
-        // Use productName or variety for search
-        String searchTerm = productName != null ? productName : variety;
-        
-        return inventoryRepository.searchInventory(searchTerm, location).stream()
+        // Use productName or variety for search, convert null to empty string for native query compatibility
+        String searchTerm = productName != null ? productName : (variety != null ? variety : "");
+        String safeLocation = location != null ? location : "";
+
+        return inventoryRepository.searchInventory(searchTerm, safeLocation).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -219,12 +220,14 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<StockMovementDto> searchStockMovements(String productName, String movementType, 
+    public List<StockMovementDto> searchStockMovements(String productName, String movementType,
                                                         LocalDateTime startDate, LocalDateTime endDate) {
-        log.info("Searching stock movements - [productName={}, movementType={}, startDate={}, endDate={}]", 
+        log.info("Searching stock movements - [productName={}, movementType={}, startDate={}, endDate={}]",
                 productName, movementType, startDate, endDate);
 
-        return stockMovementRepository.searchMovements(productName, movementType, startDate, endDate).stream()
+        // Convert null to empty string for string parameters in native query
+        String safeProductName = productName != null ? productName : "";
+        return stockMovementRepository.searchMovements(safeProductName, movementType, startDate, endDate).stream()
                 .map(this::mapMovementToDto)
                 .collect(Collectors.toList());
     }

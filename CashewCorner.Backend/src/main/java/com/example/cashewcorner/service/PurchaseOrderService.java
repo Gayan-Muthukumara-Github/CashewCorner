@@ -1,13 +1,13 @@
 package com.example.cashewcorner.service;
 
 import com.example.cashewcorner.dto.*;
-import com.example.cashewcorner.entity.Product;
 import com.example.cashewcorner.entity.PurchaseOrder;
 import com.example.cashewcorner.entity.PurchaseOrderItem;
+import com.example.cashewcorner.entity.RawCashew;
 import com.example.cashewcorner.entity.Supplier;
 import com.example.cashewcorner.exception.ResourceNotFoundException;
-import com.example.cashewcorner.repository.ProductRepository;
 import com.example.cashewcorner.repository.PurchaseOrderRepository;
+import com.example.cashewcorner.repository.RawCashewRepository;
 import com.example.cashewcorner.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,14 +25,14 @@ public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final SupplierRepository supplierRepository;
-    private final ProductRepository productRepository;
+    private final RawCashewRepository rawCashewRepository;
 
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository,
                                SupplierRepository supplierRepository,
-                               ProductRepository productRepository) {
+                               RawCashewRepository rawCashewRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierRepository = supplierRepository;
-        this.productRepository = productRepository;
+        this.rawCashewRepository = rawCashewRepository;
     }
 
     public PurchaseOrderDto createPurchaseOrder(CreatePurchaseOrderRequestDto request) {
@@ -53,12 +53,12 @@ public class PurchaseOrderService {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (PurchaseOrderItemRequestDto itemRequest : request.getItems()) {
-            Product product = productRepository.findByProductIdAndIsActiveTrue(itemRequest.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemRequest.getProductId()));
+            RawCashew rawCashew = rawCashewRepository.findByCashewTypeIdAndIsActiveTrue(itemRequest.getCashewTypeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Raw cashew type not found with id: " + itemRequest.getCashewTypeId()));
 
             PurchaseOrderItem item = PurchaseOrderItem.builder()
                     .purchaseOrder(purchaseOrder)
-                    .product(product)
+                    .rawCashew(rawCashew)
                     .quantity(itemRequest.getQuantity())
                     .unitPrice(itemRequest.getUnitPrice())
                     .receivedQuantity(BigDecimal.ZERO)
@@ -130,9 +130,9 @@ public class PurchaseOrderService {
                 .items(order.getItems().stream()
                         .map(item -> PurchaseOrderItemDto.builder()
                                 .purchaseOrderItemId(item.getPurchaseOrderItemId())
-                                .productId(item.getProduct().getProductId())
-                                .productName(item.getProduct().getName())
-                                .productSku(item.getProduct().getSku())
+                                .cashewTypeId(item.getRawCashew().getCashewTypeId())
+                                .cashewType(item.getRawCashew().getCashewType())
+                                .cashewQuality(item.getRawCashew().getCashewQuality())
                                 .quantity(item.getQuantity())
                                 .unitPrice(item.getUnitPrice())
                                 .lineTotal(item.getLineTotal())

@@ -14,14 +14,14 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class PurchaseOrderItemRequestDto {
-    
-    @NotNull(message = "Product ID is required")
-    private Long productId;
-    
+
+    @NotNull(message = "Cashew Type ID is required")
+    private Long cashewTypeId;
+
     @NotNull(message = "Quantity is required")
     @DecimalMin(value = "0.01", message = "Quantity must be greater than 0")
     private BigDecimal quantity;
-    
+
     @NotNull(message = "Unit price is required")
     @DecimalMin(value = "0.00", message = "Unit price must be 0 or greater")
     private BigDecimal unitPrice;

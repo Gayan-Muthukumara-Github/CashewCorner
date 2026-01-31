@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = "purchaseOrders")
+@ToString(exclude = {"purchaseOrders", "cashewType"})
 public class Supplier {
 
     @Id
@@ -50,6 +51,50 @@ public class Supplier {
     @Column(name = "is_approved")
     @Builder.Default
     private Boolean isApproved = false;
+
+    // New fields for cashew-related data
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cashew_type_id")
+    private RawCashew cashewType;
+
+    @Column(name = "quantity", precision = 18, scale = 4)
+    private BigDecimal quantity;
+
+    @Column(name = "quality", length = 100)
+    private String quality;
+
+    @Column(name = "cost_per_unit", precision = 15, scale = 2)
+    private BigDecimal costPerUnit;
+
+    @Column(name = "season", length = 100)
+    private String season;
+
+    @Column(name = "payment_method", length = 100)
+    private String paymentMethod;
+
+    @Column(name = "distance", precision = 15, scale = 2)
+    private BigDecimal distance;
+
+    @Column(name = "delivery_method", length = 100)
+    private String deliveryMethod;
+
+    @Column(name = "delivery_cost", precision = 15, scale = 2)
+    private BigDecimal deliveryCost;
+
+    @Column(name = "time_taken_to_receive")
+    private Integer timeTakenToReceive;
+
+    @Column(name = "average_cost_per_unit", precision = 15, scale = 2)
+    private BigDecimal averageCostPerUnit;
+
+    @Column(name = "average_delivery_time")
+    private Integer averageDeliveryTime;
+
+    @Column(name = "average_delivery_cost", precision = 15, scale = 2)
+    private BigDecimal averageDeliveryCost;
+
+    @Column(name = "performances", columnDefinition = "TEXT")
+    private String performances;
 
     @Column(name = "created_by")
     private Long createdBy;

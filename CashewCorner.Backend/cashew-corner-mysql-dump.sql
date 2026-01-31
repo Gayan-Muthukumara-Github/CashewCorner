@@ -24,6 +24,8 @@ DROP TABLE IF EXISTS `reports`;
 DROP TABLE IF EXISTS `payrolls`;
 DROP TABLE IF EXISTS `employee_duties`;
 DROP TABLE IF EXISTS `employees`;
+DROP TABLE IF EXISTS `raw_cashew_stock_movements`;
+DROP TABLE IF EXISTS `raw_cashew_inventory`;
 DROP TABLE IF EXISTS `stock_movements`;
 DROP TABLE IF EXISTS `inventory`;
 DROP TABLE IF EXISTS `sales_order_items`;
@@ -35,6 +37,7 @@ DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `product_categories`;
 DROP TABLE IF EXISTS `customers`;
 DROP TABLE IF EXISTS `suppliers`;
+DROP TABLE IF EXISTS `raw_cashew`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `roles`;
 
@@ -76,6 +79,22 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
+-- TABLE: raw_cashew
+-- Description: Raw cashew types and quality classifications
+-- ============================================================================
+CREATE TABLE `raw_cashew` (
+    `cashew_type_id` BIGINT NOT NULL AUTO_INCREMENT,
+    `cashew_type` VARCHAR(100) NOT NULL,
+    `cashew_quality` VARCHAR(255) DEFAULT NULL,
+    `created_by` BIGINT DEFAULT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_by` BIGINT DEFAULT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (`cashew_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
 -- TABLE: suppliers
 -- Description: Supplier information for purchase orders
 -- ============================================================================
@@ -88,12 +107,30 @@ CREATE TABLE `suppliers` (
     `contact_person` VARCHAR(150) DEFAULT NULL,
     `payment_terms` VARCHAR(255) DEFAULT NULL,
     `is_approved` TINYINT(1) DEFAULT 0,
+    -- New cashew-related fields
+    `cashew_type_id` BIGINT DEFAULT NULL,
+    `quantity` DECIMAL(18,4) DEFAULT NULL,
+    `quality` VARCHAR(100) DEFAULT NULL,
+    `cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
+    `season` VARCHAR(100) DEFAULT NULL,
+    `payment_method` VARCHAR(100) DEFAULT NULL,
+    `distance` DECIMAL(15,2) DEFAULT NULL,
+    `delivery_method` VARCHAR(100) DEFAULT NULL,
+    `delivery_cost` DECIMAL(15,2) DEFAULT NULL,
+    `time_taken_to_receive` INT DEFAULT NULL,
+    `average_cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
+    `average_delivery_time` INT DEFAULT NULL,
+    `average_delivery_cost` DECIMAL(15,2) DEFAULT NULL,
+    `performances` TEXT DEFAULT NULL,
+    -- Audit fields
     `created_by` BIGINT DEFAULT NULL,
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_by` BIGINT DEFAULT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (`supplier_id`)
+    PRIMARY KEY (`supplier_id`),
+    KEY `fk_suppliers_cashew_type` (`cashew_type_id`),
+    CONSTRAINT `fk_suppliers_cashew_type` FOREIGN KEY (`cashew_type_id`) REFERENCES `raw_cashew` (`cashew_type_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -228,12 +265,12 @@ CREATE TABLE `purchase_orders` (
 
 -- ============================================================================
 -- TABLE: purchase_order_items
--- Description: Line items for purchase orders
+-- Description: Line items for purchase orders (references raw_cashew types)
 -- ============================================================================
 CREATE TABLE `purchase_order_items` (
     `purchase_order_item_id` BIGINT NOT NULL AUTO_INCREMENT,
     `purchase_order_id` BIGINT NOT NULL,
-    `product_id` BIGINT NOT NULL,
+    `cashew_type_id` BIGINT NOT NULL,
     `quantity` DECIMAL(15,4) NOT NULL DEFAULT 0.0000,
     `unit_price` DECIMAL(15,2) DEFAULT 0.00,
     `received_quantity` DECIMAL(15,4) DEFAULT 0.0000,
@@ -241,9 +278,9 @@ CREATE TABLE `purchase_order_items` (
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`purchase_order_item_id`),
     KEY `fk_poi_purchase_order` (`purchase_order_id`),
-    KEY `fk_poi_product` (`product_id`),
+    KEY `fk_poi_cashew_type` (`cashew_type_id`),
     CONSTRAINT `fk_poi_purchase_order` FOREIGN KEY (`purchase_order_id`) REFERENCES `purchase_orders` (`purchase_order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_poi_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT `fk_poi_cashew_type` FOREIGN KEY (`cashew_type_id`) REFERENCES `raw_cashew` (`cashew_type_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -375,6 +412,46 @@ CREATE TABLE `reports` (
     CONSTRAINT `fk_reports_user` FOREIGN KEY (`generated_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ============================================================================
+-- TABLE: raw_cashew_inventory
+-- Description: Current inventory snapshot per raw cashew type and location
+-- ============================================================================
+CREATE TABLE `raw_cashew_inventory` (
+    `raw_cashew_inventory_id` BIGINT NOT NULL AUTO_INCREMENT,
+    `cashew_type_id` BIGINT NOT NULL,
+    `location` VARCHAR(150) DEFAULT NULL,
+    `quantity_on_hand` DECIMAL(18,4) NOT NULL DEFAULT 0.0000,
+    `reserved_quantity` DECIMAL(18,4) NOT NULL DEFAULT 0.0000,
+    `last_updated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`raw_cashew_inventory_id`),
+    UNIQUE KEY `uk_rci_cashew_location` (`cashew_type_id`, `location`),
+    KEY `idx_rci_cashew_type` (`cashew_type_id`),
+    CONSTRAINT `fk_rci_cashew_type` FOREIGN KEY (`cashew_type_id`) REFERENCES `raw_cashew` (`cashew_type_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- TABLE: raw_cashew_stock_movements
+-- Description: Ledger for raw cashew inventory movements (receives, adjustments, usage)
+-- ============================================================================
+CREATE TABLE `raw_cashew_stock_movements` (
+    `movement_id` BIGINT NOT NULL AUTO_INCREMENT,
+    `cashew_type_id` BIGINT NOT NULL,
+    `movement_type` VARCHAR(50) NOT NULL,
+    `related_type` VARCHAR(50) DEFAULT NULL,
+    `related_id` BIGINT DEFAULT NULL,
+    `quantity` DECIMAL(18,4) NOT NULL,
+    `balance_after` DECIMAL(18,4) DEFAULT NULL,
+    `movement_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` BIGINT DEFAULT NULL,
+    `notes` TEXT DEFAULT NULL,
+    PRIMARY KEY (`movement_id`),
+    KEY `idx_rcsm_cashew_type` (`cashew_type_id`),
+    KEY `idx_rcsm_movement_date` (`movement_date`),
+    KEY `fk_rcsm_created_by` (`created_by`),
+    CONSTRAINT `fk_rcsm_cashew_type` FOREIGN KEY (`cashew_type_id`) REFERENCES `raw_cashew` (`cashew_type_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_rcsm_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -404,11 +481,28 @@ INSERT INTO `users` (`username`, `password_hash`, `email`, `first_name`, `last_n
 ('manager', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DRjk38', 'manager@cashewcorner.com', 'Jane', 'Smith', 3, 1, NOW(), NOW());
 
 -- ----------------------------------------------------------------------------
--- Insert suppliers
+-- Insert raw cashew types
 -- ----------------------------------------------------------------------------
-INSERT INTO `suppliers` (`name`, `email`, `phone`, `contact_person`, `is_active`, `created_at`, `updated_at`) VALUES
-('Supplier One', 'supplier1@example.com', '+1-555-0001', 'John Contact', 1, NOW(), NOW()),
-('Supplier Two', 'supplier2@example.com', '+1-555-0002', 'Jane Contact', 1, NOW(), NOW());
+INSERT INTO `raw_cashew` (`cashew_type`, `cashew_quality`, `is_active`, `created_at`, `updated_at`) VALUES
+('W180', 'Premium Grade - King Size (180 kernels per pound)', 1, NOW(), NOW()),
+('W210', 'Premium Grade - Jumbo (210 kernels per pound)', 1, NOW(), NOW()),
+('W240', 'Standard Grade - Large (240 kernels per pound)', 1, NOW(), NOW()),
+('W320', 'Standard Grade - Medium (320 kernels per pound)', 1, NOW(), NOW()),
+('W450', 'Economy Grade - Small (450 kernels per pound)', 1, NOW(), NOW()),
+('SW', 'Scorched Wholes - Slightly discolored', 1, NOW(), NOW()),
+('SSW', 'Scorched Wholes Seconds', 1, NOW(), NOW()),
+('LWP', 'Large White Pieces', 1, NOW(), NOW()),
+('SWP', 'Small White Pieces', 1, NOW(), NOW()),
+('BB', 'Baby Bits - Small broken pieces', 1, NOW(), NOW());
+
+-- ----------------------------------------------------------------------------
+-- Insert suppliers (with new cashew-related fields)
+-- ----------------------------------------------------------------------------
+INSERT INTO `suppliers` (`name`, `email`, `phone`, `contact_person`, `is_approved`, `cashew_type_id`, `quantity`, `quality`, `cost_per_unit`, `season`, `payment_method`, `distance`, `delivery_method`, `delivery_cost`, `time_taken_to_receive`, `average_cost_per_unit`, `average_delivery_time`, `average_delivery_cost`, `performances`, `is_active`, `created_at`, `updated_at`) VALUES
+('Supplier One', 'supplier1@example.com', '+1-555-0001', 'John Contact', 1, 1, 5000.0000, 'Grade A', 18.50, 'Summer', 'Bank Transfer', 120.50, 'Truck', 350.00, 3, 18.25, 3, 340.00, 'Excellent reliability, consistent quality, on-time delivery', 1, NOW(), NOW()),
+('Supplier Two', 'supplier2@example.com', '+1-555-0002', 'Jane Contact', 1, 4, 8000.0000, 'Grade B', 12.75, 'Winter', 'Cash', 85.00, 'Van', 200.00, 2, 12.50, 2, 195.00, 'Good quality, competitive pricing', 1, NOW(), NOW()),
+('Premium Cashew Farms', 'premium@cashewfarms.com', '+1-555-0003', 'Mike Premium', 1, 2, 3000.0000, 'Premium Grade AA', 22.00, 'All Year', 'Bank Transfer', 200.00, 'Refrigerated Truck', 500.00, 5, 21.75, 4, 480.00, 'Top quality premium cashews, reliable supplier', 1, NOW(), NOW()),
+('Budget Nuts Co', 'info@budgetnuts.com', '+1-555-0004', 'Sarah Budget', 0, 5, 15000.0000, 'Economy Grade', 8.50, 'Monsoon', 'Cash on Delivery', 50.00, 'Local Pickup', 100.00, 1, 8.75, 1, 95.00, 'Budget-friendly option, large quantities available', 1, NOW(), NOW());
 
 -- ----------------------------------------------------------------------------
 -- Insert customers
@@ -442,12 +536,45 @@ INSERT INTO `product_category_map` (`product_id`, `category_id`) VALUES
 (3, 3);
 
 -- ----------------------------------------------------------------------------
--- Insert inventory
+-- Insert inventory (for finished products)
 -- ----------------------------------------------------------------------------
 INSERT INTO `inventory` (`product_id`, `location`, `quantity_on_hand`, `reserved_quantity`, `last_updated`) VALUES
 (1, 'Warehouse A', 100.0000, 10.0000, NOW()),
 (2, 'Warehouse A', 200.0000, 20.0000, NOW()),
 (3, 'Warehouse B', 150.0000, 15.0000, NOW());
+
+-- ----------------------------------------------------------------------------
+-- Insert raw cashew inventory
+-- ----------------------------------------------------------------------------
+INSERT INTO `raw_cashew_inventory` (`cashew_type_id`, `location`, `quantity_on_hand`, `reserved_quantity`, `last_updated`) VALUES
+(1, 'Raw Materials Warehouse', 5000.0000, 500.0000, NOW()),
+(2, 'Raw Materials Warehouse', 3500.0000, 200.0000, NOW()),
+(3, 'Raw Materials Warehouse', 8000.0000, 1000.0000, NOW()),
+(4, 'Raw Materials Warehouse', 12000.0000, 1500.0000, NOW()),
+(5, 'Raw Materials Warehouse', 15000.0000, 2000.0000, NOW()),
+(6, 'Processing Area', 2000.0000, 0.0000, NOW()),
+(7, 'Processing Area', 1500.0000, 0.0000, NOW()),
+(8, 'Processing Area', 3000.0000, 500.0000, NOW()),
+(9, 'Processing Area', 2500.0000, 300.0000, NOW()),
+(10, 'Processing Area', 1000.0000, 0.0000, NOW());
+
+-- ----------------------------------------------------------------------------
+-- Insert raw cashew stock movements (sample history)
+-- ----------------------------------------------------------------------------
+INSERT INTO `raw_cashew_stock_movements` (`cashew_type_id`, `movement_type`, `related_type`, `related_id`, `quantity`, `balance_after`, `movement_date`, `notes`) VALUES
+(1, 'RECEIVE', 'PURCHASE_ORDER', 1, 5000.0000, 5000.0000, DATE_SUB(NOW(), INTERVAL 30 DAY), 'Initial stock from Supplier One'),
+(2, 'RECEIVE', 'PURCHASE_ORDER', 2, 3500.0000, 3500.0000, DATE_SUB(NOW(), INTERVAL 28 DAY), 'Initial stock from Premium Cashew Farms'),
+(3, 'RECEIVE', 'PURCHASE_ORDER', 1, 8000.0000, 8000.0000, DATE_SUB(NOW(), INTERVAL 25 DAY), 'Bulk purchase'),
+(4, 'RECEIVE', 'PURCHASE_ORDER', 3, 12000.0000, 12000.0000, DATE_SUB(NOW(), INTERVAL 20 DAY), 'Regular stock replenishment'),
+(5, 'RECEIVE', 'PURCHASE_ORDER', 4, 15000.0000, 15000.0000, DATE_SUB(NOW(), INTERVAL 15 DAY), 'Economy grade bulk order'),
+(1, 'USAGE', NULL, NULL, 500.0000, 4500.0000, DATE_SUB(NOW(), INTERVAL 10 DAY), 'Used for production batch #101'),
+(4, 'USAGE', NULL, NULL, 1500.0000, 10500.0000, DATE_SUB(NOW(), INTERVAL 8 DAY), 'Used for production batch #102'),
+(6, 'RECEIVE', 'PURCHASE_ORDER', 2, 2000.0000, 2000.0000, DATE_SUB(NOW(), INTERVAL 7 DAY), 'Scorched wholes for processing'),
+(7, 'RECEIVE', 'PURCHASE_ORDER', 3, 1500.0000, 1500.0000, DATE_SUB(NOW(), INTERVAL 5 DAY), 'SSW stock'),
+(8, 'RECEIVE', 'PURCHASE_ORDER', 4, 3500.0000, 3500.0000, DATE_SUB(NOW(), INTERVAL 3 DAY), 'Large white pieces'),
+(8, 'USAGE', NULL, NULL, 500.0000, 3000.0000, DATE_SUB(NOW(), INTERVAL 1 DAY), 'Used for cashew butter production'),
+(9, 'RECEIVE', 'PURCHASE_ORDER', 1, 2500.0000, 2500.0000, NOW(), 'Small white pieces for snack mix'),
+(10, 'RECEIVE', 'PURCHASE_ORDER', 2, 1000.0000, 1000.0000, NOW(), 'Baby bits for confectionery');
 
 -- ============================================================================
 -- END OF DUMP

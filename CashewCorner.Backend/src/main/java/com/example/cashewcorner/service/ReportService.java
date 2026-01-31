@@ -467,10 +467,12 @@ public class ReportService {
 
     /**
      * Get category-based financial summary report for a specific year.
-     * Aggregates sales and purchase data by product category.
+     * Aggregates sales data by product category.
+     * Note: Purchase orders now use raw cashew types, so purchases are not included in category summary.
+     * Use getRawCashewPurchaseSummary for purchase data by raw cashew type.
      *
      * @param year optional year filter (defaults to current year if null)
-     * @return list of category financial summaries
+     * @return list of category financial summaries (sales only)
      */
     @Transactional(readOnly = true)
     public List<CategoryFinancialSummaryDto> getCategoryFinancialSummary(Integer year) {
@@ -480,9 +482,14 @@ public class ReportService {
         // Fetch all active categories
         List<ProductCategory> categories = productCategoryRepository.findByIsActiveTrue();
 
-        // Fetch all sales and purchase items for the year
+        // Fetch all sales items for the year (purchases now use raw cashew types, not product categories)
         List<SalesOrderItem> salesItems = salesOrderItemRepository.findByYear(targetYear);
+
+        // Calculate total purchases for the year (all raw cashew purchases)
         List<PurchaseOrderItem> purchaseItems = purchaseOrderItemRepository.findByYear(targetYear);
+        BigDecimal totalYearPurchases = purchaseItems.stream()
+                .map(PurchaseOrderItem::getLineTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<CategoryFinancialSummaryDto> result = new ArrayList<>();
 
@@ -496,12 +503,9 @@ public class ReportService {
                     .map(SalesOrderItem::getLineTotal)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Calculate total purchases for products in this category
-            BigDecimal totalPurchases = purchaseItems.stream()
-                    .filter(item -> item.getProduct().getCategories().stream()
-                            .anyMatch(c -> c.getCategoryId().equals(categoryId)))
-                    .map(PurchaseOrderItem::getLineTotal)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            // Purchases are now raw cashew based, not category based
+            // Set totalPurchases to zero for category-based report
+            BigDecimal totalPurchases = BigDecimal.ZERO;
 
             BigDecimal profit = totalSales.subtract(totalPurchases);
 
@@ -516,8 +520,8 @@ public class ReportService {
                     .build());
         }
 
-        log.info("Category financial summary report generated - [year={}, categoriesCount={}]",
-                targetYear, result.size());
+        log.info("Category financial summary report generated - [year={}, categoriesCount={}, totalYearPurchases={}]",
+                targetYear, result.size(), totalYearPurchases);
 
         return result;
     }
@@ -586,21 +590,26 @@ public class ReportService {
                 }
             }
         } else if ("PURCHASE".equals(reportType)) {
+            // For purchases, group by raw cashew type instead of product category
             List<PurchaseOrderItem> purchaseItems = purchaseOrderItemRepository.findByYear(targetYear);
 
-            for (ProductCategory category : categories) {
-                Long categoryId = category.getCategoryId();
+            // Group by raw cashew type ID and month
+            Map<Long, Map<Integer, List<PurchaseOrderItem>>> itemsByCashewTypeAndMonth = purchaseItems.stream()
+                    .collect(Collectors.groupingBy(
+                            item -> item.getRawCashew().getCashewTypeId(),
+                            Collectors.groupingBy(item ->
+                                    item.getPurchaseOrder().getCreatedAt().getMonthValue())));
 
-                // Filter items for this category
-                List<PurchaseOrderItem> categoryItems = purchaseItems.stream()
-                        .filter(item -> item.getProduct().getCategories().stream()
-                                .anyMatch(c -> c.getCategoryId().equals(categoryId)))
-                        .collect(Collectors.toList());
+            for (Map.Entry<Long, Map<Integer, List<PurchaseOrderItem>>> cashewTypeEntry : itemsByCashewTypeAndMonth.entrySet()) {
+                Long cashewTypeId = cashewTypeEntry.getKey();
+                Map<Integer, List<PurchaseOrderItem>> itemsByMonth = cashewTypeEntry.getValue();
 
-                // Group by month
-                Map<Integer, List<PurchaseOrderItem>> itemsByMonth = categoryItems.stream()
-                        .collect(Collectors.groupingBy(item ->
-                                item.getPurchaseOrder().getCreatedAt().getMonthValue()));
+                // Get cashew type name from first item
+                String cashewTypeName = itemsByMonth.values().stream()
+                        .flatMap(List::stream)
+                        .findFirst()
+                        .map(item -> item.getRawCashew().getCashewType())
+                        .orElse("Unknown");
 
                 for (Map.Entry<Integer, List<PurchaseOrderItem>> entry : itemsByMonth.entrySet()) {
                     Integer month = entry.getKey();
@@ -619,8 +628,8 @@ public class ReportService {
                             : BigDecimal.ZERO;
 
                     result.add(CategoryVolumeReportDto.builder()
-                            .categoryId(categoryId)
-                            .categoryName(category.getName())
+                            .categoryId(cashewTypeId)
+                            .categoryName(cashewTypeName + " (Raw Cashew)")
                             .month(month)
                             .quantitySoldOrPurchased(totalQuantity)
                             .averageUnitPrice(avgUnitPrice)

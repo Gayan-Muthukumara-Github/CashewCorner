@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +35,31 @@ public class UpdateSupplierRequestDto {
     private String paymentTerms;
 
     private Boolean isApproved;
+
+    // New fields for cashew-related data
+    private Long cashewTypeId;
+    private BigDecimal quantity;
+
+    @Size(max = 100, message = "Quality must not exceed 100 characters")
+    private String quality;
+
+    private BigDecimal costPerUnit;
+
+    @Size(max = 100, message = "Season must not exceed 100 characters")
+    private String season;
+
+    @Size(max = 100, message = "Payment method must not exceed 100 characters")
+    private String paymentMethod;
+
+    private BigDecimal distance;
+
+    @Size(max = 100, message = "Delivery method must not exceed 100 characters")
+    private String deliveryMethod;
+
+    private BigDecimal deliveryCost;
+    private Integer timeTakenToReceive;
+    private BigDecimal averageCostPerUnit;
+    private Integer averageDeliveryTime;
+    private BigDecimal averageDeliveryCost;
+    private String performances;
 }

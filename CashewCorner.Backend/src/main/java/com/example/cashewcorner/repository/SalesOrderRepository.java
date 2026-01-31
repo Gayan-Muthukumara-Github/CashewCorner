@@ -24,9 +24,11 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Long> {
 
     Optional<SalesOrder> findBySoNumber(String soNumber);
 
-    @Query("SELECT so FROM SalesOrder so WHERE LOWER(so.soNumber) LIKE LOWER(CONCAT('%', :orderNo, '%')) AND so.isActive = true")
+    @Query(value = "SELECT * FROM sales_orders so WHERE LOWER(so.so_number) LIKE LOWER(CONCAT('%', :orderNo, '%')) AND so.is_active = true",
+           nativeQuery = true)
     List<SalesOrder> searchByOrderNumber(@Param("orderNo") String orderNo);
 
-    @Query("SELECT MAX(so.soNumber) FROM SalesOrder so WHERE so.soNumber LIKE CONCAT('SO', :year, '%')")
+    @Query(value = "SELECT MAX(so.so_number) FROM sales_orders so WHERE so.so_number LIKE CONCAT('SO', :year, '%')",
+           nativeQuery = true)
     String findLatestSoNumberForYear(@Param("year") String year);
 }

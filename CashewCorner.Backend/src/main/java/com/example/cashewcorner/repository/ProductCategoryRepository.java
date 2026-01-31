@@ -18,7 +18,8 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
 
     Optional<ProductCategory> findByName(String name);
 
-    @Query("SELECT c FROM ProductCategory c WHERE c.isActive = true AND " +
-           "LOWER(c.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    @Query(value = "SELECT * FROM product_categories c WHERE c.is_active = true AND " +
+           "LOWER(c.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))",
+           nativeQuery = true)
     List<ProductCategory> searchByName(@Param("searchTerm") String searchTerm);
 }

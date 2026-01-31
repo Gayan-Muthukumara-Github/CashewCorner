@@ -1,6 +1,7 @@
 package com.example.cashewcorner.service;
 
 import com.example.cashewcorner.repository.PurchaseOrderRepository;
+import com.example.cashewcorner.repository.RawCashewRepository;
 import com.example.cashewcorner.repository.SupplierRepository;
 import org.springframework.aot.generate.Generated;
 import org.springframework.beans.factory.aot.BeanInstanceSupplier;
@@ -16,8 +17,8 @@ public class SupplierService__BeanDefinitions {
    * Get the bean instance supplier for 'supplierService'.
    */
   private static BeanInstanceSupplier<SupplierService> getSupplierServiceInstanceSupplier() {
-    return BeanInstanceSupplier.<SupplierService>forConstructor(SupplierRepository.class, PurchaseOrderRepository.class)
-            .withGenerator((registeredBean, args) -> new SupplierService(args.get(0), args.get(1)));
+    return BeanInstanceSupplier.<SupplierService>forConstructor(SupplierRepository.class, PurchaseOrderRepository.class, RawCashewRepository.class)
+            .withGenerator((registeredBean, args) -> new SupplierService(args.get(0), args.get(1), args.get(2)));
   }
 
   /**

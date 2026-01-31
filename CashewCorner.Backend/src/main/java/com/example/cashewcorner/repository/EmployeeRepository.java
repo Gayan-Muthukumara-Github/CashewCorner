@@ -18,10 +18,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByEmployeeCode(String employeeCode);
 
-    @Query("SELECT e FROM Employee e WHERE e.isActive = true AND " +
-           "(LOWER(e.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    @Query(value = "SELECT * FROM employees e WHERE e.is_active = true AND " +
+           "(LOWER(e.first_name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(e.last_name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(e.employee_code) LIKE LOWER(CONCAT('%', :searchTerm, '%')))",
+           nativeQuery = true)
     List<Employee> searchEmployees(@Param("searchTerm") String searchTerm);
 
     @Query("SELECT e FROM Employee e WHERE e.department = :department AND e.isActive = true")

@@ -2,6 +2,8 @@
 -- Converted from MySQL schema for H2 compatibility
 
 -- Drop existing tables (order matters)
+DROP TABLE IF EXISTS raw_cashew_stock_movements;
+DROP TABLE IF EXISTS raw_cashew_inventory;
 DROP TABLE IF EXISTS product_category_map;
 DROP TABLE IF EXISTS product_categories;
 DROP TABLE IF EXISTS stock_movements;
@@ -16,8 +18,9 @@ DROP TABLE IF EXISTS payrolls;
 DROP TABLE IF EXISTS employee_duties;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS suppliers;
-DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS customer;
 DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS raw_cashew;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
 
@@ -51,6 +54,21 @@ CREATE TABLE users (
   CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(role_id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
+-- Raw Cashew Types
+CREATE TABLE raw_cashew (
+  cashew_type_id BIGINT AUTO_INCREMENT NOT NULL,
+  cashew_type VARCHAR(100) NOT NULL,
+  cashew_quality VARCHAR(255) DEFAULT NULL,
+  created_by BIGINT DEFAULT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by BIGINT DEFAULT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  PRIMARY KEY (cashew_type_id),
+  CONSTRAINT fk_raw_cashew_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_raw_cashew_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
+);
+
 -- Suppliers
 CREATE TABLE suppliers (
   supplier_id BIGINT AUTO_INCREMENT NOT NULL,
@@ -73,8 +91,8 @@ CREATE TABLE suppliers (
 
 CREATE INDEX idx_suppliers_email ON suppliers(email);
 
--- Customers
-CREATE TABLE customers (
+-- Customer
+CREATE TABLE customer (
   customer_id BIGINT AUTO_INCREMENT NOT NULL,
   name VARCHAR(200) NOT NULL,
   email VARCHAR(150),
@@ -87,11 +105,11 @@ CREATE TABLE customers (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (customer_id),
-  CONSTRAINT fk_customers_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_customers_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT fk_customer_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_customer_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE INDEX idx_customers_email ON customers(email);
+CREATE INDEX idx_customer_email ON customer(email);
 
 -- Products
 CREATE TABLE products (
@@ -204,7 +222,7 @@ CREATE TABLE sales_orders (
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (sales_order_id),
   UNIQUE (so_number),
-  CONSTRAINT fk_so_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT fk_so_customer FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT fk_so_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_so_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
 );
@@ -361,6 +379,41 @@ CREATE TABLE reports (
 );
 
 CREATE INDEX fk_reports_generated_by ON reports(generated_by);
+
+-- Raw Cashew Inventory (current snapshot per raw cashew type and location)
+CREATE TABLE raw_cashew_inventory (
+  raw_cashew_inventory_id BIGINT AUTO_INCREMENT NOT NULL,
+  cashew_type_id BIGINT NOT NULL,
+  location VARCHAR(150) DEFAULT NULL,
+  quantity_on_hand DECIMAL(18,4) NOT NULL DEFAULT 0.0000,
+  reserved_quantity DECIMAL(18,4) NOT NULL DEFAULT 0.0000,
+  last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (raw_cashew_inventory_id),
+  UNIQUE (cashew_type_id, location),
+  CONSTRAINT fk_rci_cashew_type FOREIGN KEY (cashew_type_id) REFERENCES raw_cashew(cashew_type_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_rci_cashew_type ON raw_cashew_inventory(cashew_type_id);
+
+-- Raw Cashew Stock Movements (ledger for raw cashew inventory)
+CREATE TABLE raw_cashew_stock_movements (
+  movement_id BIGINT AUTO_INCREMENT NOT NULL,
+  cashew_type_id BIGINT NOT NULL,
+  movement_type VARCHAR(50) NOT NULL,
+  related_type VARCHAR(50) DEFAULT NULL,
+  related_id BIGINT DEFAULT NULL,
+  quantity DECIMAL(18,4) NOT NULL,
+  balance_after DECIMAL(18,4) DEFAULT NULL,
+  movement_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT DEFAULT NULL,
+  notes TEXT,
+  PRIMARY KEY (movement_id),
+  CONSTRAINT fk_rcsm_cashew_type FOREIGN KEY (cashew_type_id) REFERENCES raw_cashew(cashew_type_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT fk_rcsm_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+CREATE INDEX idx_rcsm_cashew_type ON raw_cashew_stock_movements(cashew_type_id);
+CREATE INDEX idx_rcsm_movement_date ON raw_cashew_stock_movements(movement_date);
 
 -- End of schema
 

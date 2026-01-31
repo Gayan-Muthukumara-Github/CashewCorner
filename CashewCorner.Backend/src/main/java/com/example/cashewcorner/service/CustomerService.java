@@ -133,6 +133,22 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
+    public List<CustomerDto> searchCustomersAdvanced(String name, String phone, String email,
+                                                      String address, String type) {
+        log.info("Advanced customer search - [name={}, phone={}, email={}, address={}, type={}]",
+                 name, phone, email, address, type);
+        // Convert null to empty string for native query compatibility
+        String safeName = name != null ? name : "";
+        String safePhone = phone != null ? phone : "";
+        String safeEmail = email != null ? email : "";
+        String safeAddress = address != null ? address : "";
+        String safeType = type != null ? type : "";
+        return customerRepository.searchCustomers(safeName, safePhone, safeEmail, safeAddress, safeType).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<SalesOrderDto> getCustomerOrders(Long customerId) {
         log.info("Fetching orders for customer - [customerId={}]", customerId);
 

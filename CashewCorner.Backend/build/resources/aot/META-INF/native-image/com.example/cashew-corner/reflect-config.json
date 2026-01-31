@@ -115,6 +115,10 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "corsConfigurationSource",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "filterChain",
         "parameterTypes": [
           "org.springframework.security.config.annotation.web.builders.HttpSecurity",
@@ -179,6 +183,64 @@
     ]
   },
   {
+    "name": "com.example.cashewcorner.controller.CategoryController",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "createCategory",
+        "parameterTypes": [
+          "com.example.cashewcorner.dto.CreateProductCategoryRequestDto"
+        ]
+      },
+      {
+        "name": "deleteCategory",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "getAllCategories",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCategoryById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchCategories",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "updateCategory",
+        "parameterTypes": [
+          "java.lang.Long",
+          "com.example.cashewcorner.dto.CreateProductCategoryRequestDto"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.service.ProductCategoryService"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.controller.CategoryController$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
     "name": "com.example.cashewcorner.controller.CustomerController",
     "queryAllPublicMethods": true,
     "queryAllDeclaredMethods": true,
@@ -192,12 +254,6 @@
         ]
       },
       {
-        "name": "createSalesOrder",
-        "parameterTypes": [
-          "com.example.cashewcorner.dto.CreateSalesOrderRequestDto"
-        ]
-      },
-      {
         "name": "deleteCustomer",
         "parameterTypes": [
           "java.lang.Long"
@@ -205,10 +261,6 @@
       },
       {
         "name": "getAllCustomers",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getAllSalesOrders",
         "parameterTypes": [ ]
       },
       {
@@ -230,20 +282,18 @@
         ]
       },
       {
-        "name": "getSalesOrderById",
-        "parameterTypes": [
-          "java.lang.Long"
-        ]
-      },
-      {
         "name": "searchCustomers",
         "parameterTypes": [
           "java.lang.String"
         ]
       },
       {
-        "name": "searchSalesOrders",
+        "name": "searchCustomersAdvanced",
         "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
           "java.lang.String"
         ]
       },
@@ -259,8 +309,7 @@
       {
         "name": "<init>",
         "parameterTypes": [
-          "com.example.cashewcorner.service.CustomerService",
-          "com.example.cashewcorner.service.SalesOrderService"
+          "com.example.cashewcorner.service.CustomerService"
         ]
       }
     ]
@@ -498,21 +547,9 @@
         ]
       },
       {
-        "name": "createCategory",
-        "parameterTypes": [
-          "com.example.cashewcorner.dto.CreateProductCategoryRequestDto"
-        ]
-      },
-      {
         "name": "createProduct",
         "parameterTypes": [
           "com.example.cashewcorner.dto.CreateProductRequestDto"
-        ]
-      },
-      {
-        "name": "deleteCategory",
-        "parameterTypes": [
-          "java.lang.Long"
         ]
       },
       {
@@ -522,18 +559,8 @@
         ]
       },
       {
-        "name": "getAllCategories",
-        "parameterTypes": [ ]
-      },
-      {
         "name": "getAllProducts",
         "parameterTypes": [ ]
-      },
-      {
-        "name": "getCategoryById",
-        "parameterTypes": [
-          "java.lang.Long"
-        ]
       },
       {
         "name": "getProductById",
@@ -555,22 +582,9 @@
         ]
       },
       {
-        "name": "searchCategories",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
         "name": "searchProducts",
         "parameterTypes": [
           "java.lang.String"
-        ]
-      },
-      {
-        "name": "updateCategory",
-        "parameterTypes": [
-          "java.lang.Long",
-          "com.example.cashewcorner.dto.CreateProductCategoryRequestDto"
         ]
       },
       {
@@ -585,14 +599,117 @@
       {
         "name": "<init>",
         "parameterTypes": [
-          "com.example.cashewcorner.service.ProductService",
-          "com.example.cashewcorner.service.ProductCategoryService"
+          "com.example.cashewcorner.service.ProductService"
         ]
       }
     ]
   },
   {
     "name": "com.example.cashewcorner.controller.ProductController$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.example.cashewcorner.controller.PurchaseOrderController",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "createPurchaseOrder",
+        "parameterTypes": [
+          "com.example.cashewcorner.dto.CreatePurchaseOrderRequestDto"
+        ]
+      },
+      {
+        "name": "getAllPurchaseOrders",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getPurchaseOrderById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchPurchaseOrders",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.service.PurchaseOrderService"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.controller.PurchaseOrderController$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.example.cashewcorner.controller.RawCashewController",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "createRawCashew",
+        "parameterTypes": [
+          "com.example.cashewcorner.dto.CreateRawCashewRequestDto"
+        ]
+      },
+      {
+        "name": "deleteRawCashew",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "getAllRawCashews",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getRawCashewById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchRawCashews",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "updateRawCashew",
+        "parameterTypes": [
+          "java.lang.Long",
+          "com.example.cashewcorner.dto.UpdateRawCashewRequestDto"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.service.RawCashewService"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.controller.RawCashewController$$SpringCGLIB$$0",
     "allDeclaredFields": true,
     "allDeclaredConstructors": true,
     "allDeclaredMethods": true
@@ -622,6 +739,19 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getCategoryFinancialSummary",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "getCategoryVolumeReport",
+        "parameterTypes": [
+          "java.lang.Integer",
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "getReportById",
         "parameterTypes": [
           "java.lang.Long"
@@ -631,6 +761,19 @@
         "name": "getReportsByType",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "getSellingPriceFluctuation",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "getTransactionSummary",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       }
     ],
@@ -650,12 +793,91 @@
     "allDeclaredMethods": true
   },
   {
+    "name": "com.example.cashewcorner.controller.SalesOrderController",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "createSalesOrder",
+        "parameterTypes": [
+          "com.example.cashewcorner.dto.CreateSalesOrderRequestDto"
+        ]
+      },
+      {
+        "name": "getAllSalesOrders",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSalesOrderById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchSalesOrders",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.service.SalesOrderService"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.controller.SalesOrderController$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
     "name": "com.example.cashewcorner.controller.SupplierController",
     "queryAllPublicMethods": true,
     "queryAllDeclaredMethods": true,
     "allPublicMethods": true,
     "allDeclaredMethods": true,
     "methods": [
+      {
+        "name": "advancedSearchSuppliers",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Long",
+          "java.lang.Boolean",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.Integer",
+          "java.lang.Integer",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.Integer",
+          "java.lang.Integer",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal"
+        ]
+      },
       {
         "name": "createSupplier",
         "parameterTypes": [
@@ -913,6 +1135,150 @@
         "name": "setTaskType",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.CategoryFinancialSummaryDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCategoryId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCategoryName",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getExpenses",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getIncome",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getProfit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTotalPurchases",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTotalSales",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCategoryId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setCategoryName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setExpenses",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setIncome",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setProfit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setTotalPurchases",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setTotalSales",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.CategoryVolumeReportDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getAverageUnitPrice",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCategoryId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCategoryName",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getMonth",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantitySoldOrPurchased",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTotalValue",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setAverageUnitPrice",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setCategoryId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setCategoryName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setMonth",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setQuantitySoldOrPurchased",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setTotalValue",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       }
     ]
@@ -1263,6 +1629,80 @@
     ]
   },
   {
+    "name": "com.example.cashewcorner.dto.CreatePurchaseOrderRequestDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getExpectedDate",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getItems",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getOrderDate",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSupplierId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setExpectedDate",
+        "parameterTypes": [
+          "java.time.LocalDate"
+        ]
+      },
+      {
+        "name": "setItems",
+        "parameterTypes": [
+          "java.util.List"
+        ]
+      },
+      {
+        "name": "setOrderDate",
+        "parameterTypes": [
+          "java.time.LocalDate"
+        ]
+      },
+      {
+        "name": "setSupplierId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.CreateRawCashewRequestDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCashewQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCashewQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
     "name": "com.example.cashewcorner.dto.CreateSalesOrderRequestDto",
     "allDeclaredFields": true,
     "allDeclaredConstructors": true,
@@ -1319,7 +1759,39 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getAverageCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryTime",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getContactPerson",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryMethod",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDistance",
         "parameterTypes": [ ]
       },
       {
@@ -1331,11 +1803,35 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getPaymentMethod",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPaymentTerms",
         "parameterTypes": [ ]
       },
       {
+        "name": "getPerformances",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPhone",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSeason",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTimeTakenToReceive",
         "parameterTypes": [ ]
       },
       {
@@ -1345,9 +1841,57 @@
         ]
       },
       {
+        "name": "setAverageCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryTime",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
         "name": "setContactPerson",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setDistance",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -1363,7 +1907,19 @@
         ]
       },
       {
+        "name": "setPaymentMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setPaymentTerms",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setPerformances",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -1372,6 +1928,30 @@
         "name": "setPhone",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuantity",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setSeason",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setTimeTakenToReceive",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       }
     ]
@@ -2687,19 +3267,19 @@
     "allDeclaredConstructors": true,
     "methods": [
       {
+        "name": "getCashewQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getLineTotal",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getProductId",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getProductName",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getProductSku",
         "parameterTypes": [ ]
       },
       {
@@ -2719,27 +3299,27 @@
         "parameterTypes": [ ]
       },
       {
-        "name": "setLineTotal",
+        "name": "setCashewQuality",
         "parameterTypes": [
-          "java.math.BigDecimal"
+          "java.lang.String"
         ]
       },
       {
-        "name": "setProductId",
+        "name": "setCashewType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
         "parameterTypes": [
           "java.lang.Long"
         ]
       },
       {
-        "name": "setProductName",
+        "name": "setLineTotal",
         "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "setProductSku",
-        "parameterTypes": [
-          "java.lang.String"
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -2764,6 +3344,110 @@
         "name": "setUnitPrice",
         "parameterTypes": [
           "java.math.BigDecimal"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.PurchaseOrderItemRequestDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getUnitPrice",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setQuantity",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setUnitPrice",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.RawCashewDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCashewQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCreatedAt",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getIsActive",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getUpdatedAt",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCashewQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setCreatedAt",
+        "parameterTypes": [
+          "java.time.LocalDateTime"
+        ]
+      },
+      {
+        "name": "setIsActive",
+        "parameterTypes": [
+          "java.lang.Boolean"
+        ]
+      },
+      {
+        "name": "setUpdatedAt",
+        "parameterTypes": [
+          "java.time.LocalDateTime"
         ]
       }
     ]
@@ -3134,6 +3818,63 @@
     ]
   },
   {
+    "name": "com.example.cashewcorner.dto.SellingPriceFluctuationDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getAverageSellingPrice",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getHighestPrice",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getLowestPrice",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getMonth",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getYear",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setAverageSellingPrice",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setHighestPrice",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setLowestPrice",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setMonth",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setYear",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      }
+    ]
+  },
+  {
     "name": "com.example.cashewcorner.dto.StockMovementDto",
     "allDeclaredFields": true,
     "allDeclaredConstructors": true,
@@ -3260,11 +4001,47 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getAverageCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryTime",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeName",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getContactPerson",
         "parameterTypes": [ ]
       },
       {
+        "name": "getCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getCreatedAt",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryMethod",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDistance",
         "parameterTypes": [ ]
       },
       {
@@ -3284,7 +4061,15 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getPaymentMethod",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPaymentTerms",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getPerformances",
         "parameterTypes": [ ]
       },
       {
@@ -3292,7 +4077,23 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSeason",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getSupplierId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTimeTakenToReceive",
         "parameterTypes": [ ]
       },
       {
@@ -3306,15 +4107,69 @@
         ]
       },
       {
+        "name": "setAverageCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryTime",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setCashewTypeName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setContactPerson",
         "parameterTypes": [
           "java.lang.String"
         ]
       },
       {
+        "name": "setCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
         "name": "setCreatedAt",
         "parameterTypes": [
           "java.time.LocalDateTime"
+        ]
+      },
+      {
+        "name": "setDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setDistance",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -3342,7 +4197,19 @@
         ]
       },
       {
+        "name": "setPaymentMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setPaymentTerms",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setPerformances",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -3354,9 +4221,33 @@
         ]
       },
       {
+        "name": "setQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuantity",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setSeason",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setSupplierId",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setTimeTakenToReceive",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       },
       {
@@ -3480,6 +4371,83 @@
         "name": "setTotalPurchaseAmount",
         "parameterTypes": [
           "java.math.BigDecimal"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.dto.TransactionSummaryDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getExpenses",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getIncome",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getMonth",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getProfit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTotalPurchases",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTotalSales",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getYear",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setExpenses",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setIncome",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setMonth",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setProfit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setTotalPurchases",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setTotalSales",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setYear",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       }
     ]
@@ -3696,6 +4664,33 @@
     ]
   },
   {
+    "name": "com.example.cashewcorner.dto.UpdateRawCashewRequestDto",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCashewQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCashewQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
     "name": "com.example.cashewcorner.dto.UpdateSupplierRequestDto",
     "allDeclaredFields": true,
     "allDeclaredConstructors": true,
@@ -3705,7 +4700,39 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getAverageCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryTime",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getContactPerson",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryMethod",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDistance",
         "parameterTypes": [ ]
       },
       {
@@ -3721,11 +4748,35 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getPaymentMethod",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPaymentTerms",
         "parameterTypes": [ ]
       },
       {
+        "name": "getPerformances",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPhone",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSeason",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTimeTakenToReceive",
         "parameterTypes": [ ]
       },
       {
@@ -3735,9 +4786,57 @@
         ]
       },
       {
+        "name": "setAverageCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryTime",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
         "name": "setContactPerson",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setDistance",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -3759,7 +4858,19 @@
         ]
       },
       {
+        "name": "setPaymentMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setPaymentTerms",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setPerformances",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -3768,6 +4879,30 @@
         "name": "setPhone",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuantity",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setSeason",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setTimeTakenToReceive",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       }
     ]
@@ -5156,10 +6291,6 @@
         "parameterTypes": [ ]
       },
       {
-        "name": "getProduct",
-        "parameterTypes": [ ]
-      },
-      {
         "name": "getPurchaseOrder",
         "parameterTypes": [ ]
       },
@@ -5169,6 +6300,10 @@
       },
       {
         "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getRawCashew",
         "parameterTypes": [ ]
       },
       {
@@ -5190,12 +6325,6 @@
         ]
       },
       {
-        "name": "setProduct",
-        "parameterTypes": [
-          "com.example.cashewcorner.entity.Product"
-        ]
-      },
-      {
         "name": "setPurchaseOrder",
         "parameterTypes": [
           "com.example.cashewcorner.entity.PurchaseOrder"
@@ -5214,6 +6343,12 @@
         ]
       },
       {
+        "name": "setRawCashew",
+        "parameterTypes": [
+          "com.example.cashewcorner.entity.RawCashew"
+        ]
+      },
+      {
         "name": "setReceivedQuantity",
         "parameterTypes": [
           "java.math.BigDecimal"
@@ -5229,6 +6364,93 @@
         "name": "setUpdatedAt",
         "parameterTypes": [
           "java.time.LocalDateTime"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.entity.RawCashew",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "getCashewQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewTypeId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCreatedAt",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCreatedBy",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getIsActive",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getUpdatedAt",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getUpdatedBy",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "setCashewQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewType",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCashewTypeId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setCreatedAt",
+        "parameterTypes": [
+          "java.time.LocalDateTime"
+        ]
+      },
+      {
+        "name": "setCreatedBy",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setIsActive",
+        "parameterTypes": [
+          "java.lang.Boolean"
+        ]
+      },
+      {
+        "name": "setUpdatedAt",
+        "parameterTypes": [
+          "java.time.LocalDateTime"
+        ]
+      },
+      {
+        "name": "setUpdatedBy",
+        "parameterTypes": [
+          "java.lang.Long"
         ]
       }
     ]
@@ -5676,7 +6898,27 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getAverageCostPerUnit",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getAverageDeliveryTime",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCashewType",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getContactPerson",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getCostPerUnit",
         "parameterTypes": [ ]
       },
       {
@@ -5685,6 +6927,18 @@
       },
       {
         "name": "getCreatedBy",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryCost",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDeliveryMethod",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getDistance",
         "parameterTypes": [ ]
       },
       {
@@ -5704,7 +6958,15 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getPaymentMethod",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getPaymentTerms",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getPerformances",
         "parameterTypes": [ ]
       },
       {
@@ -5716,7 +6978,23 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getQuality",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getQuantity",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getSeason",
+        "parameterTypes": [ ]
+      },
+      {
         "name": "getSupplierId",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getTimeTakenToReceive",
         "parameterTypes": [ ]
       },
       {
@@ -5734,9 +7012,39 @@
         ]
       },
       {
+        "name": "setAverageCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setAverageDeliveryTime",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "setCashewType",
+        "parameterTypes": [
+          "com.example.cashewcorner.entity.RawCashew"
+        ]
+      },
+      {
         "name": "setContactPerson",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "setCostPerUnit",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -5749,6 +7057,24 @@
         "name": "setCreatedBy",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setDeliveryCost",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setDeliveryMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setDistance",
+        "parameterTypes": [
+          "java.math.BigDecimal"
         ]
       },
       {
@@ -5776,7 +7102,19 @@
         ]
       },
       {
+        "name": "setPaymentMethod",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setPaymentTerms",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setPerformances",
         "parameterTypes": [
           "java.lang.String"
         ]
@@ -5794,9 +7132,33 @@
         ]
       },
       {
+        "name": "setQuality",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setQuantity",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "setSeason",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "setSupplierId",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "setTimeTakenToReceive",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       },
       {
@@ -6050,7 +7412,15 @@
     "allPublicMethods": true
   },
   {
+    "name": "com.example.cashewcorner.repository.PurchaseOrderItemRepository",
+    "allPublicMethods": true
+  },
+  {
     "name": "com.example.cashewcorner.repository.PurchaseOrderRepository",
+    "allPublicMethods": true
+  },
+  {
+    "name": "com.example.cashewcorner.repository.RawCashewRepository",
     "allPublicMethods": true
   },
   {
@@ -6136,6 +7506,16 @@
       {
         "name": "searchCustomers",
         "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "searchCustomersAdvanced",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
           "java.lang.String"
         ]
       }
@@ -6424,6 +7804,87 @@
     "allDeclaredMethods": true
   },
   {
+    "name": "com.example.cashewcorner.service.PurchaseOrderService",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "getAllPurchaseOrders",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getPurchaseOrderById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchByOrderNumber",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.repository.PurchaseOrderRepository",
+          "com.example.cashewcorner.repository.SupplierRepository",
+          "com.example.cashewcorner.repository.RawCashewRepository"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.service.PurchaseOrderService$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.example.cashewcorner.service.RawCashewService",
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredMethods": true,
+    "methods": [
+      {
+        "name": "getAllRawCashews",
+        "parameterTypes": [ ]
+      },
+      {
+        "name": "getRawCashewById",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "searchRawCashews",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      }
+    ],
+    "queriedMethods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.example.cashewcorner.repository.RawCashewRepository"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.example.cashewcorner.service.RawCashewService$$SpringCGLIB$$0",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
     "name": "com.example.cashewcorner.service.ReportService",
     "queryAllPublicMethods": true,
     "queryAllDeclaredMethods": true,
@@ -6435,6 +7896,19 @@
         "parameterTypes": [ ]
       },
       {
+        "name": "getCategoryFinancialSummary",
+        "parameterTypes": [
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "getCategoryVolumeReport",
+        "parameterTypes": [
+          "java.lang.Integer",
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "getReportById",
         "parameterTypes": [
           "java.lang.Long"
@@ -6444,6 +7918,19 @@
         "name": "getReportsByType",
         "parameterTypes": [
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "getSellingPriceFluctuation",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Integer"
+        ]
+      },
+      {
+        "name": "getTransactionSummary",
+        "parameterTypes": [
+          "java.lang.Integer"
         ]
       }
     ],
@@ -6457,6 +7944,10 @@
           "com.example.cashewcorner.repository.PayrollRepository",
           "com.example.cashewcorner.repository.EmployeeRepository",
           "com.example.cashewcorner.repository.UserRepository",
+          "com.example.cashewcorner.repository.ProductRepository",
+          "com.example.cashewcorner.repository.PurchaseOrderItemRepository",
+          "com.example.cashewcorner.repository.SalesOrderItemRepository",
+          "com.example.cashewcorner.repository.ProductCategoryRepository",
           "com.fasterxml.jackson.databind.ObjectMapper"
         ]
       }
@@ -6517,6 +8008,40 @@
     "allDeclaredMethods": true,
     "methods": [
       {
+        "name": "advancedSearchSuppliers",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Long",
+          "java.lang.Boolean",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.Integer",
+          "java.lang.Integer",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal",
+          "java.lang.Integer",
+          "java.lang.Integer",
+          "java.math.BigDecimal",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
         "name": "getAllSuppliers",
         "parameterTypes": [ ]
       },
@@ -6555,7 +8080,8 @@
         "name": "<init>",
         "parameterTypes": [
           "com.example.cashewcorner.repository.SupplierRepository",
-          "com.example.cashewcorner.repository.PurchaseOrderRepository"
+          "com.example.cashewcorner.repository.PurchaseOrderRepository",
+          "com.example.cashewcorner.repository.RawCashewRepository"
         ]
       }
     ]
@@ -7648,10 +9174,6 @@
   },
   {
     "name": "org.eclipse.core.runtime.FileLocator"
-  },
-  {
-    "name": "org.h2.jdbcx.JdbcDataSource",
-    "allPublicConstructors": true
   },
   {
     "name": "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy",
@@ -11283,130 +12805,6 @@
   {
     "name": "org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAvailabilityProvider",
     "allDeclaredConstructors": true
-  },
-  {
-    "name": "org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration",
-    "queryAllPublicMethods": true,
-    "queryAllDeclaredMethods": true,
-    "queriedMethods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.springframework.boot.autoconfigure.h2.H2ConsoleProperties"
-        ]
-      },
-      {
-        "name": "h2Console",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "h2ConsoleLogger",
-        "parameterTypes": [
-          "org.springframework.beans.factory.ObjectProvider"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration$H2ConsoleLogger",
-    "queryAllPublicMethods": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "org.springframework.boot.autoconfigure.h2.H2ConsoleProperties",
-    "queryAllPublicMethods": true,
-    "queryAllDeclaredMethods": true,
-    "fields": [
-      {
-        "name": "enabled"
-      },
-      {
-        "name": "path"
-      },
-      {
-        "name": "settings"
-      }
-    ],
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getPath",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getSettings",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "isEnabled",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "setEnabled",
-        "parameterTypes": [
-          "boolean"
-        ]
-      },
-      {
-        "name": "setPath",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.springframework.boot.autoconfigure.h2.H2ConsoleProperties$Settings",
-    "fields": [
-      {
-        "name": "trace"
-      },
-      {
-        "name": "webAdminPassword"
-      },
-      {
-        "name": "webAllowOthers"
-      }
-    ],
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "getWebAdminPassword",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "isTrace",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "isWebAllowOthers",
-        "parameterTypes": [ ]
-      },
-      {
-        "name": "setTrace",
-        "parameterTypes": [
-          "boolean"
-        ]
-      },
-      {
-        "name": "setWebAdminPassword",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "setWebAllowOthers",
-        "parameterTypes": [
-          "boolean"
-        ]
-      }
-    ]
   },
   {
     "name": "org.springframework.boot.autoconfigure.http.client.AbstractHttpClientProperties",
@@ -19328,11 +20726,6 @@
     "queryAllPublicMethods": true
   },
   {
-    "name": "org.springframework.boot.web.servlet.ServletRegistrationBean",
-    "queryAllPublicMethods": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
     "name": "org.springframework.boot.web.servlet.WebListenerRegistry",
     "queryAllPublicMethods": true
   },
@@ -21936,7 +23329,8 @@
   },
   {
     "name": "org.springframework.web.cors.CorsConfigurationSource",
-    "queryAllPublicMethods": true
+    "queryAllPublicMethods": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "org.springframework.web.cors.PreFlightRequestHandler",

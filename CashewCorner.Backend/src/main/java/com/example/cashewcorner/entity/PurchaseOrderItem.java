@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = {"purchaseOrder", "product"})
+@ToString(exclude = {"purchaseOrder", "rawCashew"})
 public class PurchaseOrderItem {
 
     @Id
@@ -34,8 +34,8 @@ public class PurchaseOrderItem {
     private PurchaseOrder purchaseOrder;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "cashew_type_id", nullable = false)
+    private RawCashew rawCashew;
 
     @Column(name = "quantity", precision = 15, scale = 4, nullable = false)
     @Builder.Default

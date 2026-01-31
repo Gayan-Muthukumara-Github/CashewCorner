@@ -24,6 +24,7 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
 
     Optional<PurchaseOrder> findByPoNumber(String poNumber);
 
-    @Query("SELECT MAX(po.poNumber) FROM PurchaseOrder po WHERE po.poNumber LIKE CONCAT('PO', :year, '%')")
+    @Query(value = "SELECT MAX(po.po_number) FROM purchase_orders po WHERE po.po_number LIKE CONCAT('PO', :year, '%')",
+           nativeQuery = true)
     String findLatestPoNumberForYear(@Param("year") String year);
 }

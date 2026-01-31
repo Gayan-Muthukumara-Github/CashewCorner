@@ -101,6 +101,24 @@ public class CustomerController {
     }
 
     /**
+     * Advanced search for customers with multiple filter criteria.
+     * Accessible by all authenticated users.
+     */
+    @GetMapping("/customers/search/advanced")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<List<CustomerDto>> searchCustomersAdvanced(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String type) {
+        log.info("Advanced customer search - [name={}, phone={}, email={}, address={}, type={}]",
+                 name, phone, email, address, type);
+        List<CustomerDto> customers = customerService.searchCustomersAdvanced(name, phone, email, address, type);
+        return ResponseEntity.ok(customers);
+    }
+
+    /**
      * Get all orders for a specific customer.
      * Accessible by all authenticated users.
      */

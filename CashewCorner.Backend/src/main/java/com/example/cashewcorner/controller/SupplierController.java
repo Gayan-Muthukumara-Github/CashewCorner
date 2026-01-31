@@ -141,4 +141,63 @@ public class SupplierController {
         List<SupplierRankingDto> rankings = supplierService.getSupplierRanking(cashewType, quantity);
         return ResponseEntity.ok(rankings);
     }
+
+    /**
+     * Advanced search for suppliers with multiple filter criteria.
+     * Supports text filters (partial match), ID/boolean filters (exact match),
+     * and range filters (min/max) for numeric fields.
+     * Accessible by authenticated users.
+     */
+    @GetMapping("/search/advanced")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<List<SupplierDto>> advancedSearchSuppliers(
+            // Text filters (partial match)
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String contactPerson,
+            @RequestParam(required = false) String paymentTerms,
+            @RequestParam(required = false) String quality,
+            @RequestParam(required = false) String season,
+            @RequestParam(required = false) String paymentMethod,
+            @RequestParam(required = false) String deliveryMethod,
+            @RequestParam(required = false) String performances,
+            // ID and boolean filters (exact match)
+            @RequestParam(required = false) Long cashewTypeId,
+            @RequestParam(required = false) Boolean isApproved,
+            // Range filters for numeric fields
+            @RequestParam(required = false) BigDecimal minQuantity,
+            @RequestParam(required = false) BigDecimal maxQuantity,
+            @RequestParam(required = false) BigDecimal minCostPerUnit,
+            @RequestParam(required = false) BigDecimal maxCostPerUnit,
+            @RequestParam(required = false) BigDecimal minDistance,
+            @RequestParam(required = false) BigDecimal maxDistance,
+            @RequestParam(required = false) BigDecimal minDeliveryCost,
+            @RequestParam(required = false) BigDecimal maxDeliveryCost,
+            @RequestParam(required = false) Integer minTimeTakenToReceive,
+            @RequestParam(required = false) Integer maxTimeTakenToReceive,
+            @RequestParam(required = false) BigDecimal minAverageCostPerUnit,
+            @RequestParam(required = false) BigDecimal maxAverageCostPerUnit,
+            @RequestParam(required = false) Integer minAverageDeliveryTime,
+            @RequestParam(required = false) Integer maxAverageDeliveryTime,
+            @RequestParam(required = false) BigDecimal minAverageDeliveryCost,
+            @RequestParam(required = false) BigDecimal maxAverageDeliveryCost) {
+
+        log.info("Advanced supplier search - [name={}, cashewTypeId={}, isApproved={}]",
+                 name, cashewTypeId, isApproved);
+
+        List<SupplierDto> suppliers = supplierService.advancedSearchSuppliers(
+                name, address, phone, email, contactPerson, paymentTerms,
+                quality, season, paymentMethod, deliveryMethod, performances,
+                cashewTypeId, isApproved,
+                minQuantity, maxQuantity, minCostPerUnit, maxCostPerUnit,
+                minDistance, maxDistance, minDeliveryCost, maxDeliveryCost,
+                minTimeTakenToReceive, maxTimeTakenToReceive,
+                minAverageCostPerUnit, maxAverageCostPerUnit,
+                minAverageDeliveryTime, maxAverageDeliveryTime,
+                minAverageDeliveryCost, maxAverageDeliveryCost);
+
+        return ResponseEntity.ok(suppliers);
+    }
 }

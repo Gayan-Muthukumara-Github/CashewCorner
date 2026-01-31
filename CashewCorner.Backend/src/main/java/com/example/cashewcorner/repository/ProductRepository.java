@@ -20,8 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findBySku(String sku);
 
-    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.isActive = true AND " +
-           "LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    @Query(value = "SELECT DISTINCT p.* FROM products p WHERE p.is_active = true AND " +
+           "LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))",
+           nativeQuery = true)
     List<Product> searchByName(@Param("searchTerm") String searchTerm);
 
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.categories WHERE p.productId IN " +

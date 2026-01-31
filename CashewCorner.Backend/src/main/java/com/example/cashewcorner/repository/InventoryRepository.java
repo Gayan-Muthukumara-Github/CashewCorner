@@ -25,9 +25,10 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT i FROM Inventory i WHERE i.quantityOnHand <= i.product.reorderLevel")
     List<Inventory> findLowStockItems();
 
-    @Query("SELECT i FROM Inventory i JOIN i.product p WHERE " +
-           "(:productName IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) AND " +
-           "(:location IS NULL OR LOWER(i.location) LIKE LOWER(CONCAT('%', :location, '%')))")
-    List<Inventory> searchInventory(@Param("productName") String productName, 
+    @Query(value = "SELECT i.* FROM inventory i JOIN products p ON i.product_id = p.product_id WHERE " +
+           "(:productName = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) AND " +
+           "(:location = '' OR LOWER(i.location) LIKE LOWER(CONCAT('%', :location, '%')))",
+           nativeQuery = true)
+    List<Inventory> searchInventory(@Param("productName") String productName,
                                     @Param("location") String location);
 }

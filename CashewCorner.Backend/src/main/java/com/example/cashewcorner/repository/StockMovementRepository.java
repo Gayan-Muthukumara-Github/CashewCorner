@@ -25,12 +25,13 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
     List<StockMovement> findByRelatedEntity(@Param("relatedType") String relatedType, 
                                             @Param("relatedId") Long relatedId);
 
-    @Query("SELECT sm FROM StockMovement sm JOIN sm.product p WHERE " +
-           "(:productName IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) AND " +
-           "(:movementType IS NULL OR sm.movementType = :movementType) AND " +
-           "(:startDate IS NULL OR sm.movementDate >= :startDate) AND " +
-           "(:endDate IS NULL OR sm.movementDate <= :endDate) " +
-           "ORDER BY sm.movementDate DESC")
+    @Query(value = "SELECT sm.* FROM stock_movements sm JOIN products p ON sm.product_id = p.product_id WHERE " +
+           "(:productName = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :productName, '%'))) AND " +
+           "(:movementType IS NULL OR sm.movement_type = :movementType) AND " +
+           "(:startDate IS NULL OR sm.movement_date >= :startDate) AND " +
+           "(:endDate IS NULL OR sm.movement_date <= :endDate) " +
+           "ORDER BY sm.movement_date DESC",
+           nativeQuery = true)
     List<StockMovement> searchMovements(@Param("productName") String productName,
                                         @Param("movementType") String movementType,
                                         @Param("startDate") LocalDateTime startDate,

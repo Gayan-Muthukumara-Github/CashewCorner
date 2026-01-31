@@ -3,9 +3,11 @@ package com.example.cashewcorner.service;
 import com.example.cashewcorner.dto.*;
 import com.example.cashewcorner.entity.PurchaseOrder;
 import com.example.cashewcorner.entity.PurchaseOrderItem;
+import com.example.cashewcorner.entity.RawCashew;
 import com.example.cashewcorner.entity.Supplier;
 import com.example.cashewcorner.exception.ResourceNotFoundException;
 import com.example.cashewcorner.repository.PurchaseOrderRepository;
+import com.example.cashewcorner.repository.RawCashewRepository;
 import com.example.cashewcorner.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,14 @@ public class SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
+    private final RawCashewRepository rawCashewRepository;
 
     public SupplierService(SupplierRepository supplierRepository,
-                          PurchaseOrderRepository purchaseOrderRepository) {
+                          PurchaseOrderRepository purchaseOrderRepository,
+                          RawCashewRepository rawCashewRepository) {
         this.supplierRepository = supplierRepository;
         this.purchaseOrderRepository = purchaseOrderRepository;
+        this.rawCashewRepository = rawCashewRepository;
     }
 
     public SupplierDto createSupplier(CreateSupplierRequestDto request) {
@@ -42,10 +47,30 @@ public class SupplierService {
                 .paymentTerms(request.getPaymentTerms())
                 .isApproved(false)
                 .isActive(true)
+                .quantity(request.getQuantity())
+                .quality(request.getQuality())
+                .costPerUnit(request.getCostPerUnit())
+                .season(request.getSeason())
+                .paymentMethod(request.getPaymentMethod())
+                .distance(request.getDistance())
+                .deliveryMethod(request.getDeliveryMethod())
+                .deliveryCost(request.getDeliveryCost())
+                .timeTakenToReceive(request.getTimeTakenToReceive())
+                .averageCostPerUnit(request.getAverageCostPerUnit())
+                .averageDeliveryTime(request.getAverageDeliveryTime())
+                .averageDeliveryCost(request.getAverageDeliveryCost())
+                .performances(request.getPerformances())
                 .build();
 
+        // Set cashew type if provided
+        if (request.getCashewTypeId() != null) {
+            RawCashew cashewType = rawCashewRepository.findByCashewTypeIdAndIsActiveTrue(request.getCashewTypeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Raw cashew type not found with id: " + request.getCashewTypeId()));
+            supplier.setCashewType(cashewType);
+        }
+
         supplier = supplierRepository.save(supplier);
-        log.info("Supplier created successfully - [supplierId={}, name={}]", 
+        log.info("Supplier created successfully - [supplierId={}, name={}]",
                 supplier.getSupplierId(), supplier.getName());
 
         return mapToDto(supplier);
@@ -77,6 +102,52 @@ public class SupplierService {
         }
         if (request.getIsApproved() != null) {
             supplier.setIsApproved(request.getIsApproved());
+        }
+
+        // Handle new cashew-related fields
+        if (request.getCashewTypeId() != null) {
+            RawCashew cashewType = rawCashewRepository.findByCashewTypeIdAndIsActiveTrue(request.getCashewTypeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Raw cashew type not found with id: " + request.getCashewTypeId()));
+            supplier.setCashewType(cashewType);
+        }
+        if (request.getQuantity() != null) {
+            supplier.setQuantity(request.getQuantity());
+        }
+        if (request.getQuality() != null) {
+            supplier.setQuality(request.getQuality());
+        }
+        if (request.getCostPerUnit() != null) {
+            supplier.setCostPerUnit(request.getCostPerUnit());
+        }
+        if (request.getSeason() != null) {
+            supplier.setSeason(request.getSeason());
+        }
+        if (request.getPaymentMethod() != null) {
+            supplier.setPaymentMethod(request.getPaymentMethod());
+        }
+        if (request.getDistance() != null) {
+            supplier.setDistance(request.getDistance());
+        }
+        if (request.getDeliveryMethod() != null) {
+            supplier.setDeliveryMethod(request.getDeliveryMethod());
+        }
+        if (request.getDeliveryCost() != null) {
+            supplier.setDeliveryCost(request.getDeliveryCost());
+        }
+        if (request.getTimeTakenToReceive() != null) {
+            supplier.setTimeTakenToReceive(request.getTimeTakenToReceive());
+        }
+        if (request.getAverageCostPerUnit() != null) {
+            supplier.setAverageCostPerUnit(request.getAverageCostPerUnit());
+        }
+        if (request.getAverageDeliveryTime() != null) {
+            supplier.setAverageDeliveryTime(request.getAverageDeliveryTime());
+        }
+        if (request.getAverageDeliveryCost() != null) {
+            supplier.setAverageDeliveryCost(request.getAverageDeliveryCost());
+        }
+        if (request.getPerformances() != null) {
+            supplier.setPerformances(request.getPerformances());
         }
 
         supplier = supplierRepository.save(supplier);
@@ -125,6 +196,49 @@ public class SupplierService {
     public List<SupplierDto> getApprovedSuppliers() {
         log.info("Fetching approved suppliers");
         return supplierRepository.findApprovedSuppliers().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SupplierDto> advancedSearchSuppliers(
+            String name, String address, String phone, String email,
+            String contactPerson, String paymentTerms, String quality,
+            String season, String paymentMethod, String deliveryMethod,
+            String performances, Long cashewTypeId, Boolean isApproved,
+            BigDecimal minQuantity, BigDecimal maxQuantity,
+            BigDecimal minCostPerUnit, BigDecimal maxCostPerUnit,
+            BigDecimal minDistance, BigDecimal maxDistance,
+            BigDecimal minDeliveryCost, BigDecimal maxDeliveryCost,
+            Integer minTimeTakenToReceive, Integer maxTimeTakenToReceive,
+            BigDecimal minAverageCostPerUnit, BigDecimal maxAverageCostPerUnit,
+            Integer minAverageDeliveryTime, Integer maxAverageDeliveryTime,
+            BigDecimal minAverageDeliveryCost, BigDecimal maxAverageDeliveryCost) {
+
+        log.info("Advanced supplier search - [name={}, cashewTypeId={}, isApproved={}]",
+                 name, cashewTypeId, isApproved);
+
+        // Convert null string parameters to empty strings for native query compatibility
+        return supplierRepository.advancedSearch(
+                name != null ? name.trim() : "",
+                address != null ? address.trim() : "",
+                phone != null ? phone.trim() : "",
+                email != null ? email.trim() : "",
+                contactPerson != null ? contactPerson.trim() : "",
+                paymentTerms != null ? paymentTerms.trim() : "",
+                quality != null ? quality.trim() : "",
+                season != null ? season.trim() : "",
+                paymentMethod != null ? paymentMethod.trim() : "",
+                deliveryMethod != null ? deliveryMethod.trim() : "",
+                performances != null ? performances.trim() : "",
+                cashewTypeId, isApproved,
+                minQuantity, maxQuantity, minCostPerUnit, maxCostPerUnit,
+                minDistance, maxDistance, minDeliveryCost, maxDeliveryCost,
+                minTimeTakenToReceive, maxTimeTakenToReceive,
+                minAverageCostPerUnit, maxAverageCostPerUnit,
+                minAverageDeliveryTime, maxAverageDeliveryTime,
+                minAverageDeliveryCost, maxAverageDeliveryCost
+        ).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -217,9 +331,9 @@ public class SupplierService {
 
         for (PurchaseOrder order : orders) {
             for (PurchaseOrderItem item : order.getItems()) {
-                // If cashewType is specified, filter by product name containing the cashew type
+                // If cashewType is specified, filter by raw cashew type name
                 if (cashewType == null || cashewType.isEmpty() ||
-                    item.getProduct().getName().toUpperCase().contains(cashewType.toUpperCase())) {
+                    item.getRawCashew().getCashewType().toUpperCase().contains(cashewType.toUpperCase())) {
                     prices.add(item.getUnitPrice());
                 }
             }
@@ -246,6 +360,22 @@ public class SupplierService {
                 .isActive(supplier.getIsActive())
                 .createdAt(supplier.getCreatedAt())
                 .updatedAt(supplier.getUpdatedAt())
+                // New cashew-related fields
+                .cashewTypeId(supplier.getCashewType() != null ? supplier.getCashewType().getCashewTypeId() : null)
+                .cashewTypeName(supplier.getCashewType() != null ? supplier.getCashewType().getCashewType() : null)
+                .quantity(supplier.getQuantity())
+                .quality(supplier.getQuality())
+                .costPerUnit(supplier.getCostPerUnit())
+                .season(supplier.getSeason())
+                .paymentMethod(supplier.getPaymentMethod())
+                .distance(supplier.getDistance())
+                .deliveryMethod(supplier.getDeliveryMethod())
+                .deliveryCost(supplier.getDeliveryCost())
+                .timeTakenToReceive(supplier.getTimeTakenToReceive())
+                .averageCostPerUnit(supplier.getAverageCostPerUnit())
+                .averageDeliveryTime(supplier.getAverageDeliveryTime())
+                .averageDeliveryCost(supplier.getAverageDeliveryCost())
+                .performances(supplier.getPerformances())
                 .build();
     }
 
@@ -272,9 +402,9 @@ public class SupplierService {
     private PurchaseOrderItemDto mapToPurchaseOrderItemDto(PurchaseOrderItem item) {
         return PurchaseOrderItemDto.builder()
                 .purchaseOrderItemId(item.getPurchaseOrderItemId())
-                .productId(item.getProduct().getProductId())
-                .productName(item.getProduct().getName())
-                .productSku(item.getProduct().getSku())
+                .cashewTypeId(item.getRawCashew().getCashewTypeId())
+                .cashewType(item.getRawCashew().getCashewType())
+                .cashewQuality(item.getRawCashew().getCashewQuality())
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
                 .lineTotal(item.getLineTotal())

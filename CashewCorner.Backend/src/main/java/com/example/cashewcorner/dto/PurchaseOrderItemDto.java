@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @Builder
 public class PurchaseOrderItemDto {
     private Long purchaseOrderItemId;
-    private Long productId;
-    private String productName;
-    private String productSku;
+    private Long cashewTypeId;
+    private String cashewType;
+    private String cashewQuality;
     private BigDecimal quantity;
     private BigDecimal unitPrice;
     private BigDecimal lineTotal;

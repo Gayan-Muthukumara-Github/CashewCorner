@@ -25,8 +25,8 @@ public class PrePostMethodSecurityConfiguration__Autowiring {
       PrePostMethodSecurityConfiguration instance) {
     AutowiredMethodArgumentsResolver.forMethod("setGrantedAuthorityDefaults", GrantedAuthorityDefaults.class).resolve(registeredBean, args -> instance.setGrantedAuthorityDefaults(args.get(0)));
     AutowiredMethodArgumentsResolver.forMethod("setRoleHierarchy", RoleHierarchy.class).resolve(registeredBean, args -> instance.setRoleHierarchy(args.get(0)));
-    AutowiredMethodArgumentsResolver.forMethod("setTemplateDefaults", AnnotationTemplateExpressionDefaults.class).resolve(registeredBean, args -> instance.setTemplateDefaults(args.get(0, AnnotationTemplateExpressionDefaults.class)));
     AutowiredMethodArgumentsResolver.forMethod("setTemplateDefaults", PrePostTemplateDefaults.class).resolve(registeredBean, args -> instance.setTemplateDefaults(args.get(0, PrePostTemplateDefaults.class)));
+    AutowiredMethodArgumentsResolver.forMethod("setTemplateDefaults", AnnotationTemplateExpressionDefaults.class).resolve(registeredBean, args -> instance.setTemplateDefaults(args.get(0, AnnotationTemplateExpressionDefaults.class)));
     AutowiredMethodArgumentsResolver.forMethod("setExpressionHandler", MethodSecurityExpressionHandler.class).resolve(registeredBean, args -> instance.setExpressionHandler(args.get(0)));
     AutowiredMethodArgumentsResolver.forMethod("setSecurityContextHolderStrategy", SecurityContextHolderStrategy.class).resolve(registeredBean, args -> instance.setSecurityContextHolderStrategy(args.get(0)));
     AutowiredMethodArgumentsResolver.forMethod("setAuthorizationEventPublisher", AuthorizationEventPublisher.class).resolve(registeredBean, args -> instance.setAuthorizationEventPublisher(args.get(0)));

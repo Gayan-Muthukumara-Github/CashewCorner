@@ -13,37 +13,37 @@ import java.util.List;
 public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrderItem, Long> {
 
     /**
-     * Find all purchase order items for a specific product.
+     * Find all purchase order items for a specific raw cashew type.
      */
-    List<PurchaseOrderItem> findByProductProductId(Long productId);
+    List<PurchaseOrderItem> findByRawCashewCashewTypeId(Long cashewTypeId);
 
     /**
-     * Find purchase order items for a product within a date range.
+     * Find purchase order items for a raw cashew type within a date range.
      * Uses the purchase order's created_at timestamp for filtering.
      */
     @Query("SELECT poi FROM PurchaseOrderItem poi " +
            "JOIN poi.purchaseOrder po " +
-           "WHERE poi.product.productId = :productId " +
+           "WHERE poi.rawCashew.cashewTypeId = :cashewTypeId " +
            "AND po.createdAt >= :startDate " +
            "AND po.createdAt <= :endDate " +
            "AND po.isActive = true " +
            "ORDER BY po.createdAt ASC")
-    List<PurchaseOrderItem> findByProductIdAndDateRange(
-            @Param("productId") Long productId,
+    List<PurchaseOrderItem> findByCashewTypeIdAndDateRange(
+            @Param("cashewTypeId") Long cashewTypeId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
     /**
-     * Find purchase order items for a product within a specific year.
+     * Find purchase order items for a raw cashew type within a specific year.
      */
     @Query("SELECT poi FROM PurchaseOrderItem poi " +
            "JOIN poi.purchaseOrder po " +
-           "WHERE poi.product.productId = :productId " +
+           "WHERE poi.rawCashew.cashewTypeId = :cashewTypeId " +
            "AND YEAR(po.createdAt) = :year " +
            "AND po.isActive = true " +
            "ORDER BY po.createdAt ASC")
-    List<PurchaseOrderItem> findByProductIdAndYear(
-            @Param("productId") Long productId,
+    List<PurchaseOrderItem> findByCashewTypeIdAndYear(
+            @Param("cashewTypeId") Long cashewTypeId,
             @Param("year") Integer year);
 
     /**
