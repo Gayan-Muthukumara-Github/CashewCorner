@@ -34,6 +34,14 @@ export class SalesOrderService {
     return this.http.get<SalesOrderResponse[]>(`${this.salesOrdersUrl}/search`, { params });
   }
 
+  /**
+   * Track order by order number (public endpoint - no auth required).
+   * GET /api/sales-orders/track/{orderNo}
+   */
+  trackOrder(orderNo: string): Observable<SalesOrderResponse> {
+    return this.http.get<SalesOrderResponse>(`${this.salesOrdersUrl}/track/${encodeURIComponent(orderNo)}`);
+  }
+
   // Assuming backend will handle updates to existing sales orders via a PUT request on the main sales order endpoint
   // For now, only create and retrieve operations are explicitly defined based on provided APIs.
   // If item-specific updates/deletions are needed, similar methods to OrderService would be added here.

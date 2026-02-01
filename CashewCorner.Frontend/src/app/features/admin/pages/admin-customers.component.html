@@ -10,13 +10,47 @@
   </div>
 
   <section class="customer-list">
-    <div class="search-bar">
-      <input
-        type="text"
-        placeholder="Search by name..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearch()"
-      />
+    <div class="search-section">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()"
+        />
+        <button type="button" class="toggle-advanced" (click)="toggleAdvancedSearch()">
+          {{ showAdvancedSearch ? 'Hide' : 'Show' }} Advanced Search
+        </button>
+      </div>
+
+      <div *ngIf="showAdvancedSearch" class="advanced-search">
+        <div class="advanced-search-fields">
+          <div class="search-field">
+            <label for="adv-name">Name</label>
+            <input id="adv-name" type="text" [(ngModel)]="advancedSearch.name" placeholder="Customer name" />
+          </div>
+          <div class="search-field">
+            <label for="adv-phone">Phone</label>
+            <input id="adv-phone" type="text" [(ngModel)]="advancedSearch.phone" placeholder="Phone number" />
+          </div>
+          <div class="search-field">
+            <label for="adv-email">Email</label>
+            <input id="adv-email" type="email" [(ngModel)]="advancedSearch.email" placeholder="Email address" />
+          </div>
+          <div class="search-field">
+            <label for="adv-address">Address</label>
+            <input id="adv-address" type="text" [(ngModel)]="advancedSearch.address" placeholder="Address" />
+          </div>
+          <div class="search-field">
+            <label for="adv-type">Type</label>
+            <input id="adv-type" type="text" [(ngModel)]="advancedSearch.type" placeholder="Customer type" />
+          </div>
+        </div>
+        <div class="advanced-search-actions">
+          <button type="button" class="primary" (click)="onAdvancedSearch()">Search</button>
+          <button type="button" class="secondary" (click)="clearAdvancedSearch()">Clear</button>
+        </div>
+      </div>
     </div>
 
     <div *ngIf="isLoading" class="info">Loading customers...</div>
@@ -37,6 +71,7 @@
           <th>Phone</th>
           <th>Address</th>
           <th>Type</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -48,7 +83,15 @@
           <td>{{ customer.phone }}</td>
           <td>{{ customer.address }}</td>
           <td>{{ customer.type }}</td>
+          <td>
+            <span class="status-badge" [class.active]="customer.isActive" [class.inactive]="!customer.isActive">
+              {{ customer.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
           <td class="actions">
+            <button type="button" class="link" (click)="viewCustomerOrders(customer)">
+              Orders
+            </button>
             <button type="button" class="link" (click)="openEditModal(customer)">
               Edit
             </button>
@@ -72,4 +115,48 @@
     (close)="closeModal()"
     (save)="onSaveCustomer($event)"
   ></app-customer-form-modal>
+
+  <!-- Customer Orders Modal -->
+  <div class="modal-overlay" *ngIf="isOrdersModalOpen" (click)="closeOrdersModal()">
+    <div class="modal-content orders-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Orders for {{ ordersCustomerName }}</h2>
+        <button type="button" class="close-btn" (click)="closeOrdersModal()" aria-label="Close">
+          ×
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isLoadingOrders" class="info">Loading orders...</div>
+        <div *ngIf="!isLoadingOrders && customerOrders.length === 0" class="info">
+          No orders found for this customer.
+        </div>
+        <table *ngIf="!isLoadingOrders && customerOrders.length > 0" class="orders-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Order Date</th>
+              <th>Delivery Date</th>
+              <th>Status</th>
+              <th>Items</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of customerOrders">
+              <td>{{ order.soNumber }}</td>
+              <td>{{ order.orderDate | date:'mediumDate' }}</td>
+              <td>{{ order.deliveryDate | date:'mediumDate' }}</td>
+              <td>
+                <span class="order-status" [ngClass]="getStatusClass(order.status)">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>{{ order.itemCount }}</td>
+              <td>{{ order.totalAmount | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

@@ -10,14 +10,100 @@
     <div class="modal-body">
       <form [formGroup]="purchaseOrderForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="form-grid">
-          <div class="form-field">
-            <label for="supplierId">Supplier</label>
-            <select id="supplierId" formControlName="supplierId" [class.error]="supplierId?.invalid && supplierId?.touched">
-              <option [value]="null" disabled>Select a supplier</option>
-              <option *ngFor="let supplier of allSuppliers" [value]="supplier.supplierId">
-                {{ supplier.name }}
-              </option>
-            </select>
+          <!-- Supplier Selection with Search -->
+          <div class="form-field full-width">
+            <label>Supplier</label>
+            
+            <!-- Selected Supplier Display -->
+            <div *ngIf="selectedSupplier && !showSupplierSearch" class="selected-supplier">
+              <div class="supplier-info">
+                <span class="supplier-name">{{ selectedSupplier.name }}</span>
+                <span class="supplier-details">{{ selectedSupplier.phone }} • {{ selectedSupplier.contactPerson }}</span>
+              </div>
+              <button type="button" class="change-supplier-btn" (click)="toggleSupplierSearch()" *ngIf="mode === 'create'">
+                Change
+              </button>
+              <button type="button" class="clear-supplier-btn" (click)="clearSelectedSupplier()" *ngIf="mode === 'create'">
+                ×
+              </button>
+            </div>
+
+            <!-- Supplier Search Panel -->
+            <div *ngIf="!selectedSupplier || showSupplierSearch" class="supplier-search-panel">
+              <div class="search-header">
+                <input
+                  type="text"
+                  placeholder="Search suppliers by name, phone, email, or contact person..."
+                  [(ngModel)]="supplierSearchTerm"
+                  [ngModelOptions]="{standalone: true}"
+                  (ngModelChange)="onSupplierSearchChange()"
+                  class="supplier-search-input"
+                />
+                <button type="button" class="advanced-search-toggle" (click)="toggleAdvancedSupplierSearch()">
+                  {{ showAdvancedSupplierSearch ? 'Hide' : 'Advanced' }}
+                </button>
+              </div>
+
+              <!-- Advanced Search Fields -->
+              <div *ngIf="showAdvancedSupplierSearch" class="advanced-search-fields">
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Name</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.name" [ngModelOptions]="{standalone: true}" placeholder="Supplier name" />
+                  </div>
+                  <div class="search-field">
+                    <label>Phone</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.phone" [ngModelOptions]="{standalone: true}" placeholder="Phone number" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="advancedSupplierSearch.email" [ngModelOptions]="{standalone: true}" placeholder="Email address" />
+                  </div>
+                  <div class="search-field">
+                    <label>Contact Person</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.contactPerson" [ngModelOptions]="{standalone: true}" placeholder="Contact person" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field full">
+                    <label>Address</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.address" [ngModelOptions]="{standalone: true}" placeholder="Address" />
+                  </div>
+                </div>
+                <div class="advanced-search-actions">
+                  <button type="button" class="search-btn" (click)="onAdvancedSupplierSearch()">Search</button>
+                  <button type="button" class="reset-btn" (click)="resetAdvancedSupplierSearch(); filteredSuppliers = allSuppliers">Reset</button>
+                </div>
+              </div>
+
+              <!-- Supplier Results List -->
+              <div class="supplier-results">
+                <div *ngIf="filteredSuppliers.length === 0" class="no-results">
+                  No suppliers found. Try a different search.
+                </div>
+                <div *ngFor="let supplier of filteredSuppliers" 
+                     class="supplier-result-item"
+                     [class.inactive]="!supplier.isActive"
+                     [class.not-approved]="!supplier.isApproved"
+                     (click)="selectSupplier(supplier)">
+                  <div class="result-main">
+                    <span class="result-name">{{ supplier.name }}</span>
+                    <span class="result-status approved" *ngIf="supplier.isApproved">Approved</span>
+                    <span class="result-status pending" *ngIf="!supplier.isApproved">Pending</span>
+                  </div>
+                  <div class="result-details">
+                    <span *ngIf="supplier.phone">📞 {{ supplier.phone }}</span>
+                    <span *ngIf="supplier.contactPerson">👤 {{ supplier.contactPerson }}</span>
+                  </div>
+                  <div class="result-address" *ngIf="supplier.address">
+                    📍 {{ supplier.address }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <small *ngIf="supplierId?.invalid && supplierId?.touched" class="error">
               Supplier is required.
             </small>
@@ -53,40 +139,49 @@
         <div class="order-items-section">
           <h3>Order Items</h3>
           
-          <!-- Add Product Controls at Top -->
+          <!-- Add Raw Cashew Controls at Top -->
           <div *ngIf="mode === 'create'" class="assign-product-controls">
             <div class="product-input-row">
-              <select 
-                [ngModelOptions]="{standalone: true}"
-                [(ngModel)]="selectedProductToAssign"
-                (ngModelChange)="onProductSelectionChange($event)">
-                <option [ngValue]="null" disabled>Select a product</option>
-                <option *ngFor="let product of allProducts" [ngValue]="product.productId">
-                  {{ product.name }} ({{ product.sellPrice | currency:'Rs. ' }})
-                </option>
-              </select>
-              <input
-                type="number"
-                [ngModelOptions]="{standalone: true}"
-                [(ngModel)]="quantityToAssign"
-                min="1"
-                placeholder="Quantity"
-                (ngModelChange)="onQuantityChange($event)"
-              />
+              <div class="input-group">
+                <label class="input-label">Raw Cashew Type</label>
+                <select 
+                  [ngModelOptions]="{standalone: true}"
+                  [(ngModel)]="selectedRawCashewToAssign"
+                  (ngModelChange)="onRawCashewSelectionChange($event)">
+                  <option [ngValue]="null" disabled>Select raw cashew type</option>
+                  <option *ngFor="let rawCashew of allRawCashews" [ngValue]="rawCashew.cashewTypeId">
+                    {{ rawCashew.cashewType }} - {{ rawCashew.cashewQuality }}
+                  </option>
+                </select>
+              </div>
             </div>
             <div class="product-input-row">
-              <input
-                type="number"
-                [ngModelOptions]="{standalone: true}"
-                [(ngModel)]="unitPriceToAssign"
-                min="0.01"
-                step="0.01"
-                placeholder="Unit Price"
-              />
-              <button type="button" class="add-product-btn" [disabled]="!selectedProductToAssign || quantityToAssign <= 0 || unitPriceToAssign <= 0" (click)="onAddItem()">
-                + Add Product
-              </button>
+              <div class="input-group">
+                <label class="input-label">Quantity (kg)</label>
+                <input
+                  type="number"
+                  [ngModelOptions]="{standalone: true}"
+                  [(ngModel)]="quantityToAssign"
+                  min="1"
+                  placeholder="Enter quantity"
+                  (ngModelChange)="onQuantityChange($event)"
+                />
+              </div>
+              <div class="input-group">
+                <label class="input-label">Item Price (Rs.)</label>
+                <input
+                  type="number"
+                  [ngModelOptions]="{standalone: true}"
+                  [(ngModel)]="unitPriceToAssign"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Enter item price"
+                />
+              </div>
             </div>
+            <button type="button" class="add-product-btn" [disabled]="!selectedRawCashewToAssign || quantityToAssign <= 0 || unitPriceToAssign <= 0" (click)="onAddItem()">
+              + Add Raw Cashew Item
+            </button>
           </div>
 
           <!-- Added Items List -->
@@ -98,16 +193,16 @@
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
               </svg>
               <p>No items added yet</p>
-              <small>Select a product and quantity above to add items</small>
+              <small>Select a raw cashew type, enter quantity and price to add items</small>
             </div>
             
             <div *ngIf="currentItems.length > 0" class="items-container">
               <div *ngFor="let item of currentItems; let i = index" class="order-item">
                 <div class="item-details">
-                  <span class="item-name">{{ getProductName(item.productId) }}</span>
-                  <span class="item-info">{{ item.quantity }} × {{ item.unitPrice | currency:'Rs. ' }} = {{ (item.quantity * item.unitPrice) | currency:'Rs. ' }}</span>
+                  <span class="item-name">{{ getRawCashewName(item.cashewTypeId) }}</span>
+                  <span class="item-info">{{ item.quantity }} kg × {{ item.unitPrice | currency:'Rs. ' }} = {{ (item.quantity * item.unitPrice) | currency:'Rs. ' }}</span>
                 </div>
-                <button type="button" class="remove-item-btn" (click)="onRemoveItem(i)" title="Remove item">
+                <button type="button" class="remove-item-btn" (click)="onRemoveItem(i)" title="Remove item" *ngIf="mode === 'create'">
                   ×
                 </button>
               </div>

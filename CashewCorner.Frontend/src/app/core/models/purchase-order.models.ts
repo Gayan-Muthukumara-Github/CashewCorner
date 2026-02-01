@@ -1,5 +1,5 @@
 export interface PurchaseOrderItemRequest {
-  productId: number;
+  cashewTypeId: number;
   quantity: number;
   unitPrice: number;
 }
@@ -13,9 +13,8 @@ export interface CreatePurchaseOrderRequest {
 
 export interface PurchaseOrderItemResponse {
   purchaseOrderItemId: number;
-  productId: number;
-  productName: string;
-  productSku: string;
+  cashewTypeId: number;
+  cashewTypeName: string;
   quantity: number;
   unitPrice: number;
   lineTotal: number;

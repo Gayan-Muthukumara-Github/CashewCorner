@@ -7,7 +7,7 @@ import {
   SalesOrderResponse,
   SalesOrderItemRequest,
 } from '../../core/models/sales-order.models';
-import { CustomerResponse } from '../../core/models/customer.models';
+import { CustomerResponse, AdvancedSearchParams } from '../../core/models/customer.models';
 import { ProductResponse } from '../../core/models/product.models';
 
 @Component({
@@ -25,11 +25,26 @@ export class SalesOrderFormModalComponent implements OnChanges {
   @Input() allProducts: ProductResponse[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<CreateSalesOrderRequest>();
+  @Output() searchCustomers = new EventEmitter<AdvancedSearchParams>();
 
   salesOrderForm: FormGroup;
   currentItems: SalesOrderItemRequest[] = [];
   selectedProductToAssign: number | null = null;
   quantityToAssign: number = 1;
+
+  // Customer search
+  showCustomerSearch = false;
+  customerSearchTerm = '';
+  filteredCustomers: CustomerResponse[] = [];
+  selectedCustomer: CustomerResponse | null = null;
+  advancedCustomerSearch: AdvancedSearchParams = {
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    type: ''
+  };
+  showAdvancedCustomerSearch = false;
 
   constructor(private readonly fb: FormBuilder) {
     this.salesOrderForm = this.fb.group({
@@ -42,6 +57,9 @@ export class SalesOrderFormModalComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen'] && this.isOpen) {
       this.initializeForm();
+    }
+    if (changes['allCustomers']) {
+      this.filteredCustomers = this.allCustomers;
     }
   }
 
@@ -58,6 +76,9 @@ export class SalesOrderFormModalComponent implements OnChanges {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       }));
+      
+      // Set selected customer for display
+      this.selectedCustomer = this.allCustomers.find(c => c.customerId === this.salesOrder?.customerId) || null;
       
       // Disable form in edit/view mode
       this.salesOrderForm.disable();
@@ -77,11 +98,87 @@ export class SalesOrderFormModalComponent implements OnChanges {
       });
       this.salesOrderForm.enable();
       this.currentItems = [];
+      this.selectedCustomer = null;
     }
     
     // Reset product selection
     this.selectedProductToAssign = null;
     this.quantityToAssign = 1;
+    
+    // Reset customer search
+    this.showCustomerSearch = false;
+    this.customerSearchTerm = '';
+    this.filteredCustomers = this.allCustomers;
+    this.resetAdvancedCustomerSearch();
+  }
+
+  // Customer search methods
+  toggleCustomerSearch(): void {
+    this.showCustomerSearch = !this.showCustomerSearch;
+    if (this.showCustomerSearch) {
+      this.filteredCustomers = this.allCustomers;
+      this.customerSearchTerm = '';
+    }
+  }
+
+  onCustomerSearchChange(): void {
+    if (!this.customerSearchTerm.trim()) {
+      this.filteredCustomers = this.allCustomers;
+      return;
+    }
+    
+    const term = this.customerSearchTerm.toLowerCase();
+    this.filteredCustomers = this.allCustomers.filter(c => 
+      c.name?.toLowerCase().includes(term) ||
+      c.phone?.toLowerCase().includes(term) ||
+      c.email?.toLowerCase().includes(term)
+    );
+  }
+
+  toggleAdvancedCustomerSearch(): void {
+    this.showAdvancedCustomerSearch = !this.showAdvancedCustomerSearch;
+    if (!this.showAdvancedCustomerSearch) {
+      this.resetAdvancedCustomerSearch();
+      this.filteredCustomers = this.allCustomers;
+    }
+  }
+
+  onAdvancedCustomerSearch(): void {
+    const { name, phone, email, address, type } = this.advancedCustomerSearch;
+    
+    this.filteredCustomers = this.allCustomers.filter(c => {
+      const matchName = !name || c.name?.toLowerCase().includes(name.toLowerCase());
+      const matchPhone = !phone || c.phone?.toLowerCase().includes(phone.toLowerCase());
+      const matchEmail = !email || c.email?.toLowerCase().includes(email.toLowerCase());
+      const matchAddress = !address || c.address?.toLowerCase().includes(address.toLowerCase());
+      const matchType = !type || c.type?.toLowerCase() === type.toLowerCase();
+      
+      return matchName && matchPhone && matchEmail && matchAddress && matchType;
+    });
+  }
+
+  resetAdvancedCustomerSearch(): void {
+    this.advancedCustomerSearch = {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      type: ''
+    };
+    this.showAdvancedCustomerSearch = false;
+  }
+
+  selectCustomer(customer: CustomerResponse): void {
+    this.selectedCustomer = customer;
+    this.salesOrderForm.patchValue({ customerId: customer.customerId });
+    this.showCustomerSearch = false;
+    this.customerSearchTerm = '';
+    this.resetAdvancedCustomerSearch();
+  }
+
+  clearSelectedCustomer(): void {
+    this.selectedCustomer = null;
+    this.salesOrderForm.patchValue({ customerId: null });
   }
 
   get title(): string {
@@ -94,6 +191,10 @@ export class SalesOrderFormModalComponent implements OnChanges {
     this.currentItems = [];
     this.selectedProductToAssign = null;
     this.quantityToAssign = 1;
+    this.selectedCustomer = null;
+    this.showCustomerSearch = false;
+    this.customerSearchTerm = '';
+    this.resetAdvancedCustomerSearch();
     this.close.emit();
   }
 

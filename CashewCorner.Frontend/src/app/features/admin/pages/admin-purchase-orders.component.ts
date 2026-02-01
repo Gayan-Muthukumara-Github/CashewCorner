@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 
 import { PurchaseOrderService } from '../../../core/services/purchase-order.service';
 import { SupplierService } from '../../../core/services/supplier.service';
-import { ProductService } from '../../../core/services/product.service';
+import { RawCashewService } from '../../../core/services/raw-cashew.service';
 import {
   CreatePurchaseOrderRequest,
   PurchaseOrderResponse,
 } from '../../../core/models/purchase-order.models';
 import { SupplierResponse } from '../../../core/models/supplier.models';
-import { ProductResponse } from '../../../core/models/product.models';
+import { RawCashewResponse } from '../../../core/models/raw-cashew.models';
 import { PurchaseOrderFormModalComponent } from '../../../shared/components/purchase-order-form-modal.component';
 
 @Component({
@@ -23,7 +23,7 @@ import { PurchaseOrderFormModalComponent } from '../../../shared/components/purc
 export class AdminPurchaseOrdersComponent implements OnInit {
   purchaseOrders: PurchaseOrderResponse[] = [];
   suppliers: SupplierResponse[] = [];
-  products: ProductResponse[] = [];
+  rawCashews: RawCashewResponse[] = [];
   isLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -36,13 +36,13 @@ export class AdminPurchaseOrdersComponent implements OnInit {
   constructor(
     private readonly purchaseOrderService: PurchaseOrderService,
     private readonly supplierService: SupplierService,
-    private readonly productService: ProductService
+    private readonly rawCashewService: RawCashewService
   ) {}
 
   ngOnInit(): void {
     this.loadPurchaseOrders();
     this.loadSuppliers();
-    this.loadProducts();
+    this.loadRawCashews();
   }
 
   loadPurchaseOrders(): void {
@@ -85,13 +85,13 @@ export class AdminPurchaseOrdersComponent implements OnInit {
     });
   }
 
-  loadProducts(): void {
-    this.productService.getProducts().subscribe({
-      next: (products) => {
-        this.products = products;
+  loadRawCashews(): void {
+    this.rawCashewService.getRawCashews().subscribe({
+      next: (rawCashews) => {
+        this.rawCashews = rawCashews;
       },
       error: (err) => {
-        console.error('Failed to load products:', err);
+        console.error('Failed to load raw cashew types:', err);
       }
     });
   }

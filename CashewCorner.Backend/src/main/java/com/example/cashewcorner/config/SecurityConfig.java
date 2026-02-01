@@ -88,6 +88,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
+                        // Public endpoint for order tracking (customers)
+                        .requestMatchers(HttpMethod.GET, "/api/sales-orders/track/**").permitAll()
+
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )

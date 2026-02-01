@@ -7,8 +7,8 @@ import {
   PurchaseOrderResponse,
   PurchaseOrderItemRequest,
 } from '../../core/models/purchase-order.models';
-import { SupplierResponse } from '../../core/models/supplier.models';
-import { ProductResponse } from '../../core/models/product.models';
+import { SupplierResponse, AdvancedSupplierSearchParams } from '../../core/models/supplier.models';
+import { RawCashewResponse } from '../../core/models/raw-cashew.models';
 
 @Component({
   selector: 'app-purchase-order-form-modal',
@@ -22,15 +22,29 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() purchaseOrder: PurchaseOrderResponse | null = null;
   @Input() allSuppliers: SupplierResponse[] = [];
-  @Input() allProducts: ProductResponse[] = [];
+  @Input() allRawCashews: RawCashewResponse[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<CreatePurchaseOrderRequest>();
 
   purchaseOrderForm: FormGroup;
   currentItems: PurchaseOrderItemRequest[] = [];
-  selectedProductToAssign: number | null = null;
+  selectedRawCashewToAssign: number | null = null;
   quantityToAssign: number = 1;
   unitPriceToAssign: number = 0;
+
+  // Supplier search
+  showSupplierSearch = false;
+  supplierSearchTerm = '';
+  filteredSuppliers: SupplierResponse[] = [];
+  selectedSupplier: SupplierResponse | null = null;
+  advancedSupplierSearch: AdvancedSupplierSearchParams = {
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    contactPerson: ''
+  };
+  showAdvancedSupplierSearch = false;
 
   constructor(private readonly fb: FormBuilder) {
     this.purchaseOrderForm = this.fb.group({
@@ -44,6 +58,9 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     if (changes['isOpen'] && this.isOpen) {
       this.initializeForm();
     }
+    if (changes['allSuppliers']) {
+      this.filteredSuppliers = this.allSuppliers;
+    }
   }
 
   private initializeForm(): void {
@@ -55,10 +72,13 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
       });
       this.purchaseOrderForm.disable(); // For viewing details
       this.currentItems = this.purchaseOrder.items.map(item => ({
-        productId: item.productId,
+        cashewTypeId: item.cashewTypeId,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
       }));
+      
+      // Set selected supplier for display
+      this.selectedSupplier = this.allSuppliers.find(s => s.supplierId === this.purchaseOrder?.supplierId) || null;
     } else {
       // Create mode - set today's date
       const today = new Date();
@@ -75,10 +95,87 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
       });
       this.purchaseOrderForm.enable();
       this.currentItems = [];
+      this.selectedSupplier = null;
     }
-    this.selectedProductToAssign = null;
+    this.selectedRawCashewToAssign = null;
     this.quantityToAssign = 1;
     this.unitPriceToAssign = 0;
+    
+    // Reset supplier search
+    this.showSupplierSearch = false;
+    this.supplierSearchTerm = '';
+    this.filteredSuppliers = this.allSuppliers;
+    this.resetAdvancedSupplierSearch();
+  }
+
+  // Supplier search methods
+  toggleSupplierSearch(): void {
+    this.showSupplierSearch = !this.showSupplierSearch;
+    if (this.showSupplierSearch) {
+      this.filteredSuppliers = this.allSuppliers;
+      this.supplierSearchTerm = '';
+    }
+  }
+
+  onSupplierSearchChange(): void {
+    if (!this.supplierSearchTerm.trim()) {
+      this.filteredSuppliers = this.allSuppliers;
+      return;
+    }
+    
+    const term = this.supplierSearchTerm.toLowerCase();
+    this.filteredSuppliers = this.allSuppliers.filter(s => 
+      s.name?.toLowerCase().includes(term) ||
+      s.phone?.toLowerCase().includes(term) ||
+      s.email?.toLowerCase().includes(term) ||
+      s.contactPerson?.toLowerCase().includes(term)
+    );
+  }
+
+  toggleAdvancedSupplierSearch(): void {
+    this.showAdvancedSupplierSearch = !this.showAdvancedSupplierSearch;
+    if (!this.showAdvancedSupplierSearch) {
+      this.resetAdvancedSupplierSearch();
+      this.filteredSuppliers = this.allSuppliers;
+    }
+  }
+
+  onAdvancedSupplierSearch(): void {
+    const { name, phone, email, address, contactPerson } = this.advancedSupplierSearch;
+    
+    this.filteredSuppliers = this.allSuppliers.filter(s => {
+      const matchName = !name || s.name?.toLowerCase().includes(name.toLowerCase());
+      const matchPhone = !phone || s.phone?.toLowerCase().includes(phone.toLowerCase());
+      const matchEmail = !email || s.email?.toLowerCase().includes(email.toLowerCase());
+      const matchAddress = !address || s.address?.toLowerCase().includes(address.toLowerCase());
+      const matchContactPerson = !contactPerson || s.contactPerson?.toLowerCase().includes(contactPerson.toLowerCase());
+      
+      return matchName && matchPhone && matchEmail && matchAddress && matchContactPerson;
+    });
+  }
+
+  resetAdvancedSupplierSearch(): void {
+    this.advancedSupplierSearch = {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      contactPerson: ''
+    };
+    this.showAdvancedSupplierSearch = false;
+  }
+
+  selectSupplier(supplier: SupplierResponse): void {
+    this.selectedSupplier = supplier;
+    this.purchaseOrderForm.patchValue({ supplierId: supplier.supplierId });
+    this.showSupplierSearch = false;
+    this.supplierSearchTerm = '';
+    this.resetAdvancedSupplierSearch();
+  }
+
+  clearSelectedSupplier(): void {
+    this.selectedSupplier = null;
+    this.purchaseOrderForm.patchValue({ supplierId: null });
   }
 
   get title(): string {
@@ -88,6 +185,14 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   onClose(): void {
     this.purchaseOrderForm.reset();
     this.purchaseOrderForm.enable();
+    this.currentItems = [];
+    this.selectedRawCashewToAssign = null;
+    this.quantityToAssign = 1;
+    this.unitPriceToAssign = 0;
+    this.selectedSupplier = null;
+    this.showSupplierSearch = false;
+    this.supplierSearchTerm = '';
+    this.resetAdvancedSupplierSearch();
     this.close.emit();
   }
 
@@ -125,7 +230,7 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
         orderDate: formValue.orderDate,
         expectedDate: formValue.expectedDate,
         items: this.currentItems.map(item => ({
-          productId: Number(item.productId),
+          cashewTypeId: Number(item.cashewTypeId),
           quantity: Number(item.quantity),
           unitPrice: Number(item.unitPrice)
         }))
@@ -137,10 +242,10 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   }
 
   onAddItem(): void {
-    console.log('Adding item - Product:', this.selectedProductToAssign, 'Quantity:', this.quantityToAssign, 'Price:', this.unitPriceToAssign);
+    console.log('Adding item - Raw Cashew:', this.selectedRawCashewToAssign, 'Quantity:', this.quantityToAssign, 'Price:', this.unitPriceToAssign);
     
-    if (!this.selectedProductToAssign) {
-      alert('Please select a product');
+    if (!this.selectedRawCashewToAssign) {
+      alert('Please select a raw cashew type');
       return;
     }
 
@@ -150,20 +255,20 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     }
 
     if (!this.unitPriceToAssign || this.unitPriceToAssign <= 0) {
-      alert('Please enter a valid unit price');
+      alert('Please enter a valid item price');
       return;
     }
 
     // Convert to number for comparison since select returns string
-    const productIdNumber = Number(this.selectedProductToAssign);
-    const product = this.allProducts.find(p => p.productId === productIdNumber);
+    const cashewTypeIdNumber = Number(this.selectedRawCashewToAssign);
+    const rawCashew = this.allRawCashews.find(r => r.cashewTypeId === cashewTypeIdNumber);
     
-    if (!product) {
-      console.error('Product not found. ProductId:', productIdNumber);
+    if (!rawCashew) {
+      console.error('Raw Cashew not found. CashewTypeId:', cashewTypeIdNumber);
       return;
     }
 
-    const existingItemIndex = this.currentItems.findIndex(item => item.productId === productIdNumber);
+    const existingItemIndex = this.currentItems.findIndex(item => item.cashewTypeId === cashewTypeIdNumber);
     
     if (existingItemIndex !== -1) {
       // Update existing item quantity
@@ -172,7 +277,7 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     } else {
       // Add new item
       const newItem: PurchaseOrderItemRequest = {
-        productId: productIdNumber,
+        cashewTypeId: cashewTypeIdNumber,
         quantity: Number(this.quantityToAssign),
         unitPrice: Number(this.unitPriceToAssign)
       };
@@ -183,7 +288,7 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     console.log('Current items after add:', this.currentItems);
     
     // Reset selection
-    this.selectedProductToAssign = null;
+    this.selectedRawCashewToAssign = null;
     this.quantityToAssign = 1;
     this.unitPriceToAssign = 0;
   }
@@ -192,8 +297,9 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     this.currentItems.splice(index, 1);
   }
 
-  getProductName(productId: number): string {
-    return this.allProducts.find(p => p.productId === productId)?.name || 'Unknown Product';
+  getRawCashewName(cashewTypeId: number): string {
+    const rawCashew = this.allRawCashews.find(r => r.cashewTypeId === cashewTypeId);
+    return rawCashew ? `${rawCashew.cashewType} (${rawCashew.cashewQuality})` : 'Unknown';
   }
 
   getTotalAmount(): number {
@@ -210,8 +316,8 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     return supplierId && orderDate && expectedDate;
   }
 
-  onProductSelectionChange(productId: number | null): void {
-    console.log('Product selected:', productId);
+  onRawCashewSelectionChange(cashewTypeId: number | null): void {
+    console.log('Raw Cashew selected:', cashewTypeId);
   }
 
   onQuantityChange(quantity: number): void {

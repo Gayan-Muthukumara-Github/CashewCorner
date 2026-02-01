@@ -36,9 +36,11 @@
           <th>Contact Person</th>
           <th>Email</th>
           <th>Phone</th>
-          <th>Address</th>
-          <th>Payment Terms</th>
+          <th>Cashew Type</th>
+          <th>Quality</th>
+          <th>Cost/Unit</th>
           <th>Approved</th>
+          <th>Active</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -49,8 +51,9 @@
           <td>{{ supplier.contactPerson }}</td>
           <td>{{ supplier.email }}</td>
           <td>{{ supplier.phone }}</td>
-          <td>{{ supplier.address }}</td>
-          <td>{{ supplier.paymentTerms }}</td>
+          <td>{{ supplier.cashewTypeName || '-' }}</td>
+          <td>{{ supplier.quality || '-' }}</td>
+          <td>{{ supplier.costPerUnit ? (supplier.costPerUnit | number:'1.2-2') : '-' }}</td>
           <td>
             <span
               class="status-pill"
@@ -58,6 +61,15 @@
               [class.inactive]="!supplier.isApproved"
             >
               {{ supplier.isApproved ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="supplier.isActive"
+              [class.inactive]="!supplier.isActive"
+            >
+              {{ supplier.isActive ? 'Yes' : 'No' }}
             </span>
           </td>
           <td class="actions">

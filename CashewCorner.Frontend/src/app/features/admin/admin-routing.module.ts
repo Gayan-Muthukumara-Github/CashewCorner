@@ -18,6 +18,8 @@ import { AdminSalesOrdersComponent } from './pages/admin-sales-orders.component'
 import { AdminPurchaseOrdersComponent } from './pages/admin-purchase-orders.component';
 import { AdminInventoryComponent } from './pages/admin-inventory.component';
 import { AdminReportsComponent } from './pages/admin-reports.component';
+import { AdminRawCashewComponent } from './pages/admin-raw-cashew.component';
+import { AdminRawCashewInventoryComponent } from './pages/admin-raw-cashew-inventory.component';
 
 const routes: Routes = [
   {
@@ -42,6 +44,8 @@ const routes: Routes = [
       { path: 'sales-orders', component: AdminSalesOrdersComponent },
       { path: 'purchase-orders', component: AdminPurchaseOrdersComponent },
       { path: 'inventory', component: AdminInventoryComponent },
+      { path: 'raw-cashew-inventory', component: AdminRawCashewInventoryComponent },
+      { path: 'raw-cashew', component: AdminRawCashewComponent },
       { path: 'analytics', component: AdminReportsComponent },
     ]
   }

@@ -65,7 +65,7 @@
           <td>
             <ul *ngIf="purchaseOrder.items.length > 0">
               <li *ngFor="let item of purchaseOrder.items">
-                {{ item.productName }} ({{ item.quantity }} x {{ item.unitPrice | currency:'Rs. ' }})
+                {{ item.cashewTypeName }} ({{ item.quantity }} kg × {{ item.unitPrice | currency:'Rs. ' }})
               </li>
             </ul>
             <span *ngIf="purchaseOrder.items.length === 0">No items</span>
@@ -85,7 +85,7 @@
     [mode]="modalMode"
     [purchaseOrder]="selectedPurchaseOrder"
     [allSuppliers]="suppliers"
-    [allProducts]="products"
+    [allRawCashews]="rawCashews"
     (close)="closeModal()"
     (save)="onCreatePurchaseOrder($event)"
   ></app-purchase-order-form-modal>

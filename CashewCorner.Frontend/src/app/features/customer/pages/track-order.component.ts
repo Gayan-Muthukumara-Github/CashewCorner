@@ -215,10 +215,6 @@ interface OrderTrackingResult {
                       <span class="desc">Order is being processed</span>
                     </div>
                     <div class="status-item">
-                      <span class="status status-shipped">Shipped</span>
-                      <span class="desc">Order has been shipped</span>
-                    </div>
-                    <div class="status-item">
                       <span class="status status-delivered">Delivered</span>
                       <span class="desc">Order successfully delivered</span>
                     </div>
@@ -469,10 +465,6 @@ interface OrderTrackingResult {
       color: #3730a3;
     }
     
-    .status-shipped {
-      background: #cffafe;
-      color: #0e7490;
-    }
     
     .status-delivered {
       background: #d1fae5;
@@ -785,39 +777,19 @@ export class TrackOrderComponent {
     
     const orderNo = this.form.value.orderId?.trim() || '';
     
-    // Try to parse as numeric ID first, otherwise search by order number
-    const numericId = parseInt(orderNo, 10);
-    
-    if (!isNaN(numericId) && numericId > 0) {
-      // Search by ID
-      this.salesOrderService.getSalesOrderById(numericId).subscribe({
-        next: (order) => {
-          this.processOrderResult(order);
-          this.isTracking = false;
-        },
-        error: (err) => {
-          console.error('Error fetching order:', err);
-          this.searchByOrderNumber(orderNo);
-        }
-      });
-    } else {
-      this.searchByOrderNumber(orderNo);
-    }
-  }
-
-  private searchByOrderNumber(orderNo: string): void {
-    this.salesOrderService.searchSalesOrders(orderNo).subscribe({
-      next: (orders) => {
-        if (orders && orders.length > 0) {
-          this.processOrderResult(orders[0]);
-        } else {
-          this.errorMessage = `No order found with number "${orderNo}". Please check and try again.`;
-        }
+    // Use the public tracking endpoint
+    this.salesOrderService.trackOrder(orderNo).subscribe({
+      next: (order) => {
+        this.processOrderResult(order);
         this.isTracking = false;
       },
       error: (err) => {
-        console.error('Error searching orders:', err);
-        this.errorMessage = err.error?.message || 'Failed to find order. Please try again.';
+        console.error('Error tracking order:', err);
+        if (err.status === 404) {
+          this.errorMessage = `No order found with number "${orderNo}". Please check and try again.`;
+        } else {
+          this.errorMessage = err.error?.message || 'Failed to find order. Please try again.';
+        }
         this.isTracking = false;
       }
     });
@@ -846,7 +818,7 @@ export class TrackOrderComponent {
   }
 
   private generateTimeline(order: SalesOrderResponse): TimelineEvent[] {
-    const statuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+    const statuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'DELIVERED'];
     const currentIndex = statuses.indexOf(order.status.toUpperCase());
     
     const timeline: TimelineEvent[] = [
@@ -870,13 +842,6 @@ export class TrackOrderComponent {
         location: 'Warehouse',
         completed: currentIndex >= 2,
         active: currentIndex === 2
-      },
-      {
-        title: 'Shipped',
-        date: currentIndex >= 3 ? 'On the way' : 'Pending',
-        location: 'Distribution Center',
-        completed: currentIndex >= 3,
-        active: currentIndex === 3
       },
       {
         title: 'Delivered',
@@ -925,7 +890,6 @@ export class TrackOrderComponent {
       'PENDING': 0,
       'CONFIRMED': 1,
       'PROCESSING': 2,
-      'SHIPPED': 3,
       'DELIVERED': 4,
       'CANCELLED': -1
     };

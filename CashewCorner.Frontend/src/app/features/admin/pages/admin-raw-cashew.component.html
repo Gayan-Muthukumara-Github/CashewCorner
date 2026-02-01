@@ -1,0 +1,99 @@
+<div class="raw-cashew-page">
+  <div class="page-header">
+    <div>
+      <h1>Raw Cashew Management</h1>
+      <p class="subtitle">Create, update and manage raw cashew types.</p>
+    </div>
+    <button class="primary" type="button" (click)="openCreateModal()">
+      + New Raw Cashew Type
+    </button>
+  </div>
+
+  <section class="raw-cashew-list">
+    <div class="search-bar">
+      <div class="search-inputs">
+        <input
+          type="text"
+          placeholder="Search by type (e.g., W320, W240)..."
+          [(ngModel)]="searchType"
+          (keyup.enter)="onSearch()"
+        />
+        <input
+          type="text"
+          placeholder="Search by quality..."
+          [(ngModel)]="searchQuality"
+          (keyup.enter)="onSearch()"
+        />
+        <button type="button" class="secondary" (click)="onSearch()">
+          Search
+        </button>
+        <button type="button" class="link" (click)="clearSearch()" *ngIf="searchType || searchQuality">
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="info">Loading raw cashew types...</div>
+    <div *ngIf="!isLoading && rawCashews.length === 0" class="info">
+      No raw cashew types found.
+    </div>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!isLoading && rawCashews.length > 0" class="raw-cashew-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cashew Type</th>
+          <th>Quality</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rawCashew of rawCashews">
+          <td>{{ rawCashew.cashewTypeId }}</td>
+          <td>
+            <span class="cashew-type-badge">{{ rawCashew.cashewType }}</span>
+          </td>
+          <td>{{ rawCashew.cashewQuality || '-' }}</td>
+          <td class="description-cell">{{ rawCashew.description || '-' }}</td>
+          <td>
+            <span
+              class="status-pill"
+              [class.active]="rawCashew.isActive"
+              [class.inactive]="!rawCashew.isActive"
+            >
+              {{ rawCashew.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ rawCashew.createdAt | date:'mediumDate' }}</td>
+          <td class="actions">
+            <button type="button" class="link" (click)="openEditModal(rawCashew)">
+              Edit
+            </button>
+            <button
+              type="button"
+              class="link danger"
+              (click)="deleteRawCashew(rawCashew.cashewTypeId)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <app-raw-cashew-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [rawCashew]="selectedRawCashew"
+    (close)="closeModal()"
+    (save)="onSaveRawCashew($event)"
+  ></app-raw-cashew-form-modal>
+</div>

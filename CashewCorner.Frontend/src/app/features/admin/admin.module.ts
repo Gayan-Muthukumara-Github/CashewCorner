@@ -27,6 +27,8 @@ import { AdminInventoryComponent } from './pages/admin-inventory.component';
 import { ReceiveStockModalComponent } from '../../shared/components/receive-stock-modal.component';
 import { AdjustStockModalComponent } from '../../shared/components/adjust-stock-modal.component';
 import { AdminReportsComponent } from './pages/admin-reports.component';
+import { AdminRawCashewComponent } from './pages/admin-raw-cashew.component';
+import { RawCashewFormModalComponent } from '../../shared/components/raw-cashew-form-modal.component';
 
 @NgModule({
   declarations: [],
@@ -58,7 +60,9 @@ import { AdminReportsComponent } from './pages/admin-reports.component';
     AdminInventoryComponent,
     ReceiveStockModalComponent,
     AdjustStockModalComponent,
-    AdminReportsComponent
+    AdminReportsComponent,
+    AdminRawCashewComponent,
+    RawCashewFormModalComponent
   ]
 })
 export class AdminModule { }

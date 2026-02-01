@@ -1,0 +1,66 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button type="button" class="close-btn" (click)="onClose()" aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="rawCashewForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="cashewType">Cashew Type *</label>
+            <input
+              id="cashewType"
+              type="text"
+              formControlName="cashewType"
+              list="cashewTypeList"
+              placeholder="e.g., W320, W240"
+              [class.error]="cashewType?.invalid && cashewType?.touched"
+            />
+            <datalist id="cashewTypeList">
+              <option *ngFor="let type of cashewTypeOptions" [value]="type"></option>
+            </datalist>
+            <small *ngIf="cashewType?.invalid && cashewType?.touched" class="error">
+              Cashew type is required (min 2 characters).
+            </small>
+          </div>
+
+          <div class="form-field">
+            <label for="cashewQuality">Quality</label>
+            <select
+              id="cashewQuality"
+              formControlName="cashewQuality"
+            >
+              <option value="">Select quality...</option>
+              <option *ngFor="let quality of qualityOptions" [value]="quality">
+                {{ quality }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Enter description about this cashew type..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary" [disabled]="rawCashewForm.invalid">
+            {{ mode === 'create' ? 'Create Raw Cashew Type' : 'Save Changes' }}
+          </button>
+          <button type="button" class="secondary" (click)="onClose()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

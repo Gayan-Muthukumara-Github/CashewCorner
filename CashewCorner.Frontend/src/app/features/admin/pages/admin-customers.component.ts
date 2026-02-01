@@ -3,7 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { CustomerService } from '../../../core/services/customer.service';
-import { CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse } from '../../../core/models/customer.models';
+import { 
+  CreateCustomerRequest, 
+  UpdateCustomerRequest, 
+  CustomerResponse,
+  AdvancedSearchParams,
+  OrderStatusResponse
+} from '../../../core/models/customer.models';
 import { CustomerFormModalComponent } from '../../../shared/components/customer-form-modal.component';
 
 @Component({
@@ -17,11 +23,30 @@ export class AdminCustomersComponent implements OnInit {
   customers: CustomerResponse[] = [];
   isLoading = false;
   errorMessage = '';
+  
+  // Simple search
   searchTerm = '';
+  
+  // Advanced search
+  showAdvancedSearch = false;
+  advancedSearch: AdvancedSearchParams = {
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    type: ''
+  };
 
+  // Modal state
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
   selectedCustomer: CustomerResponse | null = null;
+
+  // Customer orders modal
+  isOrdersModalOpen = false;
+  customerOrders: OrderStatusResponse[] = [];
+  ordersCustomerName = '';
+  isLoadingOrders = false;
 
   constructor(private readonly customerService: CustomerService) {}
 
@@ -59,6 +84,48 @@ export class AdminCustomersComponent implements OnInit {
   }
 
   onSearch(): void {
+    this.loadCustomers();
+  }
+
+  toggleAdvancedSearch(): void {
+    this.showAdvancedSearch = !this.showAdvancedSearch;
+    if (!this.showAdvancedSearch) {
+      this.clearAdvancedSearch();
+    }
+  }
+
+  onAdvancedSearch(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // Check if any advanced search params are provided
+    const hasAdvancedParams = Object.values(this.advancedSearch).some(v => v && v.trim() !== '');
+
+    if (!hasAdvancedParams) {
+      this.loadCustomers();
+      return;
+    }
+
+    this.customerService.searchCustomersAdvanced(this.advancedSearch).subscribe({
+      next: (customers) => {
+        this.customers = customers;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.message || 'Failed to search customers.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  clearAdvancedSearch(): void {
+    this.advancedSearch = {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      type: ''
+    };
     this.loadCustomers();
   }
 
@@ -115,6 +182,47 @@ export class AdminCustomersComponent implements OnInit {
           this.errorMessage = err.message || 'Failed to delete customer.';
         }
       });
+    }
+  }
+
+  viewCustomerOrders(customer: CustomerResponse): void {
+    this.ordersCustomerName = customer.name;
+    this.isOrdersModalOpen = true;
+    this.isLoadingOrders = true;
+    this.customerOrders = [];
+
+    this.customerService.getCustomerOrderStatus(customer.customerId).subscribe({
+      next: (orders) => {
+        this.customerOrders = orders;
+        this.isLoadingOrders = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.message || 'Failed to load customer orders.';
+        this.isLoadingOrders = false;
+      }
+    });
+  }
+
+  closeOrdersModal(): void {
+    this.isOrdersModalOpen = false;
+    this.customerOrders = [];
+    this.ordersCustomerName = '';
+  }
+
+  getStatusClass(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'completed':
+      case 'delivered':
+        return 'status-completed';
+      case 'pending':
+        return 'status-pending';
+      case 'processing':
+      case 'in_progress':
+        return 'status-processing';
+      case 'cancelled':
+        return 'status-cancelled';
+      default:
+        return 'status-default';
     }
   }
 }

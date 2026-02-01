@@ -10,14 +10,98 @@
     <div class="modal-body">
       <form [formGroup]="salesOrderForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="form-grid">
-          <div class="form-field">
-            <label for="customerId">Customer</label>
-            <select id="customerId" formControlName="customerId" [class.error]="customerId?.invalid && customerId?.touched">
-              <option [value]="null" disabled>Select a customer</option>
-              <option *ngFor="let customer of allCustomers" [value]="customer.customerId">
-                {{ customer.name }}
-              </option>
-            </select>
+          <!-- Customer Selection with Search -->
+          <div class="form-field full-width">
+            <label>Customer</label>
+            
+            <!-- Selected Customer Display -->
+            <div *ngIf="selectedCustomer && !showCustomerSearch" class="selected-customer">
+              <div class="customer-info">
+                <span class="customer-name">{{ selectedCustomer.name }}</span>
+                <span class="customer-details">{{ selectedCustomer.phone }} • {{ selectedCustomer.email }}</span>
+              </div>
+              <button type="button" class="change-customer-btn" (click)="toggleCustomerSearch()" *ngIf="mode === 'create'">
+                Change
+              </button>
+              <button type="button" class="clear-customer-btn" (click)="clearSelectedCustomer()" *ngIf="mode === 'create'">
+                ×
+              </button>
+            </div>
+
+            <!-- Customer Search Panel -->
+            <div *ngIf="!selectedCustomer || showCustomerSearch" class="customer-search-panel">
+              <div class="search-header">
+                <input
+                  type="text"
+                  placeholder="Search customers by name, phone, or email..."
+                  [(ngModel)]="customerSearchTerm"
+                  [ngModelOptions]="{standalone: true}"
+                  (ngModelChange)="onCustomerSearchChange()"
+                  class="customer-search-input"
+                />
+                <button type="button" class="advanced-search-toggle" (click)="toggleAdvancedCustomerSearch()">
+                  {{ showAdvancedCustomerSearch ? 'Hide' : 'Advanced' }}
+                </button>
+              </div>
+
+              <!-- Advanced Search Fields -->
+              <div *ngIf="showAdvancedCustomerSearch" class="advanced-search-fields">
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Name</label>
+                    <input type="text" [(ngModel)]="advancedCustomerSearch.name" [ngModelOptions]="{standalone: true}" placeholder="Customer name" />
+                  </div>
+                  <div class="search-field">
+                    <label>Phone</label>
+                    <input type="text" [(ngModel)]="advancedCustomerSearch.phone" [ngModelOptions]="{standalone: true}" placeholder="Phone number" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="advancedCustomerSearch.email" [ngModelOptions]="{standalone: true}" placeholder="Email address" />
+                  </div>
+                  <div class="search-field">
+                    <label>Type</label>
+                    <input type="text" [(ngModel)]="advancedCustomerSearch.type" [ngModelOptions]="{standalone: true}" placeholder="Customer type" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field full">
+                    <label>Address</label>
+                    <input type="text" [(ngModel)]="advancedCustomerSearch.address" [ngModelOptions]="{standalone: true}" placeholder="Address" />
+                  </div>
+                </div>
+                <div class="advanced-search-actions">
+                  <button type="button" class="search-btn" (click)="onAdvancedCustomerSearch()">Search</button>
+                  <button type="button" class="reset-btn" (click)="resetAdvancedCustomerSearch(); filteredCustomers = allCustomers">Reset</button>
+                </div>
+              </div>
+
+              <!-- Customer Results List -->
+              <div class="customer-results">
+                <div *ngIf="filteredCustomers.length === 0" class="no-results">
+                  No customers found. Try a different search.
+                </div>
+                <div *ngFor="let customer of filteredCustomers" 
+                     class="customer-result-item"
+                     [class.inactive]="!customer.isActive"
+                     (click)="selectCustomer(customer)">
+                  <div class="result-main">
+                    <span class="result-name">{{ customer.name }}</span>
+                    <span class="result-type" *ngIf="customer.type">{{ customer.type }}</span>
+                  </div>
+                  <div class="result-details">
+                    <span *ngIf="customer.phone">📞 {{ customer.phone }}</span>
+                    <span *ngIf="customer.email">✉️ {{ customer.email }}</span>
+                  </div>
+                  <div class="result-address" *ngIf="customer.address">
+                    📍 {{ customer.address }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <small *ngIf="customerId?.invalid && customerId?.touched" class="error">
               Customer is required.
             </small>

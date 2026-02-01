@@ -221,7 +221,6 @@ export class AdminDashboardComponent implements OnInit {
     const statusMap: Record<string, string> = {
       'PENDING': 'pending',
       'PROCESSING': 'processing',
-      'SHIPPED': 'shipped',
       'DELIVERED': 'completed',
       'COMPLETED': 'completed',
       'CANCELLED': 'failed'
