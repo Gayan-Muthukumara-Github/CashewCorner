@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SupplierService } from '../../../core/services/supplier.service';
-import { CreateSupplierRequest, UpdateSupplierRequest, SupplierResponse } from '../../../core/models/supplier.models';
+import { RawCashewService } from '../../../core/services/raw-cashew.service';
+import { CreateSupplierRequest, UpdateSupplierRequest, SupplierResponse, AdvancedSupplierSearchParams } from '../../../core/models/supplier.models';
+import { RawCashewResponse } from '../../../core/models/raw-cashew.models';
 import { SupplierFormModalComponent } from '../../../shared/components/supplier-form-modal.component';
 
 @Component({
@@ -23,17 +25,44 @@ export class AdminSuppliersComponent implements OnInit {
   modalMode: 'create' | 'edit' = 'create';
   selectedSupplier: SupplierResponse | null = null;
 
-  constructor(private readonly supplierService: SupplierService) {}
+  // Advanced search
+  showAdvancedSearch = false;
+  cashewTypes: RawCashewResponse[] = [];
+  advancedParams: AdvancedSupplierSearchParams = {};
+
+  constructor(
+    private readonly supplierService: SupplierService,
+    private readonly rawCashewService: RawCashewService
+  ) {}
 
   ngOnInit(): void {
     this.loadSuppliers();
+    this.loadCashewTypes();
+  }
+
+  loadCashewTypes(): void {
+    this.rawCashewService.getRawCashews().subscribe({
+      next: (types) => this.cashewTypes = types,
+      error: () => {}
+    });
   }
 
   loadSuppliers(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    if (this.searchTerm) {
+    if (this.showAdvancedSearch) {
+      this.supplierService.advancedSearchSuppliers(this.advancedParams).subscribe({
+        next: (suppliers) => {
+          this.suppliers = suppliers;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.errorMessage = err.message || 'Failed to search suppliers.';
+          this.isLoading = false;
+        }
+      });
+    } else if (this.searchTerm) {
       this.supplierService.searchSuppliers(this.searchTerm).subscribe({
         next: (suppliers) => {
           this.suppliers = suppliers;
@@ -59,6 +88,23 @@ export class AdminSuppliersComponent implements OnInit {
   }
 
   onSearch(): void {
+    this.loadSuppliers();
+  }
+
+  toggleAdvancedSearch(): void {
+    this.showAdvancedSearch = !this.showAdvancedSearch;
+    if (!this.showAdvancedSearch) {
+      this.advancedParams = {};
+      this.loadSuppliers();
+    }
+  }
+
+  onAdvancedSearch(): void {
+    this.loadSuppliers();
+  }
+
+  clearAdvancedSearch(): void {
+    this.advancedParams = {};
     this.loadSuppliers();
   }
 

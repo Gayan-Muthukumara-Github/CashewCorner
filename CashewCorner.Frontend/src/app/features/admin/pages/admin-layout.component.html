@@ -5,55 +5,55 @@
       <span class="name">Cashew Corner</span>
     </div>
     <nav class="nav">
-      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🏠</span>
         <span>Dashboard</span>
       </a>
-      <a routerLink="/admin/users" routerLinkActive="active">
+      <a routerLink="/admin/users" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🧑‍💼</span>
         <span>Users</span>
       </a>
-      <a routerLink="/admin/suppliers" routerLinkActive="active">
+      <a routerLink="/admin/suppliers" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🚚</span>
         <span>Suppliers</span>
       </a>
-      <a routerLink="/admin/customers" routerLinkActive="active">
+      <a routerLink="/admin/customers" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">👥</span>
         <span>Customers</span>
       </a>
-      <a routerLink="/admin/categories" routerLinkActive="active">
+      <a routerLink="/admin/categories" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">📚</span>
         <span>Categories</span>
       </a>
-      <a routerLink="/admin/products" routerLinkActive="active">
+      <a routerLink="/admin/products" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">📦</span>
         <span>Products</span>
       </a>
-      <a routerLink="/admin/inventory" routerLinkActive="active">
+      <a routerLink="/admin/inventory" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">📋</span>
         <span>Product Inventory</span>
       </a>
-      <a routerLink="/admin/raw-cashew-inventory" routerLinkActive="active">
+      <a routerLink="/admin/raw-cashew-inventory" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🥜</span>
         <span>Raw Cashew Inventory</span>
       </a>
-      <a routerLink="/admin/raw-cashew" routerLinkActive="active">
+      <a routerLink="/admin/raw-cashew" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🏷️</span>
         <span>Raw Cashew Types</span>
       </a>
-      <a routerLink="/admin/sales-orders" routerLinkActive="active">
+      <a routerLink="/admin/sales-orders" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">📝</span>
         <span>Sales Orders</span>
       </a>
-      <a routerLink="/admin/purchase-orders" routerLinkActive="active">
+      <a routerLink="/admin/purchase-orders" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">🛒</span>
         <span>Purchase Orders</span>
       </a>
-      <a routerLink="/admin/employees" routerLinkActive="active">
+      <a routerLink="/admin/employees" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">👨‍💼</span>
         <span>Employees</span>
       </a>
-      <a routerLink="/admin/payrolls" routerLinkActive="active">
+      <a routerLink="/admin/payrolls" routerLinkActive="active" *ngIf="userRole !== 'MANAGER'">
         <span class="icon">💰</span>
         <span>Payroll</span>
       </a>
@@ -85,7 +85,7 @@
               <div class="user-menu-avatar">{{ adminUser.charAt(0).toUpperCase() }}</div>
               <div class="user-menu-info">
                 <div class="user-menu-name">{{ adminUser }}</div>
-                <div class="user-menu-role">Administrator</div>
+                <div class="user-menu-role">{{ userRole || 'User' }}</div>
               </div>
             </div>
             <div class="user-menu-divider"></div>

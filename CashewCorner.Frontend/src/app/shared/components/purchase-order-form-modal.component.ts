@@ -9,6 +9,7 @@ import {
 } from '../../core/models/purchase-order.models';
 import { SupplierResponse, AdvancedSupplierSearchParams } from '../../core/models/supplier.models';
 import { RawCashewResponse } from '../../core/models/raw-cashew.models';
+import { SupplierService } from '../../core/services/supplier.service';
 
 @Component({
   selector: 'app-purchase-order-form-modal',
@@ -37,16 +38,14 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   supplierSearchTerm = '';
   filteredSuppliers: SupplierResponse[] = [];
   selectedSupplier: SupplierResponse | null = null;
-  advancedSupplierSearch: AdvancedSupplierSearchParams = {
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-    contactPerson: ''
-  };
+  advancedSupplierSearch: AdvancedSupplierSearchParams = {};
   showAdvancedSupplierSearch = false;
+  isAdvancedSearchLoading = false;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly supplierService: SupplierService
+  ) {
     this.purchaseOrderForm = this.fb.group({
       supplierId: [null, [Validators.required]],
       orderDate: ['', [Validators.required]],
@@ -141,27 +140,21 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   }
 
   onAdvancedSupplierSearch(): void {
-    const { name, phone, email, address, contactPerson } = this.advancedSupplierSearch;
-    
-    this.filteredSuppliers = this.allSuppliers.filter(s => {
-      const matchName = !name || s.name?.toLowerCase().includes(name.toLowerCase());
-      const matchPhone = !phone || s.phone?.toLowerCase().includes(phone.toLowerCase());
-      const matchEmail = !email || s.email?.toLowerCase().includes(email.toLowerCase());
-      const matchAddress = !address || s.address?.toLowerCase().includes(address.toLowerCase());
-      const matchContactPerson = !contactPerson || s.contactPerson?.toLowerCase().includes(contactPerson.toLowerCase());
-      
-      return matchName && matchPhone && matchEmail && matchAddress && matchContactPerson;
+    this.isAdvancedSearchLoading = true;
+    this.supplierService.advancedSearchSuppliers(this.advancedSupplierSearch).subscribe({
+      next: (suppliers) => {
+        this.filteredSuppliers = suppliers;
+        this.isAdvancedSearchLoading = false;
+      },
+      error: () => {
+        this.filteredSuppliers = [];
+        this.isAdvancedSearchLoading = false;
+      }
     });
   }
 
   resetAdvancedSupplierSearch(): void {
-    this.advancedSupplierSearch = {
-      name: '',
-      phone: '',
-      email: '',
-      address: '',
-      contactPerson: ''
-    };
+    this.advancedSupplierSearch = {};
     this.showAdvancedSupplierSearch = false;
   }
 

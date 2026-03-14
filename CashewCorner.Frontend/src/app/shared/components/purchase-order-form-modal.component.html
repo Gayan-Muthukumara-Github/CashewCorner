@@ -46,6 +46,7 @@
 
               <!-- Advanced Search Fields -->
               <div *ngIf="showAdvancedSupplierSearch" class="advanced-search-fields">
+                <h4 class="adv-section-title">Basic Information</h4>
                 <div class="search-field-row">
                   <div class="search-field">
                     <label>Name</label>
@@ -67,13 +68,142 @@
                   </div>
                 </div>
                 <div class="search-field-row">
-                  <div class="search-field full">
+                  <div class="search-field">
                     <label>Address</label>
                     <input type="text" [(ngModel)]="advancedSupplierSearch.address" [ngModelOptions]="{standalone: true}" placeholder="Address" />
                   </div>
+                  <div class="search-field">
+                    <label>Payment Terms</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.paymentTerms" [ngModelOptions]="{standalone: true}" placeholder="Payment terms" />
+                  </div>
                 </div>
+
+                <h4 class="adv-section-title">Cashew & Supplier Details</h4>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Cashew Type</label>
+                    <select [(ngModel)]="advancedSupplierSearch.cashewTypeId" [ngModelOptions]="{standalone: true}">
+                      <option [ngValue]="undefined">-- All --</option>
+                      <option *ngFor="let rc of allRawCashews" [ngValue]="rc.cashewTypeId">
+                        {{ rc.cashewType }} ({{ rc.cashewQuality }})
+                      </option>
+                    </select>
+                  </div>
+                  <div class="search-field">
+                    <label>Quality</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.quality" [ngModelOptions]="{standalone: true}" placeholder="Quality" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Season</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.season" [ngModelOptions]="{standalone: true}" placeholder="Season" />
+                  </div>
+                  <div class="search-field">
+                    <label>Performances</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.performances" [ngModelOptions]="{standalone: true}" placeholder="Performances" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Payment Method</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.paymentMethod" [ngModelOptions]="{standalone: true}" placeholder="Payment method" />
+                  </div>
+                  <div class="search-field">
+                    <label>Delivery Method</label>
+                    <input type="text" [(ngModel)]="advancedSupplierSearch.deliveryMethod" [ngModelOptions]="{standalone: true}" placeholder="Delivery method" />
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Approved</label>
+                    <select [(ngModel)]="advancedSupplierSearch.isApproved" [ngModelOptions]="{standalone: true}">
+                      <option [ngValue]="undefined">-- All --</option>
+                      <option [ngValue]="true">Yes</option>
+                      <option [ngValue]="false">No</option>
+                    </select>
+                  </div>
+                  <div class="search-field"></div>
+                </div>
+
+                <h4 class="adv-section-title">Range Filters</h4>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Quantity</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minQuantity" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxQuantity" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                  <div class="search-field">
+                    <label>Cost Per Unit</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minCostPerUnit" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxCostPerUnit" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Distance</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minDistance" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxDistance" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                  <div class="search-field">
+                    <label>Delivery Cost</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minDeliveryCost" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxDeliveryCost" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Time to Receive (days)</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minTimeTakenToReceive" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxTimeTakenToReceive" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                  <div class="search-field">
+                    <label>Avg Cost Per Unit</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minAverageCostPerUnit" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxAverageCostPerUnit" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                </div>
+                <div class="search-field-row">
+                  <div class="search-field">
+                    <label>Avg Delivery Time (days)</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minAverageDeliveryTime" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxAverageDeliveryTime" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                  <div class="search-field">
+                    <label>Avg Delivery Cost</label>
+                    <div class="range-inputs">
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.minAverageDeliveryCost" [ngModelOptions]="{standalone: true}" placeholder="Min" />
+                      <span class="range-sep">-</span>
+                      <input type="number" [(ngModel)]="advancedSupplierSearch.maxAverageDeliveryCost" [ngModelOptions]="{standalone: true}" placeholder="Max" />
+                    </div>
+                  </div>
+                </div>
+
                 <div class="advanced-search-actions">
-                  <button type="button" class="search-btn" (click)="onAdvancedSupplierSearch()">Search</button>
+                  <button type="button" class="search-btn" (click)="onAdvancedSupplierSearch()" [disabled]="isAdvancedSearchLoading">
+                    {{ isAdvancedSearchLoading ? 'Searching...' : 'Search' }}
+                  </button>
                   <button type="button" class="reset-btn" (click)="resetAdvancedSupplierSearch(); filteredSuppliers = allSuppliers">Reset</button>
                 </div>
               </div>

@@ -11,12 +11,166 @@
 
   <section class="supplier-list">
     <div class="search-bar">
-      <input
-        type="text"
-        placeholder="Search by name..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearch()"
-      />
+      <div class="search-row">
+        <input
+          *ngIf="!showAdvancedSearch"
+          type="text"
+          placeholder="Search by name..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()"
+        />
+        <button type="button" class="toggle-advanced" (click)="toggleAdvancedSearch()">
+          {{ showAdvancedSearch ? 'Simple Search' : 'Advanced Search' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Advanced Search Panel -->
+    <div *ngIf="showAdvancedSearch" class="advanced-search-panel">
+      <!-- Text Filters -->
+      <h3 class="section-title">Basic Information</h3>
+      <div class="filter-grid">
+        <div class="filter-field">
+          <label>Name</label>
+          <input type="text" placeholder="Supplier name..." [(ngModel)]="advancedParams.name" />
+        </div>
+        <div class="filter-field">
+          <label>Address</label>
+          <input type="text" placeholder="Address..." [(ngModel)]="advancedParams.address" />
+        </div>
+        <div class="filter-field">
+          <label>Phone</label>
+          <input type="text" placeholder="Phone..." [(ngModel)]="advancedParams.phone" />
+        </div>
+        <div class="filter-field">
+          <label>Email</label>
+          <input type="text" placeholder="Email..." [(ngModel)]="advancedParams.email" />
+        </div>
+        <div class="filter-field">
+          <label>Contact Person</label>
+          <input type="text" placeholder="Contact person..." [(ngModel)]="advancedParams.contactPerson" />
+        </div>
+        <div class="filter-field">
+          <label>Payment Terms</label>
+          <input type="text" placeholder="Payment terms..." [(ngModel)]="advancedParams.paymentTerms" />
+        </div>
+      </div>
+
+      <!-- Cashew & Supplier Details -->
+      <h3 class="section-title">Cashew & Supplier Details</h3>
+      <div class="filter-grid">
+        <div class="filter-field">
+          <label>Cashew Type</label>
+          <select [(ngModel)]="advancedParams.cashewTypeId">
+            <option [ngValue]="undefined">-- All --</option>
+            <option *ngFor="let ct of cashewTypes" [ngValue]="ct.cashewTypeId">
+              {{ ct.cashewType }} ({{ ct.cashewQuality }})
+            </option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>Quality</label>
+          <input type="text" placeholder="Quality..." [(ngModel)]="advancedParams.quality" />
+        </div>
+        <div class="filter-field">
+          <label>Season</label>
+          <input type="text" placeholder="Season..." [(ngModel)]="advancedParams.season" />
+        </div>
+        <div class="filter-field">
+          <label>Performances</label>
+          <input type="text" placeholder="Performances..." [(ngModel)]="advancedParams.performances" />
+        </div>
+        <div class="filter-field">
+          <label>Payment Method</label>
+          <input type="text" placeholder="Payment method..." [(ngModel)]="advancedParams.paymentMethod" />
+        </div>
+        <div class="filter-field">
+          <label>Delivery Method</label>
+          <input type="text" placeholder="Delivery method..." [(ngModel)]="advancedParams.deliveryMethod" />
+        </div>
+        <div class="filter-field">
+          <label>Approved</label>
+          <select [(ngModel)]="advancedParams.isApproved">
+            <option [ngValue]="undefined">-- All --</option>
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Range Filters -->
+      <h3 class="section-title">Range Filters</h3>
+      <div class="filter-grid">
+        <div class="filter-field range-field">
+          <label>Quantity</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minQuantity" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxQuantity" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Cost Per Unit</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minCostPerUnit" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxCostPerUnit" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Distance</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minDistance" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxDistance" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Delivery Cost</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minDeliveryCost" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxDeliveryCost" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Time Taken to Receive (days)</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minTimeTakenToReceive" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxTimeTakenToReceive" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Avg Cost Per Unit</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minAverageCostPerUnit" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxAverageCostPerUnit" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Avg Delivery Time (days)</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minAverageDeliveryTime" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxAverageDeliveryTime" />
+          </div>
+        </div>
+        <div class="filter-field range-field">
+          <label>Avg Delivery Cost</label>
+          <div class="range-inputs">
+            <input type="number" placeholder="Min" [(ngModel)]="advancedParams.minAverageDeliveryCost" />
+            <span class="range-sep">-</span>
+            <input type="number" placeholder="Max" [(ngModel)]="advancedParams.maxAverageDeliveryCost" />
+          </div>
+        </div>
+      </div>
+
+      <div class="advanced-actions">
+        <button type="button" class="secondary" (click)="clearAdvancedSearch()">Clear</button>
+        <button type="button" class="primary" (click)="onAdvancedSearch()">Search</button>
+      </div>
     </div>
 
     <div *ngIf="isLoading" class="info">Loading suppliers...</div>

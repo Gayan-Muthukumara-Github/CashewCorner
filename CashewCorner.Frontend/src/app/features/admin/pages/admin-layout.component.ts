@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -12,10 +12,11 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss'
 })
-export class AdminLayoutComponent implements OnDestroy {
+export class AdminLayoutComponent implements OnInit, OnDestroy {
   isSidebarOpen = true;
   showUserMenu = false;
   adminUser = 'Admin';
+  userRole = '';
   private sessionSub?: Subscription;
 
   constructor(
@@ -24,10 +25,17 @@ export class AdminLayoutComponent implements OnDestroy {
   ) {
     const user = this.authService.getCurrentUser();
     this.adminUser = user?.fullName || user?.username || this.adminUser;
+    this.userRole = user?.roleName || '';
 
     this.sessionSub = this.authService.sessionExpired$.subscribe(() => {
       this.showUserMenu = false;
     });
+  }
+
+  ngOnInit(): void {
+    if (this.userRole === 'MANAGER' && this.router.url === '/admin') {
+      this.router.navigate(['/admin/analytics']);
+    }
   }
 
   ngOnDestroy(): void {
