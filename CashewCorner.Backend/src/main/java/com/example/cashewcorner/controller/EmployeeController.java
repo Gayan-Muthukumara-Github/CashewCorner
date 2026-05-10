@@ -1,6 +1,7 @@
 package com.example.cashewcorner.controller;
 
 import com.example.cashewcorner.dto.*;
+import com.example.cashewcorner.dto.MarkPayrollPaidRequestDto;
 import com.example.cashewcorner.service.EmployeeService;
 import com.example.cashewcorner.service.PayrollService;
 import jakarta.validation.Valid;
@@ -247,5 +248,20 @@ public class EmployeeController {
         log.info("Fetching unpaid payrolls");
         List<PayrollDto> payrolls = payrollService.getUnpaidPayrolls();
         return ResponseEntity.ok(payrolls);
+    }
+
+    /**
+     * Mark an unpaid payroll as paid.
+     * Accessible by ADMIN and MANAGER roles.
+     */
+    @PatchMapping("/payrolls/{payrollId}/paid")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<PayrollDto> markPayrollPaid(
+            @PathVariable Long payrollId,
+            @Valid @RequestBody(required = false) MarkPayrollPaidRequestDto request) {
+        log.info("Marking payroll as paid - [payrollId={}]", payrollId);
+        String paymentMethod = request != null ? request.getPaymentMethod() : null;
+        PayrollDto payroll = payrollService.markPayrollAsPaid(payrollId, paymentMethod);
+        return ResponseEntity.ok(payroll);
     }
 }

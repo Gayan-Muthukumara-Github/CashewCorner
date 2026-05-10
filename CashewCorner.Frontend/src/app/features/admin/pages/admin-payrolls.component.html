@@ -68,6 +68,16 @@
               {{ payroll.isPaid ? 'Paid' : 'Unpaid' }}
             </span>
           </td>
+          <td>
+            <button
+              *ngIf="!payroll.isPaid"
+              class="secondary"
+              type="button"
+              (click)="markPayrollPaid(payroll)"
+            >
+              Mark Paid
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>

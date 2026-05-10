@@ -25,6 +25,7 @@ public class PayrollDto {
     private BigDecimal netPay;
     private LocalDate paymentDate;
     private String paymentMethod;
+    private Boolean isPaid;
     private String notes;
     private LocalDateTime createdAt;
 }

@@ -115,4 +115,16 @@ export class AdminPayrollsComponent implements OnInit {
       }
     });
   }
+
+  markPayrollPaid(payroll: PayrollResponse): void {
+    this.errorMessage = '';
+    this.payrollService.markPayrollPaid(payroll.payrollId, payroll.paymentMethod).subscribe({
+      next: () => {
+        this.loadPayrolls();
+      },
+      error: (err) => {
+        this.errorMessage = err.message || 'Failed to mark payroll as paid.';
+      }
+    });
+  }
 }

@@ -141,6 +141,23 @@ public class PayrollService {
                 .collect(Collectors.toList());
     }
 
+    public PayrollDto markPayrollAsPaid(Long payrollId, String paymentMethod) {
+        log.info("Marking payroll as paid - [payrollId={}]", payrollId);
+        Payroll payroll = payrollRepository.findById(payrollId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll not found with id: " + payrollId));
+
+        if (payroll.getPaymentDate() == null) {
+            payroll.setPaymentDate(LocalDate.now());
+        }
+
+        if (paymentMethod != null && !paymentMethod.trim().isEmpty()) {
+            payroll.setPaymentMethod(paymentMethod);
+        }
+
+        payroll = payrollRepository.save(payroll);
+        return mapToDto(payroll);
+    }
+
     private PayrollDto mapToDto(Payroll payroll) {
         return PayrollDto.builder()
                 .payrollId(payroll.getPayrollId())
@@ -154,6 +171,7 @@ public class PayrollService {
                 .netPay(payroll.getNetPay())
                 .paymentDate(payroll.getPaymentDate())
                 .paymentMethod(payroll.getPaymentMethod())
+                .isPaid(payroll.getPaymentDate() != null)
                 .notes(payroll.getNotes())
                 .createdAt(payroll.getCreatedAt())
                 .build();

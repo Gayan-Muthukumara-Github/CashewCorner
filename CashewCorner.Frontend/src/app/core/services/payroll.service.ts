@@ -36,4 +36,9 @@ export class PayrollService {
   getUnpaidPayrolls(): Observable<PayrollResponse[]> {
     return this.http.get<PayrollResponse[]>(`${this.payrollsUrl}/unpaid`);
   }
+
+  markPayrollPaid(payrollId: number, paymentMethod?: string): Observable<PayrollResponse> {
+    const payload = paymentMethod ? { paymentMethod } : null;
+    return this.http.patch<PayrollResponse>(`${this.payrollsUrl}/${payrollId}/paid`, payload);
+  }
 }
