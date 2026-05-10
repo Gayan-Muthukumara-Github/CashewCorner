@@ -48,6 +48,61 @@ public class PurchaseOrder {
     @Column(name = "expected_date")
     private LocalDate expectedDate;
 
+    @Column(name = "phone", length = 50)
+    private String phone;
+
+    @Column(name = "email", length = 150)
+    private String email;
+
+    @Column(name = "contact_person", length = 150)
+    private String contactPerson;
+
+    @Column(name = "payment_terms", length = 255)
+    private String paymentTerms;
+
+    @Column(name = "is_approved")
+    @Builder.Default
+    private Boolean isApproved = false;
+
+    @Column(name = "quantity", precision = 18, scale = 4)
+    private BigDecimal quantity;
+
+    @Column(name = "quality", length = 100)
+    private String quality;
+
+    @Column(name = "cost_per_unit", precision = 15, scale = 2)
+    private BigDecimal costPerUnit;
+
+    @Column(name = "season", length = 100)
+    private String season;
+
+    @Column(name = "payment_method", length = 100)
+    private String paymentMethod;
+
+    @Column(name = "distance", precision = 15, scale = 2)
+    private BigDecimal distance;
+
+    @Column(name = "delivery_method", length = 100)
+    private String deliveryMethod;
+
+    @Column(name = "delivery_cost", precision = 15, scale = 2)
+    private BigDecimal deliveryCost;
+
+    @Column(name = "time_taken_to_receive")
+    private Integer timeTakenToReceive;
+
+    @Column(name = "average_cost_per_unit", precision = 15, scale = 2)
+    private BigDecimal averageCostPerUnit;
+
+    @Column(name = "average_delivery_time")
+    private Integer averageDeliveryTime;
+
+    @Column(name = "average_delivery_cost", precision = 15, scale = 2)
+    private BigDecimal averageDeliveryCost;
+
+    @Column(name = "performances", columnDefinition = "TEXT")
+    private String performances;
+
     @Column(name = "status", length = 50)
     @Builder.Default
     private String status = "pending";

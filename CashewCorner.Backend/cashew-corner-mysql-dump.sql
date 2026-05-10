@@ -96,32 +96,16 @@ CREATE TABLE `raw_cashew` (
 
 -- ============================================================================
 -- TABLE: suppliers
--- Description: Supplier information for purchase orders
+-- Description: Supplier identity and preferred cashew type.
+--              Contact details, payment terms, and order-specific cashew data
+--              now live on purchase_orders.
 -- ============================================================================
 CREATE TABLE `suppliers` (
     `supplier_id` BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(200) NOT NULL,
     `address` TEXT DEFAULT NULL,
-    `phone` VARCHAR(50) DEFAULT NULL,
-    `email` VARCHAR(150) DEFAULT NULL,
-    `contact_person` VARCHAR(150) DEFAULT NULL,
-    `payment_terms` VARCHAR(255) DEFAULT NULL,
-    `is_approved` TINYINT(1) DEFAULT 0,
-    -- New cashew-related fields
     `cashew_type_id` BIGINT DEFAULT NULL,
-    `quantity` DECIMAL(18,4) DEFAULT NULL,
-    `quality` VARCHAR(100) DEFAULT NULL,
-    `cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
-    `season` VARCHAR(100) DEFAULT NULL,
-    `payment_method` VARCHAR(100) DEFAULT NULL,
     `distance` DECIMAL(15,2) DEFAULT NULL,
-    `delivery_method` VARCHAR(100) DEFAULT NULL,
-    `delivery_cost` DECIMAL(15,2) DEFAULT NULL,
-    `time_taken_to_receive` INT DEFAULT NULL,
-    `average_cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
-    `average_delivery_time` INT DEFAULT NULL,
-    `average_delivery_cost` DECIMAL(15,2) DEFAULT NULL,
-    `performances` TEXT DEFAULT NULL,
     -- Audit fields
     `created_by` BIGINT DEFAULT NULL,
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -242,7 +226,9 @@ CREATE TABLE `stock_movements` (
 
 -- ============================================================================
 -- TABLE: purchase_orders
--- Description: Purchase orders from suppliers
+-- Description: Purchase orders from suppliers. Carries the contact details,
+--              payment terms, and cashew-specific fields that were previously
+--              on the suppliers table, making each order self-contained.
 -- ============================================================================
 CREATE TABLE `purchase_orders` (
     `purchase_order_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -251,8 +237,30 @@ CREATE TABLE `purchase_orders` (
     `created_by` BIGINT DEFAULT NULL,
     `order_date` DATE NOT NULL,
     `expected_date` DATE DEFAULT NULL,
+    -- Contact & payment details (moved from suppliers)
+    `phone` VARCHAR(50) DEFAULT NULL,
+    `email` VARCHAR(150) DEFAULT NULL,
+    `contact_person` VARCHAR(150) DEFAULT NULL,
+    `payment_terms` VARCHAR(255) DEFAULT NULL,
+    `is_approved` TINYINT(1) DEFAULT 0,
+    -- Cashew-specific order details (moved from suppliers)
+    `quantity` DECIMAL(18,4) DEFAULT NULL,
+    `quality` VARCHAR(100) DEFAULT NULL,
+    `cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
+    `season` VARCHAR(100) DEFAULT NULL,
+    `payment_method` VARCHAR(100) DEFAULT NULL,
+    `distance` DECIMAL(15,2) DEFAULT NULL,
+    `delivery_method` VARCHAR(100) DEFAULT NULL,
+    `delivery_cost` DECIMAL(15,2) DEFAULT NULL,
+    `time_taken_to_receive` INT DEFAULT NULL,
+    `average_cost_per_unit` DECIMAL(15,2) DEFAULT NULL,
+    `average_delivery_time` INT DEFAULT NULL,
+    `average_delivery_cost` DECIMAL(15,2) DEFAULT NULL,
+    `performances` TEXT DEFAULT NULL,
+    -- Order financials & status
     `status` VARCHAR(50) DEFAULT 'pending',
     `total_amount` DECIMAL(18,2) DEFAULT 0.00,
+    -- Audit fields
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_by` BIGINT DEFAULT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -260,7 +268,11 @@ CREATE TABLE `purchase_orders` (
     PRIMARY KEY (`purchase_order_id`),
     UNIQUE KEY `uk_purchase_orders_po_number` (`po_number`),
     KEY `fk_purchase_orders_supplier` (`supplier_id`),
-    CONSTRAINT `fk_purchase_orders_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+    KEY `fk_po_created_by` (`created_by`),
+    KEY `fk_po_updated_by` (`updated_by`),
+    CONSTRAINT `fk_purchase_orders_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_po_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `fk_po_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -496,13 +508,62 @@ INSERT INTO `raw_cashew` (`cashew_type`, `cashew_quality`, `is_active`, `created
 ('BB', 'Baby Bits - Small broken pieces', 1, NOW(), NOW());
 
 -- ----------------------------------------------------------------------------
--- Insert suppliers (with new cashew-related fields)
+-- Insert suppliers
+-- Note: phone, email, contact_person, payment_terms, is_approved and all
+--       cashew-specific fields now live on purchase_orders, not here.
 -- ----------------------------------------------------------------------------
-INSERT INTO `suppliers` (`name`, `email`, `phone`, `contact_person`, `is_approved`, `cashew_type_id`, `quantity`, `quality`, `cost_per_unit`, `season`, `payment_method`, `distance`, `delivery_method`, `delivery_cost`, `time_taken_to_receive`, `average_cost_per_unit`, `average_delivery_time`, `average_delivery_cost`, `performances`, `is_active`, `created_at`, `updated_at`) VALUES
-('Supplier One', 'supplier1@example.com', '+1-555-0001', 'John Contact', 1, 1, 5000.0000, 'Grade A', 18.50, 'Summer', 'Bank Transfer', 120.50, 'Truck', 350.00, 3, 18.25, 3, 340.00, 'Excellent reliability, consistent quality, on-time delivery', 1, NOW(), NOW()),
-('Supplier Two', 'supplier2@example.com', '+1-555-0002', 'Jane Contact', 1, 4, 8000.0000, 'Grade B', 12.75, 'Winter', 'Cash', 85.00, 'Van', 200.00, 2, 12.50, 2, 195.00, 'Good quality, competitive pricing', 1, NOW(), NOW()),
-('Premium Cashew Farms', 'premium@cashewfarms.com', '+1-555-0003', 'Mike Premium', 1, 2, 3000.0000, 'Premium Grade AA', 22.00, 'All Year', 'Bank Transfer', 200.00, 'Refrigerated Truck', 500.00, 5, 21.75, 4, 480.00, 'Top quality premium cashews, reliable supplier', 1, NOW(), NOW()),
-('Budget Nuts Co', 'info@budgetnuts.com', '+1-555-0004', 'Sarah Budget', 0, 5, 15000.0000, 'Economy Grade', 8.50, 'Monsoon', 'Cash on Delivery', 50.00, 'Local Pickup', 100.00, 1, 8.75, 1, 95.00, 'Budget-friendly option, large quantities available', 1, NOW(), NOW());
+INSERT INTO `suppliers` (`name`, `address`, `cashew_type_id`, `distance`, `is_active`, `created_at`, `updated_at`) VALUES
+('Supplier One',       '123 Farm Road, Colombo',         1, 45.50,  1, NOW(), NOW()),
+('Supplier Two',       '456 Cashew Avenue, Galle',       4, 120.75, 1, NOW(), NOW()),
+('Premium Cashew Farms','789 Plantation Drive, Kandy',   2, 85.00,  1, NOW(), NOW()),
+('Budget Nuts Co',     '321 Economy Street, Matara',     5, 210.30, 1, NOW(), NOW());
+
+-- ----------------------------------------------------------------------------
+-- Insert sample purchase orders (carrying the contact & cashew-specific data)
+-- ----------------------------------------------------------------------------
+INSERT INTO `purchase_orders` (
+    `po_number`, `supplier_id`, `order_date`, `expected_date`,
+    `phone`, `email`, `contact_person`, `payment_terms`, `is_approved`,
+    `quantity`, `quality`, `cost_per_unit`, `season`, `payment_method`,
+    `distance`, `delivery_method`, `delivery_cost`, `time_taken_to_receive`,
+    `average_cost_per_unit`, `average_delivery_time`, `average_delivery_cost`,
+    `performances`, `status`, `total_amount`, `is_active`, `created_at`, `updated_at`
+) VALUES
+('PO20260001', 1,
+    DATE_SUB(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 27 DAY),
+    '+1-555-0001', 'supplier1@example.com', 'John Contact', 'Net 30', 1,
+    5000.0000, 'Grade A', 18.50, 'Summer', 'Bank Transfer',
+    120.50, 'Truck', 350.00, 3,
+    18.25, 3, 340.00,
+    'Excellent reliability, consistent quality, on-time delivery',
+    'completed', 92500.00, 1, DATE_SUB(NOW(), INTERVAL 30 DAY), NOW()),
+
+('PO20260002', 2,
+    DATE_SUB(NOW(), INTERVAL 20 DAY), DATE_SUB(NOW(), INTERVAL 18 DAY),
+    '+1-555-0002', 'supplier2@example.com', 'Jane Contact', 'Net 15', 1,
+    8000.0000, 'Grade B', 12.75, 'Winter', 'Cash',
+    85.00, 'Van', 200.00, 2,
+    12.50, 2, 195.00,
+    'Good quality, competitive pricing',
+    'completed', 102000.00, 1, DATE_SUB(NOW(), INTERVAL 20 DAY), NOW()),
+
+('PO20260003', 3,
+    DATE_SUB(NOW(), INTERVAL 10 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY),
+    '+1-555-0003', 'premium@cashewfarms.com', 'Mike Premium', 'Net 45', 1,
+    3000.0000, 'Premium Grade AA', 22.00, 'All Year', 'Bank Transfer',
+    200.00, 'Refrigerated Truck', 500.00, 5,
+    21.75, 4, 480.00,
+    'Top quality premium cashews, reliable supplier',
+    'pending', 66000.00, 1, DATE_SUB(NOW(), INTERVAL 10 DAY), NOW()),
+
+('PO20260004', 4,
+    DATE_SUB(NOW(), INTERVAL 5 DAY), NOW(),
+    '+1-555-0004', 'info@budgetnuts.com', 'Sarah Budget', 'COD', 0,
+    15000.0000, 'Economy Grade', 8.50, 'Monsoon', 'Cash on Delivery',
+    50.00, 'Local Pickup', 100.00, 1,
+    8.75, 1, 95.00,
+    'Budget-friendly option, large quantities available',
+    'pending', 127500.00, 1, DATE_SUB(NOW(), INTERVAL 5 DAY), NOW());
 
 -- ----------------------------------------------------------------------------
 -- Insert customers

@@ -1,5 +1,6 @@
 package com.example.cashewcorner.controller;
 
+import com.example.cashewcorner.dto.BuyingPriceFluctuationDto;
 import com.example.cashewcorner.dto.CategoryFinancialSummaryDto;
 import com.example.cashewcorner.dto.CategoryVolumeReportDto;
 import com.example.cashewcorner.dto.GenerateReportRequestDto;
@@ -120,6 +121,50 @@ public class ReportController {
         log.info("Selling price fluctuation report request - [productId={}, year={}]", productId, year);
         List<SellingPriceFluctuationDto> report = reportService.getSellingPriceFluctuation(productId, year);
         log.info("Selling price fluctuation report generated - [productId={}, year={}, recordsCount={}]",
+                productId, year, report.size());
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get buying price fluctuation report.
+     * Returns monthly aggregated buying (purchase) price statistics.
+     * Optionally filter by cashew type. Defaults to current year if year not provided.
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param cashewTypeId optional raw cashew type filter
+     * @param year optional year filter (defaults to current year if not provided)
+     * @return list of monthly buying price fluctuation data
+     */
+    @GetMapping("/buying-price-fluctuation")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<BuyingPriceFluctuationDto>> getBuyingPriceFluctuation(
+            @RequestParam(required = false) Long cashewTypeId,
+            @RequestParam(required = false) Integer year) {
+        log.info("Buying price fluctuation report request - [cashewTypeId={}, year={}]", cashewTypeId, year);
+        List<BuyingPriceFluctuationDto> report = reportService.getBuyingPriceFluctuation(cashewTypeId, year);
+        log.info("Buying price fluctuation report generated - [cashewTypeId={}, year={}, recordsCount={}]",
+                cashewTypeId, year, report.size());
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Get selling price trend report.
+     * Returns monthly aggregated selling price statistics across all products.
+     * Optionally filter by product. Defaults to current year if year not provided.
+     * Accessible by ADMIN and MANAGER roles.
+     *
+     * @param productId optional product filter
+     * @param year optional year filter (defaults to current year if not provided)
+     * @return list of monthly selling price trend data
+     */
+    @GetMapping("/selling-price-trend")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<List<SellingPriceFluctuationDto>> getSellingPriceTrend(
+            @RequestParam(required = false) Long productId,
+            @RequestParam(required = false) Integer year) {
+        log.info("Selling price trend report request - [productId={}, year={}]", productId, year);
+        List<SellingPriceFluctuationDto> report = reportService.getSellingPriceTrend(productId, year);
+        log.info("Selling price trend report generated - [productId={}, year={}, recordsCount={}]",
                 productId, year, report.size());
         return ResponseEntity.ok(report);
     }

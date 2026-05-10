@@ -527,6 +527,136 @@ public class ReportService {
     }
 
     /**
+     * Get buying price fluctuation report.
+     * Aggregates purchase order item unit prices by year and month.
+     * If cashewTypeId is provided, filters to that raw cashew type only.
+     *
+     * @param cashewTypeId optional cashew type filter
+     * @param year optional year filter (defaults to current year if null)
+     * @return list of monthly buying price fluctuation data
+     */
+    @Transactional(readOnly = true)
+    public List<BuyingPriceFluctuationDto> getBuyingPriceFluctuation(Long cashewTypeId, Integer year) {
+        int targetYear = year != null ? year : LocalDate.now().getYear();
+        log.info("Generating buying price fluctuation report - [cashewTypeId={}, year={}]", cashewTypeId, targetYear);
+
+        List<PurchaseOrderItem> items = cashewTypeId != null
+                ? purchaseOrderItemRepository.findByCashewTypeIdAndYear(cashewTypeId, targetYear)
+                : purchaseOrderItemRepository.findByYear(targetYear);
+
+        if (items.isEmpty()) {
+            log.info("No purchase order items found - [cashewTypeId={}, year={}]", cashewTypeId, targetYear);
+            return Collections.emptyList();
+        }
+
+        Map<Integer, List<PurchaseOrderItem>> itemsByMonth = items.stream()
+                .collect(Collectors.groupingBy(item ->
+                        item.getPurchaseOrder().getCreatedAt().getMonthValue()));
+
+        List<BuyingPriceFluctuationDto> result = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<PurchaseOrderItem>> entry : itemsByMonth.entrySet()) {
+            Integer month = entry.getKey();
+            List<PurchaseOrderItem> monthItems = entry.getValue();
+
+            BigDecimal avgPrice = monthItems.stream()
+                    .map(PurchaseOrderItem::getUnitPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .divide(BigDecimal.valueOf(monthItems.size()), 2, RoundingMode.HALF_UP);
+
+            BigDecimal highestPrice = monthItems.stream()
+                    .map(PurchaseOrderItem::getUnitPrice)
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            BigDecimal lowestPrice = monthItems.stream()
+                    .map(PurchaseOrderItem::getUnitPrice)
+                    .min(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            result.add(BuyingPriceFluctuationDto.builder()
+                    .year(targetYear)
+                    .month(month)
+                    .averageBuyingPrice(avgPrice)
+                    .highestPrice(highestPrice)
+                    .lowestPrice(lowestPrice)
+                    .build());
+        }
+
+        result.sort(Comparator.comparing(BuyingPriceFluctuationDto::getMonth));
+
+        log.info("Buying price fluctuation report generated - [cashewTypeId={}, year={}, monthsCount={}]",
+                cashewTypeId, targetYear, result.size());
+
+        return result;
+    }
+
+    /**
+     * Get selling price trend report.
+     * Aggregates sales order item unit prices by year and month.
+     * If productId is provided, filters to that product only.
+     *
+     * @param productId optional product filter
+     * @param year optional year filter (defaults to current year if null)
+     * @return list of monthly selling price fluctuation data
+     */
+    @Transactional(readOnly = true)
+    public List<SellingPriceFluctuationDto> getSellingPriceTrend(Long productId, Integer year) {
+        int targetYear = year != null ? year : LocalDate.now().getYear();
+        log.info("Generating selling price trend report - [productId={}, year={}]", productId, targetYear);
+
+        List<SalesOrderItem> items = productId != null
+                ? salesOrderItemRepository.findByProductIdAndYear(productId, targetYear)
+                : salesOrderItemRepository.findByYear(targetYear);
+
+        if (items.isEmpty()) {
+            log.info("No sales order items found - [productId={}, year={}]", productId, targetYear);
+            return Collections.emptyList();
+        }
+
+        Map<Integer, List<SalesOrderItem>> itemsByMonth = items.stream()
+                .collect(Collectors.groupingBy(item ->
+                        item.getSalesOrder().getCreatedAt().getMonthValue()));
+
+        List<SellingPriceFluctuationDto> result = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<SalesOrderItem>> entry : itemsByMonth.entrySet()) {
+            Integer month = entry.getKey();
+            List<SalesOrderItem> monthItems = entry.getValue();
+
+            BigDecimal avgPrice = monthItems.stream()
+                    .map(SalesOrderItem::getUnitPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .divide(BigDecimal.valueOf(monthItems.size()), 2, RoundingMode.HALF_UP);
+
+            BigDecimal highestPrice = monthItems.stream()
+                    .map(SalesOrderItem::getUnitPrice)
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            BigDecimal lowestPrice = monthItems.stream()
+                    .map(SalesOrderItem::getUnitPrice)
+                    .min(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
+            result.add(SellingPriceFluctuationDto.builder()
+                    .year(targetYear)
+                    .month(month)
+                    .averageSellingPrice(avgPrice)
+                    .highestPrice(highestPrice)
+                    .lowestPrice(lowestPrice)
+                    .build());
+        }
+
+        result.sort(Comparator.comparing(SellingPriceFluctuationDto::getMonth));
+
+        log.info("Selling price trend report generated - [productId={}, year={}, monthsCount={}]",
+                productId, targetYear, result.size());
+
+        return result;
+    }
+
+    /**
      * Get category volume report for a specific year and type (SALES or PURCHASE).
      * Aggregates monthly quantity and value data by product category.
      *

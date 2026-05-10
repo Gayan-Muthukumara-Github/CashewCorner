@@ -99,14 +99,6 @@ public class SalesOrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public SalesOrderDto trackOrderByNumber(String orderNo) {
-        log.info("Tracking order by number - [orderNo={}]", orderNo);
-        SalesOrder salesOrder = salesOrderRepository.findBySoNumberIgnoreCaseAndIsActiveTrue(orderNo)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with number: " + orderNo));
-        return mapToDto(salesOrder);
-    }
-
     private String generateSoNumber() {
         String year = String.valueOf(Year.now().getValue());
         String latestSoNumber = salesOrderRepository.findLatestSoNumberForYear(year);

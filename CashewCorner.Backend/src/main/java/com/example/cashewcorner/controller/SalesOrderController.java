@@ -75,15 +75,4 @@ public class SalesOrderController {
         List<SalesOrderDto> salesOrders = salesOrderService.searchByOrderNumber(orderNo);
         return ResponseEntity.ok(salesOrders);
     }
-
-    /**
-     * Track a sales order by order number (public endpoint for customers).
-     * This endpoint does not require authentication.
-     */
-    @GetMapping("/track/{orderNo}")
-    public ResponseEntity<SalesOrderDto> trackOrder(@PathVariable String orderNo) {
-        log.info("Public order tracking request - [orderNo={}]", orderNo);
-        SalesOrderDto salesOrder = salesOrderService.trackOrderByNumber(orderNo);
-        return ResponseEntity.ok(salesOrder);
-    }
 }

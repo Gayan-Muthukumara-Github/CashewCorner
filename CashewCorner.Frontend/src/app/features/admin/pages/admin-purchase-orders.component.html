@@ -36,6 +36,7 @@
           <th>Supplier</th>
           <th>Order Date</th>
           <th>Expected Date</th>
+          <th>Contact Person</th>
           <th>Status</th>
           <th>Total Amount</th>
           <th>Items</th>
@@ -49,6 +50,7 @@
           <td>{{ purchaseOrder.supplierName }}</td>
           <td>{{ purchaseOrder.orderDate | date:'shortDate' }}</td>
           <td>{{ purchaseOrder.expectedDate | date:'shortDate' }}</td>
+          <td>{{ purchaseOrder.contactPerson || '-' }}</td>
           <td>
             <span
               class="status-pill"

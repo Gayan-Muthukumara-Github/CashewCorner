@@ -74,11 +74,8 @@ CREATE TABLE suppliers (
   supplier_id BIGINT AUTO_INCREMENT NOT NULL,
   name VARCHAR(200) NOT NULL,
   address TEXT,
-  phone VARCHAR(50),
-  email VARCHAR(150),
-  contact_person VARCHAR(150),
-  payment_terms VARCHAR(255),
-  is_approved BOOLEAN DEFAULT FALSE,
+  cashew_type_id BIGINT DEFAULT NULL,
+  distance DECIMAL(15,2) DEFAULT NULL,
   created_by BIGINT DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_by BIGINT DEFAULT NULL,
@@ -86,10 +83,9 @@ CREATE TABLE suppliers (
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (supplier_id),
   CONSTRAINT fk_suppliers_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_suppliers_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT fk_suppliers_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_suppliers_cashew_type FOREIGN KEY (cashew_type_id) REFERENCES raw_cashew(cashew_type_id) ON UPDATE CASCADE ON DELETE SET NULL
 );
-
-CREATE INDEX idx_suppliers_email ON suppliers(email);
 
 -- Customer
 CREATE TABLE customer (
@@ -171,6 +167,24 @@ CREATE TABLE purchase_orders (
   created_by BIGINT DEFAULT NULL,
   order_date DATE NOT NULL,
   expected_date DATE DEFAULT NULL,
+  phone VARCHAR(50),
+  email VARCHAR(150),
+  contact_person VARCHAR(150),
+  payment_terms VARCHAR(255),
+  is_approved BOOLEAN DEFAULT FALSE,
+  quantity DECIMAL(18,4),
+  quality VARCHAR(100),
+  cost_per_unit DECIMAL(15,2),
+  season VARCHAR(100),
+  payment_method VARCHAR(100),
+  distance DECIMAL(15,2),
+  delivery_method VARCHAR(100),
+  delivery_cost DECIMAL(15,2),
+  time_taken_to_receive INT,
+  average_cost_per_unit DECIMAL(15,2),
+  average_delivery_time INT,
+  average_delivery_cost DECIMAL(15,2),
+  performances TEXT,
   status VARCHAR(50) DEFAULT 'pending',
   total_amount DECIMAL(18,2) DEFAULT 0.00,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

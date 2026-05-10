@@ -7,7 +7,25 @@ export interface PurchaseOrderItemRequest {
 export interface CreatePurchaseOrderRequest {
   supplierId: number;
   orderDate: string;
-  expectedDate: string;
+  expectedDate?: string;
+  phone?: string;
+  email?: string;
+  contactPerson?: string;
+  paymentTerms?: string;
+  isApproved?: boolean;
+  quantity?: number;
+  quality?: string;
+  costPerUnit?: number;
+  season?: string;
+  paymentMethod?: string;
+  distance?: number;
+  deliveryMethod?: string;
+  deliveryCost?: number;
+  timeTakenToReceive?: number;
+  averageCostPerUnit?: number;
+  averageDeliveryTime?: number;
+  averageDeliveryCost?: number;
+  performances?: string;
   items: PurchaseOrderItemRequest[];
 }
 
@@ -28,6 +46,24 @@ export interface PurchaseOrderResponse {
   supplierName: string;
   orderDate: string;
   expectedDate: string;
+  phone?: string;
+  email?: string;
+  contactPerson?: string;
+  paymentTerms?: string;
+  isApproved?: boolean;
+  quantity?: number;
+  quality?: string;
+  costPerUnit?: number;
+  season?: string;
+  paymentMethod?: string;
+  distance?: number;
+  deliveryMethod?: string;
+  deliveryCost?: number;
+  timeTakenToReceive?: number;
+  averageCostPerUnit?: number;
+  averageDeliveryTime?: number;
+  averageDeliveryCost?: number;
+  performances?: string;
   status: string;
   totalAmount: number;
   items: PurchaseOrderItemResponse[];

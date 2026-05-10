@@ -9,8 +9,7 @@
 
     <div class="modal-body">
       <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" novalidate>
-        <!-- Basic Information Section -->
-        <h3 class="section-title">Basic Information</h3>
+        <h3 class="section-title">Supplier Details</h3>
         <div class="form-grid">
           <div class="form-field">
             <label for="name">Supplier Name *</label>
@@ -25,37 +24,6 @@
             </small>
           </div>
 
-          <div class="form-field">
-            <label for="contactPerson">Contact Person</label>
-            <input
-              id="contactPerson"
-              type="text"
-              formControlName="contactPerson"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
-              [class.error]="email?.invalid && email?.touched"
-            />
-            <small *ngIf="email?.invalid && email?.touched" class="error">
-              Enter a valid email address.
-            </small>
-          </div>
-
-          <div class="form-field">
-            <label for="phone">Phone</label>
-            <input
-              id="phone"
-              type="text"
-              formControlName="phone"
-            />
-          </div>
-
           <div class="form-field full-width">
             <label for="address">Address</label>
             <textarea
@@ -65,87 +33,18 @@
           </div>
 
           <div class="form-field">
-            <label for="paymentTerms">Payment Terms</label>
-            <input
-              id="paymentTerms"
-              type="text"
-              formControlName="paymentTerms"
-            />
-          </div>
-
-          <div class="form-field checkbox-field" *ngIf="mode === 'edit'">
-            <input
-              id="isApproved"
-              type="checkbox"
-              formControlName="isApproved"
-            />
-            <label for="isApproved">Is Approved</label>
-          </div>
-        </div>
-
-        <!-- Cashew Information Section -->
-        <h3 class="section-title">Cashew Information</h3>
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="cashewTypeId">Cashew Type ID</label>
-            <input
+            <label for="cashewTypeId">Cashew Type</label>
+            <select
               id="cashewTypeId"
-              type="number"
               formControlName="cashewTypeId"
-            />
+            >
+              <option [value]="null">-- Select Cashew Type --</option>
+              <option *ngFor="let cashew of rawCashews" [value]="cashew.cashewTypeId">
+                {{ cashew.cashewType }} ({{ cashew.cashewQuality }})
+              </option>
+            </select>
           </div>
 
-          <div class="form-field">
-            <label for="quantity">Quantity</label>
-            <input
-              id="quantity"
-              type="number"
-              formControlName="quantity"
-              step="0.01"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="quality">Quality</label>
-            <input
-              id="quality"
-              type="text"
-              formControlName="quality"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="costPerUnit">Cost Per Unit</label>
-            <input
-              id="costPerUnit"
-              type="number"
-              formControlName="costPerUnit"
-              step="0.01"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="season">Season</label>
-            <input
-              id="season"
-              type="text"
-              formControlName="season"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="paymentMethod">Payment Method</label>
-            <input
-              id="paymentMethod"
-              type="text"
-              formControlName="paymentMethod"
-            />
-          </div>
-        </div>
-
-        <!-- Delivery Information Section -->
-        <h3 class="section-title">Delivery Information</h3>
-        <div class="form-grid">
           <div class="form-field">
             <label for="distance">Distance (km)</label>
             <input
@@ -154,75 +53,6 @@
               formControlName="distance"
               step="0.01"
             />
-          </div>
-
-          <div class="form-field">
-            <label for="deliveryMethod">Delivery Method</label>
-            <input
-              id="deliveryMethod"
-              type="text"
-              formControlName="deliveryMethod"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="deliveryCost">Delivery Cost</label>
-            <input
-              id="deliveryCost"
-              type="number"
-              formControlName="deliveryCost"
-              step="0.01"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="timeTakenToReceive">Time to Receive (days)</label>
-            <input
-              id="timeTakenToReceive"
-              type="number"
-              formControlName="timeTakenToReceive"
-            />
-          </div>
-        </div>
-
-        <!-- Performance & Averages Section -->
-        <h3 class="section-title">Performance & Averages</h3>
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="averageCostPerUnit">Avg. Cost Per Unit</label>
-            <input
-              id="averageCostPerUnit"
-              type="number"
-              formControlName="averageCostPerUnit"
-              step="0.01"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="averageDeliveryTime">Avg. Delivery Time (days)</label>
-            <input
-              id="averageDeliveryTime"
-              type="number"
-              formControlName="averageDeliveryTime"
-            />
-          </div>
-
-          <div class="form-field">
-            <label for="averageDeliveryCost">Avg. Delivery Cost</label>
-            <input
-              id="averageDeliveryCost"
-              type="number"
-              formControlName="averageDeliveryCost"
-              step="0.01"
-            />
-          </div>
-
-          <div class="form-field full-width">
-            <label for="performances">Performance Notes</label>
-            <textarea
-              id="performances"
-              formControlName="performances"
-            ></textarea>
           </div>
         </div>
 

@@ -17,48 +17,58 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     Optional<Supplier> findBySupplierIdAndIsActiveTrue(Long supplierId);
 
-    @Query(value = "SELECT * FROM suppliers s WHERE s.is_active = true AND " +
+    @Query(value = "SELECT DISTINCT s.* FROM suppliers s " +
+           "LEFT JOIN purchase_orders po ON po.supplier_id = s.supplier_id AND po.is_active = true " +
+           "WHERE s.is_active = true AND " +
            "(LOWER(s.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(s.phone) LIKE LOWER(CONCAT('%', :searchTerm, '%')))",
+           "LOWER(po.phone) LIKE LOWER(CONCAT('%', :searchTerm, '%')))",
            nativeQuery = true)
     List<Supplier> searchSuppliers(@Param("searchTerm") String searchTerm);
 
-    @Query("SELECT s FROM Supplier s WHERE s.isApproved = true AND s.isActive = true")
+    @Query(value = "SELECT DISTINCT s.* FROM suppliers s " +
+           "WHERE s.is_active = true " +
+           "AND EXISTS (SELECT 1 FROM purchase_orders po WHERE po.supplier_id = s.supplier_id AND po.is_approved = true AND po.is_active = true)",
+           nativeQuery = true)
     List<Supplier> findApprovedSuppliers();
 
-    @Query(value = "SELECT s.* FROM suppliers s LEFT JOIN raw_cashew ct ON ct.cashew_type_id = s.cashew_type_id WHERE s.is_active = true " +
-           // Text filters (partial match) - use empty string check instead of NULL
+    @Query(value = "SELECT DISTINCT s.* FROM suppliers s " +
+           "LEFT JOIN raw_cashew ct ON ct.cashew_type_id = s.cashew_type_id " +
+           "LEFT JOIN purchase_orders po ON po.supplier_id = s.supplier_id AND po.is_active = true " +
+           "WHERE s.is_active = true " +
+           // Supplier-level text filters
            "AND (:name = '' OR LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
            "AND (:address = '' OR LOWER(s.address) LIKE LOWER(CONCAT('%', :address, '%'))) " +
-           "AND (:phone = '' OR LOWER(s.phone) LIKE LOWER(CONCAT('%', :phone, '%'))) " +
-           "AND (:email = '' OR LOWER(s.email) LIKE LOWER(CONCAT('%', :email, '%'))) " +
-           "AND (:contactPerson = '' OR LOWER(s.contact_person) LIKE LOWER(CONCAT('%', :contactPerson, '%'))) " +
-           "AND (:paymentTerms = '' OR LOWER(s.payment_terms) LIKE LOWER(CONCAT('%', :paymentTerms, '%'))) " +
-           "AND (:quality = '' OR LOWER(s.quality) LIKE LOWER(CONCAT('%', :quality, '%'))) " +
-           "AND (:season = '' OR LOWER(s.season) LIKE LOWER(CONCAT('%', :season, '%'))) " +
-           "AND (:paymentMethod = '' OR LOWER(s.payment_method) LIKE LOWER(CONCAT('%', :paymentMethod, '%'))) " +
-           "AND (:deliveryMethod = '' OR LOWER(s.delivery_method) LIKE LOWER(CONCAT('%', :deliveryMethod, '%'))) " +
-           "AND (:performances = '' OR LOWER(s.performances) LIKE LOWER(CONCAT('%', :performances, '%'))) " +
-           // ID and boolean filters (exact match)
+           // PO-level text filters
+           "AND (:phone = '' OR LOWER(po.phone) LIKE LOWER(CONCAT('%', :phone, '%'))) " +
+           "AND (:email = '' OR LOWER(po.email) LIKE LOWER(CONCAT('%', :email, '%'))) " +
+           "AND (:contactPerson = '' OR LOWER(po.contact_person) LIKE LOWER(CONCAT('%', :contactPerson, '%'))) " +
+           "AND (:paymentTerms = '' OR LOWER(po.payment_terms) LIKE LOWER(CONCAT('%', :paymentTerms, '%'))) " +
+           "AND (:quality = '' OR LOWER(po.quality) LIKE LOWER(CONCAT('%', :quality, '%'))) " +
+           "AND (:season = '' OR LOWER(po.season) LIKE LOWER(CONCAT('%', :season, '%'))) " +
+           "AND (:paymentMethod = '' OR LOWER(po.payment_method) LIKE LOWER(CONCAT('%', :paymentMethod, '%'))) " +
+           "AND (:deliveryMethod = '' OR LOWER(po.delivery_method) LIKE LOWER(CONCAT('%', :deliveryMethod, '%'))) " +
+           "AND (:performances = '' OR LOWER(po.performances) LIKE LOWER(CONCAT('%', :performances, '%'))) " +
+           // Supplier cashew type filter
            "AND (:cashewTypeId IS NULL OR ct.cashew_type_id = :cashewTypeId) " +
-           "AND (:isApproved IS NULL OR s.is_approved = :isApproved) " +
-           // Range filters for numeric fields
-           "AND (:minQuantity IS NULL OR s.quantity >= :minQuantity) " +
-           "AND (:maxQuantity IS NULL OR s.quantity <= :maxQuantity) " +
-           "AND (:minCostPerUnit IS NULL OR s.cost_per_unit >= :minCostPerUnit) " +
-           "AND (:maxCostPerUnit IS NULL OR s.cost_per_unit <= :maxCostPerUnit) " +
+           // PO boolean filter
+           "AND (:isApproved IS NULL OR po.is_approved = :isApproved) " +
+           // PO range filters
+           "AND (:minQuantity IS NULL OR po.quantity >= :minQuantity) " +
+           "AND (:maxQuantity IS NULL OR po.quantity <= :maxQuantity) " +
+           "AND (:minCostPerUnit IS NULL OR po.cost_per_unit >= :minCostPerUnit) " +
+           "AND (:maxCostPerUnit IS NULL OR po.cost_per_unit <= :maxCostPerUnit) " +
            "AND (:minDistance IS NULL OR s.distance >= :minDistance) " +
            "AND (:maxDistance IS NULL OR s.distance <= :maxDistance) " +
-           "AND (:minDeliveryCost IS NULL OR s.delivery_cost >= :minDeliveryCost) " +
-           "AND (:maxDeliveryCost IS NULL OR s.delivery_cost <= :maxDeliveryCost) " +
-           "AND (:minTimeTakenToReceive IS NULL OR s.time_taken_to_receive >= :minTimeTakenToReceive) " +
-           "AND (:maxTimeTakenToReceive IS NULL OR s.time_taken_to_receive <= :maxTimeTakenToReceive) " +
-           "AND (:minAverageCostPerUnit IS NULL OR s.average_cost_per_unit >= :minAverageCostPerUnit) " +
-           "AND (:maxAverageCostPerUnit IS NULL OR s.average_cost_per_unit <= :maxAverageCostPerUnit) " +
-           "AND (:minAverageDeliveryTime IS NULL OR s.average_delivery_time >= :minAverageDeliveryTime) " +
-           "AND (:maxAverageDeliveryTime IS NULL OR s.average_delivery_time <= :maxAverageDeliveryTime) " +
-           "AND (:minAverageDeliveryCost IS NULL OR s.average_delivery_cost >= :minAverageDeliveryCost) " +
-           "AND (:maxAverageDeliveryCost IS NULL OR s.average_delivery_cost <= :maxAverageDeliveryCost)",
+           "AND (:minDeliveryCost IS NULL OR po.delivery_cost >= :minDeliveryCost) " +
+           "AND (:maxDeliveryCost IS NULL OR po.delivery_cost <= :maxDeliveryCost) " +
+           "AND (:minTimeTakenToReceive IS NULL OR po.time_taken_to_receive >= :minTimeTakenToReceive) " +
+           "AND (:maxTimeTakenToReceive IS NULL OR po.time_taken_to_receive <= :maxTimeTakenToReceive) " +
+           "AND (:minAverageCostPerUnit IS NULL OR po.average_cost_per_unit >= :minAverageCostPerUnit) " +
+           "AND (:maxAverageCostPerUnit IS NULL OR po.average_cost_per_unit <= :maxAverageCostPerUnit) " +
+           "AND (:minAverageDeliveryTime IS NULL OR po.average_delivery_time >= :minAverageDeliveryTime) " +
+           "AND (:maxAverageDeliveryTime IS NULL OR po.average_delivery_time <= :maxAverageDeliveryTime) " +
+           "AND (:minAverageDeliveryCost IS NULL OR po.average_delivery_cost >= :minAverageDeliveryCost) " +
+           "AND (:maxAverageDeliveryCost IS NULL OR po.average_delivery_cost <= :maxAverageDeliveryCost)",
            nativeQuery = true)
     List<Supplier> advancedSearch(
             @Param("name") String name,

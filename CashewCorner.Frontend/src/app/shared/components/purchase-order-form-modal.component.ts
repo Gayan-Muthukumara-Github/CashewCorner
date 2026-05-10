@@ -50,6 +50,24 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
       supplierId: [null, [Validators.required]],
       orderDate: ['', [Validators.required]],
       expectedDate: ['', [Validators.required]],
+      phone: [''],
+      email: [''],
+      contactPerson: [''],
+      paymentTerms: [''],
+      isApproved: [false],
+      quantity: [null],
+      quality: [''],
+      costPerUnit: [null],
+      season: [''],
+      paymentMethod: [''],
+      distance: [null],
+      deliveryMethod: [''],
+      deliveryCost: [null],
+      timeTakenToReceive: [null],
+      averageCostPerUnit: [null],
+      averageDeliveryTime: [null],
+      averageDeliveryCost: [null],
+      performances: [''],
     });
   }
 
@@ -68,6 +86,24 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
         supplierId: this.purchaseOrder.supplierId,
         orderDate: this.purchaseOrder.orderDate.substring(0, 10),
         expectedDate: this.purchaseOrder.expectedDate.substring(0, 10),
+        phone: this.purchaseOrder.phone,
+        email: this.purchaseOrder.email,
+        contactPerson: this.purchaseOrder.contactPerson,
+        paymentTerms: this.purchaseOrder.paymentTerms,
+        isApproved: this.purchaseOrder.isApproved,
+        quantity: this.purchaseOrder.quantity,
+        quality: this.purchaseOrder.quality,
+        costPerUnit: this.purchaseOrder.costPerUnit,
+        season: this.purchaseOrder.season,
+        paymentMethod: this.purchaseOrder.paymentMethod,
+        distance: this.purchaseOrder.distance,
+        deliveryMethod: this.purchaseOrder.deliveryMethod,
+        deliveryCost: this.purchaseOrder.deliveryCost,
+        timeTakenToReceive: this.purchaseOrder.timeTakenToReceive,
+        averageCostPerUnit: this.purchaseOrder.averageCostPerUnit,
+        averageDeliveryTime: this.purchaseOrder.averageDeliveryTime,
+        averageDeliveryCost: this.purchaseOrder.averageDeliveryCost,
+        performances: this.purchaseOrder.performances,
       });
       this.purchaseOrderForm.disable(); // For viewing details
       this.currentItems = this.purchaseOrder.items.map(item => ({
@@ -91,6 +127,24 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
         supplierId: null,
         orderDate: todayStr,
         expectedDate: expectedStr,
+        phone: '',
+        email: '',
+        contactPerson: '',
+        paymentTerms: '',
+        isApproved: false,
+        quantity: null,
+        quality: '',
+        costPerUnit: null,
+        season: '',
+        paymentMethod: '',
+        distance: null,
+        deliveryMethod: '',
+        deliveryCost: null,
+        timeTakenToReceive: null,
+        averageCostPerUnit: null,
+        averageDeliveryTime: null,
+        averageDeliveryCost: null,
+        performances: '',
       });
       this.purchaseOrderForm.enable();
       this.currentItems = [];
@@ -125,9 +179,8 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
     const term = this.supplierSearchTerm.toLowerCase();
     this.filteredSuppliers = this.allSuppliers.filter(s => 
       s.name?.toLowerCase().includes(term) ||
-      s.phone?.toLowerCase().includes(term) ||
-      s.email?.toLowerCase().includes(term) ||
-      s.contactPerson?.toLowerCase().includes(term)
+      s.address?.toLowerCase().includes(term) ||
+      s.cashewTypeName?.toLowerCase().includes(term)
     );
   }
 
@@ -176,7 +229,29 @@ export class PurchaseOrderFormModalComponent implements OnChanges {
   }
 
   onClose(): void {
-    this.purchaseOrderForm.reset();
+    this.purchaseOrderForm.reset({
+      supplierId: null,
+      orderDate: '',
+      expectedDate: '',
+      phone: '',
+      email: '',
+      contactPerson: '',
+      paymentTerms: '',
+      isApproved: false,
+      quantity: null,
+      quality: '',
+      costPerUnit: null,
+      season: '',
+      paymentMethod: '',
+      distance: null,
+      deliveryMethod: '',
+      deliveryCost: null,
+      timeTakenToReceive: null,
+      averageCostPerUnit: null,
+      averageDeliveryTime: null,
+      averageDeliveryCost: null,
+      performances: '',
+    });
     this.purchaseOrderForm.enable();
     this.currentItems = [];
     this.selectedRawCashewToAssign = null;

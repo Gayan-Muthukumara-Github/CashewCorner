@@ -187,13 +187,9 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
-          <th>Contact Person</th>
-          <th>Email</th>
-          <th>Phone</th>
+          <th>Address</th>
           <th>Cashew Type</th>
-          <th>Quality</th>
-          <th>Cost/Unit</th>
-          <th>Approved</th>
+          <th>Distance</th>
           <th>Active</th>
           <th>Actions</th>
         </tr>
@@ -202,21 +198,9 @@
         <tr *ngFor="let supplier of suppliers">
           <td>{{ supplier.supplierId }}</td>
           <td>{{ supplier.name }}</td>
-          <td>{{ supplier.contactPerson }}</td>
-          <td>{{ supplier.email }}</td>
-          <td>{{ supplier.phone }}</td>
+          <td>{{ supplier.address || '-' }}</td>
           <td>{{ supplier.cashewTypeName || '-' }}</td>
-          <td>{{ supplier.quality || '-' }}</td>
-          <td>{{ supplier.costPerUnit ? (supplier.costPerUnit | number:'1.2-2') : '-' }}</td>
-          <td>
-            <span
-              class="status-pill"
-              [class.active]="supplier.isApproved"
-              [class.inactive]="!supplier.isApproved"
-            >
-              {{ supplier.isApproved ? 'Yes' : 'No' }}
-            </span>
-          </td>
+          <td>{{ supplier.distance != null ? (supplier.distance | number:'1.2-2') : '-' }}</td>
           <td>
             <span
               class="status-pill"

@@ -1,80 +1,27 @@
 export interface CreateSupplierRequest {
   name: string;
-  phone?: string;
-  email?: string;
   address?: string;
-  contactPerson?: string;
-  paymentTerms?: string;
-  // Cashew-related fields
   cashewTypeId?: number;
-  quantity?: number;
-  quality?: string;
-  costPerUnit?: number;
-  season?: string;
-  paymentMethod?: string;
   distance?: number;
-  deliveryMethod?: string;
-  deliveryCost?: number;
-  timeTakenToReceive?: number;
-  averageCostPerUnit?: number;
-  averageDeliveryTime?: number;
-  averageDeliveryCost?: number;
-  performances?: string;
 }
 
 export interface UpdateSupplierRequest {
   name?: string;
-  phone?: string;
-  email?: string;
   address?: string;
-  contactPerson?: string;
-  paymentTerms?: string;
-  isApproved?: boolean;
-  // Cashew-related fields
   cashewTypeId?: number;
-  quantity?: number;
-  quality?: string;
-  costPerUnit?: number;
-  season?: string;
-  paymentMethod?: string;
   distance?: number;
-  deliveryMethod?: string;
-  deliveryCost?: number;
-  timeTakenToReceive?: number;
-  averageCostPerUnit?: number;
-  averageDeliveryTime?: number;
-  averageDeliveryCost?: number;
-  performances?: string;
 }
 
 export interface SupplierResponse {
   supplierId: number;
   name: string;
-  phone: string;
-  email: string;
-  address: string;
-  contactPerson: string;
-  paymentTerms: string;
-  isApproved: boolean;
+  address?: string;
+  cashewTypeId?: number;
+  cashewTypeName?: string;
+  distance?: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  // Cashew-related fields
-  cashewTypeId?: number;
-  cashewTypeName?: string;
-  quantity?: number;
-  quality?: string;
-  costPerUnit?: number;
-  season?: string;
-  paymentMethod?: string;
-  distance?: number;
-  deliveryMethod?: string;
-  deliveryCost?: number;
-  timeTakenToReceive?: number;
-  averageCostPerUnit?: number;
-  averageDeliveryTime?: number;
-  averageDeliveryCost?: number;
-  performances?: string;
 }
 
 export interface SupplierRankingResponse {

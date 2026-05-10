@@ -24,8 +24,6 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, Long> {
 
     Optional<SalesOrder> findBySoNumber(String soNumber);
 
-    Optional<SalesOrder> findBySoNumberIgnoreCaseAndIsActiveTrue(String soNumber);
-
     @Query(value = "SELECT * FROM sales_orders so WHERE LOWER(so.so_number) LIKE LOWER(CONCAT('%', :orderNo, '%')) AND so.is_active = true",
            nativeQuery = true)
     List<SalesOrder> searchByOrderNumber(@Param("orderNo") String orderNo);

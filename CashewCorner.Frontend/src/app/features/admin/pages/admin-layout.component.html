@@ -57,7 +57,7 @@
         <span class="icon">💰</span>
         <span>Payroll</span>
       </a>
-      <a routerLink="/admin/analytics" routerLinkActive="active">
+      <a routerLink="/admin/analytics" routerLinkActive="active" *ngIf="userRole == 'MANAGER'">
         <span class="icon">📊</span>
         <span>Reports & Analytics</span>
       </a>

@@ -41,28 +41,10 @@ public class SupplierService {
         Supplier supplier = Supplier.builder()
                 .name(request.getName())
                 .address(request.getAddress())
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .contactPerson(request.getContactPerson())
-                .paymentTerms(request.getPaymentTerms())
-                .isApproved(false)
-                .isActive(true)
-                .quantity(request.getQuantity())
-                .quality(request.getQuality())
-                .costPerUnit(request.getCostPerUnit())
-                .season(request.getSeason())
-                .paymentMethod(request.getPaymentMethod())
                 .distance(request.getDistance())
-                .deliveryMethod(request.getDeliveryMethod())
-                .deliveryCost(request.getDeliveryCost())
-                .timeTakenToReceive(request.getTimeTakenToReceive())
-                .averageCostPerUnit(request.getAverageCostPerUnit())
-                .averageDeliveryTime(request.getAverageDeliveryTime())
-                .averageDeliveryCost(request.getAverageDeliveryCost())
-                .performances(request.getPerformances())
+                .isActive(true)
                 .build();
 
-        // Set cashew type if provided
         if (request.getCashewTypeId() != null) {
             RawCashew cashewType = rawCashewRepository.findByCashewTypeIdAndIsActiveTrue(request.getCashewTypeId())
                     .orElseThrow(() -> new ResourceNotFoundException("Raw cashew type not found with id: " + request.getCashewTypeId()));
@@ -88,66 +70,13 @@ public class SupplierService {
         if (request.getAddress() != null) {
             supplier.setAddress(request.getAddress());
         }
-        if (request.getPhone() != null) {
-            supplier.setPhone(request.getPhone());
-        }
-        if (request.getEmail() != null) {
-            supplier.setEmail(request.getEmail());
-        }
-        if (request.getContactPerson() != null) {
-            supplier.setContactPerson(request.getContactPerson());
-        }
-        if (request.getPaymentTerms() != null) {
-            supplier.setPaymentTerms(request.getPaymentTerms());
-        }
-        if (request.getIsApproved() != null) {
-            supplier.setIsApproved(request.getIsApproved());
-        }
-
-        // Handle new cashew-related fields
         if (request.getCashewTypeId() != null) {
             RawCashew cashewType = rawCashewRepository.findByCashewTypeIdAndIsActiveTrue(request.getCashewTypeId())
                     .orElseThrow(() -> new ResourceNotFoundException("Raw cashew type not found with id: " + request.getCashewTypeId()));
             supplier.setCashewType(cashewType);
         }
-        if (request.getQuantity() != null) {
-            supplier.setQuantity(request.getQuantity());
-        }
-        if (request.getQuality() != null) {
-            supplier.setQuality(request.getQuality());
-        }
-        if (request.getCostPerUnit() != null) {
-            supplier.setCostPerUnit(request.getCostPerUnit());
-        }
-        if (request.getSeason() != null) {
-            supplier.setSeason(request.getSeason());
-        }
-        if (request.getPaymentMethod() != null) {
-            supplier.setPaymentMethod(request.getPaymentMethod());
-        }
         if (request.getDistance() != null) {
             supplier.setDistance(request.getDistance());
-        }
-        if (request.getDeliveryMethod() != null) {
-            supplier.setDeliveryMethod(request.getDeliveryMethod());
-        }
-        if (request.getDeliveryCost() != null) {
-            supplier.setDeliveryCost(request.getDeliveryCost());
-        }
-        if (request.getTimeTakenToReceive() != null) {
-            supplier.setTimeTakenToReceive(request.getTimeTakenToReceive());
-        }
-        if (request.getAverageCostPerUnit() != null) {
-            supplier.setAverageCostPerUnit(request.getAverageCostPerUnit());
-        }
-        if (request.getAverageDeliveryTime() != null) {
-            supplier.setAverageDeliveryTime(request.getAverageDeliveryTime());
-        }
-        if (request.getAverageDeliveryCost() != null) {
-            supplier.setAverageDeliveryCost(request.getAverageDeliveryCost());
-        }
-        if (request.getPerformances() != null) {
-            supplier.setPerformances(request.getPerformances());
         }
 
         supplier = supplierRepository.save(supplier);
@@ -295,12 +224,17 @@ public class SupplierService {
                             .multiply(BigDecimal.valueOf(100))
                     : BigDecimal.ZERO;
 
+            // Pull contact info from most recent purchase order
+            PurchaseOrder latestPo = orders.stream()
+                    .max(Comparator.comparing(PurchaseOrder::getCreatedAt))
+                    .orElse(null);
+
             SupplierRankingDto ranking = SupplierRankingDto.builder()
                     .supplierId(supplier.getSupplierId())
                     .name(supplier.getName())
-                    .contactPerson(supplier.getContactPerson())
-                    .phone(supplier.getPhone())
-                    .email(supplier.getEmail())
+                    .contactPerson(latestPo != null ? latestPo.getContactPerson() : null)
+                    .phone(latestPo != null ? latestPo.getPhone() : null)
+                    .email(latestPo != null ? latestPo.getEmail() : null)
                     .averageUnitPrice(averageUnitPrice)
                     .totalOrders(totalOrders)
                     .completedOrders(completedOrders)
@@ -352,30 +286,12 @@ public class SupplierService {
                 .supplierId(supplier.getSupplierId())
                 .name(supplier.getName())
                 .address(supplier.getAddress())
-                .phone(supplier.getPhone())
-                .email(supplier.getEmail())
-                .contactPerson(supplier.getContactPerson())
-                .paymentTerms(supplier.getPaymentTerms())
-                .isApproved(supplier.getIsApproved())
+                .cashewTypeId(supplier.getCashewType() != null ? supplier.getCashewType().getCashewTypeId() : null)
+                .cashewTypeName(supplier.getCashewType() != null ? supplier.getCashewType().getCashewType() : null)
+                .distance(supplier.getDistance())
                 .isActive(supplier.getIsActive())
                 .createdAt(supplier.getCreatedAt())
                 .updatedAt(supplier.getUpdatedAt())
-                // New cashew-related fields
-                .cashewTypeId(supplier.getCashewType() != null ? supplier.getCashewType().getCashewTypeId() : null)
-                .cashewTypeName(supplier.getCashewType() != null ? supplier.getCashewType().getCashewType() : null)
-                .quantity(supplier.getQuantity())
-                .quality(supplier.getQuality())
-                .costPerUnit(supplier.getCostPerUnit())
-                .season(supplier.getSeason())
-                .paymentMethod(supplier.getPaymentMethod())
-                .distance(supplier.getDistance())
-                .deliveryMethod(supplier.getDeliveryMethod())
-                .deliveryCost(supplier.getDeliveryCost())
-                .timeTakenToReceive(supplier.getTimeTakenToReceive())
-                .averageCostPerUnit(supplier.getAverageCostPerUnit())
-                .averageDeliveryTime(supplier.getAverageDeliveryTime())
-                .averageDeliveryCost(supplier.getAverageDeliveryCost())
-                .performances(supplier.getPerformances())
                 .build();
     }
 
@@ -391,6 +307,24 @@ public class SupplierService {
                 .supplierName(purchaseOrder.getSupplier().getName())
                 .orderDate(purchaseOrder.getOrderDate())
                 .expectedDate(purchaseOrder.getExpectedDate())
+                .phone(purchaseOrder.getPhone())
+                .email(purchaseOrder.getEmail())
+                .contactPerson(purchaseOrder.getContactPerson())
+                .paymentTerms(purchaseOrder.getPaymentTerms())
+                .isApproved(purchaseOrder.getIsApproved())
+                .quantity(purchaseOrder.getQuantity())
+                .quality(purchaseOrder.getQuality())
+                .costPerUnit(purchaseOrder.getCostPerUnit())
+                .season(purchaseOrder.getSeason())
+                .paymentMethod(purchaseOrder.getPaymentMethod())
+                .distance(purchaseOrder.getDistance())
+                .deliveryMethod(purchaseOrder.getDeliveryMethod())
+                .deliveryCost(purchaseOrder.getDeliveryCost())
+                .timeTakenToReceive(purchaseOrder.getTimeTakenToReceive())
+                .averageCostPerUnit(purchaseOrder.getAverageCostPerUnit())
+                .averageDeliveryTime(purchaseOrder.getAverageDeliveryTime())
+                .averageDeliveryCost(purchaseOrder.getAverageDeliveryCost())
+                .performances(purchaseOrder.getPerformances())
                 .status(purchaseOrder.getStatus())
                 .totalAmount(purchaseOrder.getTotalAmount())
                 .items(itemDtos)

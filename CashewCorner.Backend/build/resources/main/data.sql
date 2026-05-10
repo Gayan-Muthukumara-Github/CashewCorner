@@ -24,11 +24,11 @@ INSERT INTO users (username, password_hash, email, first_name, last_name, role_i
 VALUES ('manager', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DRjk38', 'manager@cashewcorner.com', 'Jane', 'Smith', 3, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert test suppliers
-INSERT INTO suppliers (name, email, phone, contact_person, is_active, created_at, updated_at)
-VALUES ('Supplier One', 'supplier1@example.com', '+1-555-0001', 'John Contact', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO suppliers (name, is_active, created_at, updated_at)
+VALUES ('Supplier One', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO suppliers (name, email, phone, contact_person, is_active, created_at, updated_at)
-VALUES ('Supplier Two', 'supplier2@example.com', '+1-555-0002', 'Jane Contact', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO suppliers (name, is_active, created_at, updated_at)
+VALUES ('Supplier Two', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert test customers
 INSERT INTO customers (name, email, phone, type, is_active, created_at, updated_at)

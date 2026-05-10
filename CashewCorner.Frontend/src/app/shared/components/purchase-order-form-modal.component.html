@@ -18,7 +18,9 @@
             <div *ngIf="selectedSupplier && !showSupplierSearch" class="selected-supplier">
               <div class="supplier-info">
                 <span class="supplier-name">{{ selectedSupplier.name }}</span>
-                <span class="supplier-details">{{ selectedSupplier.phone }} • {{ selectedSupplier.contactPerson }}</span>
+                <span class="supplier-details">
+                  {{ selectedSupplier.cashewTypeName || 'Unknown type' }} • {{ selectedSupplier.address || 'No address' }}
+                </span>
               </div>
               <button type="button" class="change-supplier-btn" (click)="toggleSupplierSearch()" *ngIf="mode === 'create'">
                 Change
@@ -216,16 +218,12 @@
                 <div *ngFor="let supplier of filteredSuppliers" 
                      class="supplier-result-item"
                      [class.inactive]="!supplier.isActive"
-                     [class.not-approved]="!supplier.isApproved"
                      (click)="selectSupplier(supplier)">
                   <div class="result-main">
                     <span class="result-name">{{ supplier.name }}</span>
-                    <span class="result-status approved" *ngIf="supplier.isApproved">Approved</span>
-                    <span class="result-status pending" *ngIf="!supplier.isApproved">Pending</span>
-                  </div>
-                  <div class="result-details">
-                    <span *ngIf="supplier.phone">📞 {{ supplier.phone }}</span>
-                    <span *ngIf="supplier.contactPerson">👤 {{ supplier.contactPerson }}</span>
+                    <span class="result-meta">
+                      {{ supplier.cashewTypeName || 'Unknown type' }}
+                    </span>
                   </div>
                   <div class="result-address" *ngIf="supplier.address">
                     📍 {{ supplier.address }}
@@ -266,8 +264,259 @@
           </div>
         </div>
 
+        <h3 class="section-title">Supplier Contact Information</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="phone">Phone</label>
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="contactPerson">Contact Person</label>
+            <input
+              id="contactPerson"
+              type="text"
+              formControlName="contactPerson"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="paymentTerms">Payment Terms</label>
+            <input
+              id="paymentTerms"
+              type="text"
+              formControlName="paymentTerms"
+              placeholder="e.g., Net 30, COD"
+            />
+          </div>
+        </div>
+
+        <h3 class="section-title">Cashew & Order Details</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="quantity">Total Quantity (kg)</label>
+            <input
+              id="quantity"
+              type="number"
+              formControlName="quantity"
+              step="0.01"
+              placeholder="Total order quantity"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="quality">Quality Grade</label>
+            <input
+              id="quality"
+              type="text"
+              formControlName="quality"
+              placeholder="e.g., Grade A, Premium"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="costPerUnit">Cost Per Unit (Rs.)</label>
+            <input
+              id="costPerUnit"
+              type="number"
+              formControlName="costPerUnit"
+              step="0.01"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="season">Season</label>
+            <input
+              id="season"
+              type="text"
+              formControlName="season"
+              placeholder="e.g., 2024 Harvest"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="paymentMethod">Payment Method</label>
+            <select formControlName="paymentMethod">
+              <option value="">-- Select Payment Method --</option>
+              <option value="cash">Cash</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="cheque">Cheque</option>
+              <option value="credit">Credit</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="distance">Distance (km)</label>
+            <input
+              id="distance"
+              type="number"
+              formControlName="distance"
+              step="0.01"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="deliveryMethod">Delivery Method</label>
+            <select formControlName="deliveryMethod">
+              <option value="">-- Select Delivery Method --</option>
+              <option value="pickup">Pickup</option>
+              <option value="truck">Truck</option>
+              <option value="rail">Rail</option>
+              <option value="air">Air</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="deliveryCost">Delivery Cost (Rs.)</label>
+            <input
+              id="deliveryCost"
+              type="number"
+              formControlName="deliveryCost"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <h3 class="section-title">Performance Metrics</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="timeTakenToReceive">Time to Receive (days)</label>
+            <input
+              id="timeTakenToReceive"
+              type="number"
+              formControlName="timeTakenToReceive"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="averageCostPerUnit">Avg. Cost Per Unit (Rs.)</label>
+            <input
+              id="averageCostPerUnit"
+              type="number"
+              formControlName="averageCostPerUnit"
+              step="0.01"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="averageDeliveryTime">Avg. Delivery Time (days)</label>
+            <input
+              id="averageDeliveryTime"
+              type="number"
+              formControlName="averageDeliveryTime"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="averageDeliveryCost">Avg. Delivery Cost (Rs.)</label>
+            <input
+              id="averageDeliveryCost"
+              type="number"
+              formControlName="averageDeliveryCost"
+              step="0.01"
+            />
+          </div>
+
+          <div class="form-field full-width">
+            <label for="performances">Performance Notes</label>
+            <textarea
+              id="performances"
+              formControlName="performances"
+              rows="3"
+              placeholder="Any performance notes or observations"
+            ></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="isApproved">
+              <input
+                id="isApproved"
+                type="checkbox"
+                formControlName="isApproved"
+              />
+              Approved
+            </label>
+          </div>
+        </div>
+
         <div class="order-items-section">
           <h3>Order Items</h3>
+          
+          <!-- Display order details in edit mode -->
+          <div *ngIf="mode === 'edit'" class="order-details-section">
+            <h4>Order Details</h4>
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Phone:</label>
+                <span>{{ purchaseOrder?.phone || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Email:</label>
+                <span>{{ purchaseOrder?.email || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Contact Person:</label>
+                <span>{{ purchaseOrder?.contactPerson || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Payment Terms:</label>
+                <span>{{ purchaseOrder?.paymentTerms || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Quality:</label>
+                <span>{{ purchaseOrder?.quality || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Season:</label>
+                <span>{{ purchaseOrder?.season || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Payment Method:</label>
+                <span>{{ purchaseOrder?.paymentMethod || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Delivery Method:</label>
+                <span>{{ purchaseOrder?.deliveryMethod || 'Not specified' }}</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.quantity">
+                <label>Total Quantity:</label>
+                <span>{{ purchaseOrder?.quantity }} kg</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.costPerUnit">
+                <label>Cost Per Unit:</label>
+                <span>{{ purchaseOrder?.costPerUnit | currency:'Rs. ' }}</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.distance">
+                <label>Distance:</label>
+                <span>{{ purchaseOrder?.distance }} km</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.deliveryCost">
+                <label>Delivery Cost:</label>
+                <span>{{ purchaseOrder?.deliveryCost | currency:'Rs. ' }}</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.isApproved !== null">
+                <label>Approved:</label>
+                <span>{{ purchaseOrder?.isApproved ? 'Yes' : 'No' }}</span>
+              </div>
+              <div class="detail-item" *ngIf="purchaseOrder?.performances">
+                <label>Performance Notes:</label>
+                <span>{{ purchaseOrder?.performances }}</span>
+              </div>
+            </div>
+          </div>
           
           <!-- Add Raw Cashew Controls at Top -->
           <div *ngIf="mode === 'create'" class="assign-product-controls">
