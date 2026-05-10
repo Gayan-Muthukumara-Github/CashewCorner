@@ -24,6 +24,9 @@
       No sales orders found.
     </div>
 
+    <div *ngIf="successMessage" class="success-banner">
+      {{ successMessage }}
+    </div>
     <div *ngIf="errorMessage" class="error-banner">
       {{ errorMessage }}
     </div>
@@ -85,5 +88,6 @@
     [allProducts]="products"
     (close)="closeModal()"
     (save)="onCreateSalesOrder($event)"
+    (update)="onUpdateSalesOrderStatus($event)"
   ></app-sales-order-form-modal>
 </div>

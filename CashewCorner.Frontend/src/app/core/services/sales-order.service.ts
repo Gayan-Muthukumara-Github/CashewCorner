@@ -29,6 +29,10 @@ export class SalesOrderService {
     return this.http.get<SalesOrderResponse>(`${this.salesOrdersUrl}/${salesOrderId}`);
   }
 
+  updateSalesOrderStatus(salesOrderId: number, status: string): Observable<SalesOrderResponse> {
+    return this.http.patch<SalesOrderResponse>(`${this.salesOrdersUrl}/${salesOrderId}/status`, { status });
+  }
+
   searchSalesOrders(orderNo: string): Observable<SalesOrderResponse[]> {
     const params = new HttpParams().set('orderNo', orderNo);
     return this.http.get<SalesOrderResponse[]>(`${this.salesOrdersUrl}/search`, { params });

@@ -173,6 +173,41 @@ export class AdminSalesOrdersComponent implements OnInit {
     });
   }
 
+  onUpdateSalesOrderStatus(event: { salesOrderId: number; status: string }): void {
+    this.clearMessages();
+    this.isLoading = true;
+    
+    this.salesOrderService.updateSalesOrderStatus(event.salesOrderId, event.status).subscribe({
+      next: (response) => {
+        console.log('Sales order status updated successfully:', response);
+        this.successMessage = `Sales order ${response.soNumber} status updated to ${response.status}.`;
+        this.closeModal();
+        this.loadSalesOrders();
+
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 5000);
+      },
+      error: (err) => {
+        console.error('Failed to update sales order status:', err);
+        let errorMsg = 'Failed to update sales order status.';
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMsg = err.error;
+          } else if (err.error.message) {
+            errorMsg = err.error.message;
+          } else if (err.error.error) {
+            errorMsg = err.error.error;
+          }
+        } else if (err.message) {
+          errorMsg = err.message;
+        }
+        this.errorMessage = errorMsg;
+        this.isLoading = false;
+      }
+    });
+  }
+
   clearMessages(): void {
     this.errorMessage = '';
     this.successMessage = '';

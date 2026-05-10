@@ -2,6 +2,7 @@ package com.example.cashewcorner.controller;
 
 import com.example.cashewcorner.dto.CreateSalesOrderRequestDto;
 import com.example.cashewcorner.dto.SalesOrderDto;
+import com.example.cashewcorner.dto.UpdateSalesOrderStatusRequestDto;
 import com.example.cashewcorner.service.SalesOrderService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,20 @@ public class SalesOrderController {
     public ResponseEntity<SalesOrderDto> getSalesOrderById(@PathVariable Long salesOrderId) {
         log.info("Fetching sales order - [salesOrderId={}]", salesOrderId);
         SalesOrderDto salesOrder = salesOrderService.getSalesOrderById(salesOrderId);
+        return ResponseEntity.ok(salesOrder);
+    }
+
+    /**
+     * Update sales order status.
+     * Accessible by ADMIN and MANAGER roles.
+     */
+    @PatchMapping("/{salesOrderId}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<SalesOrderDto> updateSalesOrderStatus(
+            @PathVariable Long salesOrderId,
+            @Valid @RequestBody UpdateSalesOrderStatusRequestDto request) {
+        log.info("Updating sales order status - [salesOrderId={}, status={}]", salesOrderId, request.getStatus());
+        SalesOrderDto salesOrder = salesOrderService.updateSalesOrderStatus(salesOrderId, request.getStatus());
         return ResponseEntity.ok(salesOrder);
     }
 

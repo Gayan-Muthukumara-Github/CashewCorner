@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS `product_category_map`;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `product_categories`;
 DROP TABLE IF EXISTS `customers`;
+DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `suppliers`;
 DROP TABLE IF EXISTS `raw_cashew`;
 DROP TABLE IF EXISTS `users`;
@@ -118,10 +119,10 @@ CREATE TABLE `suppliers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
--- TABLE: customers
+-- TABLE: customer
 -- Description: Customer information for sales orders
 -- ============================================================================
-CREATE TABLE `customers` (
+CREATE TABLE `customer` (
     `customer_id` BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(200) NOT NULL,
     `email` VARCHAR(150) DEFAULT NULL,
@@ -297,7 +298,7 @@ CREATE TABLE `purchase_order_items` (
 
 -- ============================================================================
 -- TABLE: sales_orders
--- Description: Sales orders to customers
+-- Description: Sales orders to customer
 -- ============================================================================
 CREATE TABLE `sales_orders` (
     `sales_order_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -315,7 +316,7 @@ CREATE TABLE `sales_orders` (
     PRIMARY KEY (`sales_order_id`),
     UNIQUE KEY `uk_sales_orders_so_number` (`so_number`),
     KEY `fk_sales_orders_customer` (`customer_id`),
-    CONSTRAINT `fk_sales_orders_customer` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT `fk_sales_orders_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -566,9 +567,9 @@ INSERT INTO `purchase_orders` (
     'pending', 127500.00, 1, DATE_SUB(NOW(), INTERVAL 5 DAY), NOW());
 
 -- ----------------------------------------------------------------------------
--- Insert customers
+-- Insert customer
 -- ----------------------------------------------------------------------------
-INSERT INTO `customers` (`name`, `email`, `phone`, `type`, `is_active`, `created_at`, `updated_at`) VALUES
+INSERT INTO `customer` (`name`, `email`, `phone`, `type`, `is_active`, `created_at`, `updated_at`) VALUES
 ('Customer One', 'customer1@example.com', '+1-555-1001', 'retail', 1, NOW(), NOW()),
 ('Customer Two', 'customer2@example.com', '+1-555-1002', 'wholesale', 1, NOW(), NOW());
 

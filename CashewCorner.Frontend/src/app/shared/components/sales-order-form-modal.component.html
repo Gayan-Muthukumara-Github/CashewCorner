@@ -132,6 +132,20 @@
               Delivery Date is required.
             </small>
           </div>
+
+          <div class="form-field" *ngIf="mode === 'edit'">
+            <label for="status">Status</label>
+            <select id="status" formControlName="status">
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="processing">Processing</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <small *ngIf="status?.invalid && status?.touched" class="error">
+              Status is required.
+            </small>
+          </div>
         </div>
 
         <div class="order-items-section">
@@ -200,11 +214,11 @@
             *ngIf="mode === 'create'">
             Create Sales Order
           </button>
-          <button type="button" class="primary" (click)="onClose()" *ngIf="mode === 'edit'">
-            Close Details
+          <button type="submit" class="primary" [disabled]="!isFormValid()" *ngIf="mode === 'edit'">
+            Save Status
           </button>
           <button type="button" class="secondary" (click)="onClose()">
-            Cancel
+            Close
           </button>
         </div>
       </form>

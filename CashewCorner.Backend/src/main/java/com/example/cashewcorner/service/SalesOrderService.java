@@ -99,6 +99,17 @@ public class SalesOrderService {
                 .collect(Collectors.toList());
     }
 
+    public SalesOrderDto updateSalesOrderStatus(Long salesOrderId, String status) {
+        log.info("Updating sales order status - [salesOrderId={}, status={}]", salesOrderId, status);
+
+        SalesOrder salesOrder = salesOrderRepository.findBySalesOrderIdAndIsActiveTrue(salesOrderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sales order not found with id: " + salesOrderId));
+
+        salesOrder.setStatus(status);
+        salesOrder = salesOrderRepository.save(salesOrder);
+        return mapToDto(salesOrder);
+    }
+
     private String generateSoNumber() {
         String year = String.valueOf(Year.now().getValue());
         String latestSoNumber = salesOrderRepository.findLatestSoNumberForYear(year);

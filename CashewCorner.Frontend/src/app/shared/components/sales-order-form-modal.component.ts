@@ -25,6 +25,7 @@ export class SalesOrderFormModalComponent implements OnChanges {
   @Input() allProducts: ProductResponse[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<CreateSalesOrderRequest>();
+  @Output() update = new EventEmitter<{ salesOrderId: number; status: string }>();
   @Output() searchCustomers = new EventEmitter<AdvancedSearchParams>();
 
   salesOrderForm: FormGroup;
@@ -51,6 +52,7 @@ export class SalesOrderFormModalComponent implements OnChanges {
       customerId: [null, [Validators.required]],
       orderDate: ['', [Validators.required]],
       deliveryDate: ['', [Validators.required]],
+      status: ['', [Validators.required]],
     });
   }
 
@@ -69,6 +71,7 @@ export class SalesOrderFormModalComponent implements OnChanges {
         customerId: this.salesOrder.customerId,
         orderDate: this.salesOrder.orderDate.substring(0, 10),
         deliveryDate: this.salesOrder.deliveryDate.substring(0, 10),
+        status: this.salesOrder.status,
       });
       
       this.currentItems = this.salesOrder.items.map(item => ({
@@ -80,8 +83,9 @@ export class SalesOrderFormModalComponent implements OnChanges {
       // Set selected customer for display
       this.selectedCustomer = this.allCustomers.find(c => c.customerId === this.salesOrder?.customerId) || null;
       
-      // Disable form in edit/view mode
+      // Disable form in edit/view mode, but allow status updates
       this.salesOrderForm.disable();
+      this.salesOrderForm.get('status')?.enable();
     } else {
       // Create mode
       const today = new Date();
@@ -95,8 +99,10 @@ export class SalesOrderFormModalComponent implements OnChanges {
         customerId: null,
         orderDate: todayStr,
         deliveryDate: deliveryStr,
+        status: 'pending'
       });
       this.salesOrderForm.enable();
+      this.salesOrderForm.get('status')?.disable();
       this.currentItems = [];
       this.selectedCustomer = null;
     }
@@ -210,6 +216,21 @@ export class SalesOrderFormModalComponent implements OnChanges {
       return;
     }
 
+    if (this.mode === 'edit' && this.salesOrder) {
+      const formValue = this.salesOrderForm.getRawValue();
+      const status = (formValue.status || '').trim();
+      if (!status) {
+        alert('Please select a status');
+        return;
+      }
+
+      this.update.emit({
+        salesOrderId: this.salesOrder.salesOrderId,
+        status,
+      });
+      return;
+    }
+
     if (this.currentItems.length === 0) {
       console.log('No items added');
       alert('Please add at least one item to the sales order');
@@ -310,6 +331,11 @@ export class SalesOrderFormModalComponent implements OnChanges {
   }
 
   isFormValid(): boolean {
+    if (this.mode === 'edit') {
+      const status = this.salesOrderForm.get('status')?.value;
+      return !!status;
+    }
+
     const customerId = this.salesOrderForm.get('customerId')?.value;
     const orderDate = this.salesOrderForm.get('orderDate')?.value;
     const deliveryDate = this.salesOrderForm.get('deliveryDate')?.value;
@@ -336,4 +362,5 @@ export class SalesOrderFormModalComponent implements OnChanges {
   get customerId() { return this.salesOrderForm.get('customerId'); }
   get orderDate() { return this.salesOrderForm.get('orderDate'); }
   get deliveryDate() { return this.salesOrderForm.get('deliveryDate'); }
+  get status() { return this.salesOrderForm.get('status'); }
 }
