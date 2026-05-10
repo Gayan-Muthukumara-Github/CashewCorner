@@ -43,6 +43,15 @@ export interface SellingPriceFluctuation {
   lowestPrice: number;
 }
 
+// Buying Price Fluctuation
+export interface BuyingPriceFluctuation {
+  year: number;
+  month: number;
+  averageBuyingPrice: number;
+  highestPrice: number;
+  lowestPrice: number;
+}
+
 // Transaction Summary
 export interface TransactionSummary {
   year: number;

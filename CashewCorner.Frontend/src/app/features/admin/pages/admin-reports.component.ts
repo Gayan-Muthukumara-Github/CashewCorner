@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 import { ReportService } from '../../../core/services/report.service';
 import { ProductService } from '../../../core/services/product.service';
+import { RawCashewService } from '../../../core/services/raw-cashew.service';
 import { ProductResponse } from '../../../core/models/product.models';
+import { RawCashewResponse } from '../../../core/models/raw-cashew.models';
 import {
   ReportResponse,
   ReportType,
@@ -14,6 +17,7 @@ import {
   PayrollSummaryData,
   LowStockAlertData,
   SellingPriceFluctuation,
+  BuyingPriceFluctuation,
   TransactionSummary,
   CategoryFinancialSummary,
   CategoryVolumeReport,
@@ -53,10 +57,15 @@ export class AdminReportsComponent implements OnInit {
   products: ProductResponse[] = [];
   isLoadingProducts = false;
 
+  rawCashews: RawCashewResponse[] = [];
+  isLoadingRawCashews = false;
+
   // Price Fluctuation
   selectedProductId: number | null = null;
+  selectedRawCashewId: number | null = null;
+  priceFluctuationMode: 'selling' | 'buying' = 'selling';
   priceFluctuationYear: number | null = null;
-  priceFluctuationData: SellingPriceFluctuation[] = [];
+  priceFluctuationData: (SellingPriceFluctuation | BuyingPriceFluctuation)[] = [];
   isLoadingPriceFluctuation = false;
 
   // Transaction Summary
@@ -80,7 +89,8 @@ export class AdminReportsComponent implements OnInit {
 
   constructor(
     private readonly reportService: ReportService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly rawCashewService: RawCashewService
   ) {
     // Set default dates (current month)
     const now = new Date();
@@ -102,6 +112,7 @@ export class AdminReportsComponent implements OnInit {
   ngOnInit(): void {
     this.loadReports();
     this.loadProducts();
+    this.loadRawCashews();
     this.loadTransactionSummary();
   }
 
@@ -392,32 +403,67 @@ export class AdminReportsComponent implements OnInit {
     });
   }
 
+  loadRawCashews(): void {
+    this.isLoadingRawCashews = true;
+    this.rawCashewService.getRawCashews().subscribe({
+      next: (data) => {
+        this.rawCashews = data;
+        this.isLoadingRawCashews = false;
+      },
+      error: (err) => {
+        console.error('Error loading raw cashews:', err);
+        this.isLoadingRawCashews = false;
+      },
+    });
+  }
+
   loadPriceFluctuation(): void {
-    if (!this.selectedProductId) {
-      this.errorMessage = 'Please select a product';
+    const selectorId =
+      this.priceFluctuationMode === 'selling'
+        ? this.selectedProductId
+        : this.selectedRawCashewId;
+
+    if (!selectorId) {
+      this.errorMessage = this.priceFluctuationMode === 'selling'
+        ? 'Please select a product'
+        : 'Please select a raw cashew type';
       return;
     }
 
     this.isLoadingPriceFluctuation = true;
     this.clearMessages();
 
-    this.reportService
-      .getSellingPriceFluctuation(
-        this.selectedProductId,
-        this.priceFluctuationYear || undefined
-      )
-      .subscribe({
-        next: (data) => {
-          this.priceFluctuationData = data;
-          this.isLoadingPriceFluctuation = false;
-        },
-        error: (err) => {
-          console.error('Error loading price fluctuation:', err);
-          this.errorMessage =
-            err.error?.message || 'Failed to load price fluctuation data.';
-          this.isLoadingPriceFluctuation = false;
-        },
-      });
+    const request$: Observable<
+      SellingPriceFluctuation[] | BuyingPriceFluctuation[]
+    > =
+      this.priceFluctuationMode === 'selling'
+        ? this.reportService.getSellingPriceFluctuation(
+            selectorId,
+            this.priceFluctuationYear || undefined
+          )
+        : this.reportService.getBuyingPriceFluctuation(
+            selectorId,
+            this.priceFluctuationYear || undefined
+          );
+
+    request$.subscribe({
+      next: (data: SellingPriceFluctuation[] | BuyingPriceFluctuation[]) => {
+        this.priceFluctuationData = data;
+        this.isLoadingPriceFluctuation = false;
+      },
+      error: (err: any) => {
+        console.error('Error loading price fluctuation:', err);
+        this.errorMessage =
+          err.error?.message || 'Failed to load price fluctuation data.';
+        this.isLoadingPriceFluctuation = false;
+      },
+    });
+  }
+
+  getPriceFluctuationTitle(): string {
+    return this.priceFluctuationMode === 'selling'
+      ? 'Selling Price Fluctuation'
+      : 'Buying Price Fluctuation';
   }
 
   loadTransactionSummary(): void {
@@ -490,6 +536,15 @@ export class AdminReportsComponent implements OnInit {
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
     return months[month - 1] || '';
+  }
+
+  // Get average price based on fluctuation mode
+  getAveragePrice(item: SellingPriceFluctuation | BuyingPriceFluctuation): number {
+    if (this.priceFluctuationMode === 'selling') {
+      return (item as SellingPriceFluctuation).averageSellingPrice;
+    } else {
+      return (item as BuyingPriceFluctuation).averageBuyingPrice;
+    }
   }
 
   // Get totals for transaction summary

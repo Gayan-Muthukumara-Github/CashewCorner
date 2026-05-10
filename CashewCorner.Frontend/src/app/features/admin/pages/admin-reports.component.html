@@ -362,14 +362,43 @@
     @if (activeAnalyticsTab === 'price') {
       <div class="analytics-panel">
         <div class="panel-header">
-          <h3>📉 Selling Price Fluctuation</h3>
+          <h3>📉 {{ getPriceFluctuationTitle() }}</h3>
           <div class="panel-controls">
-            <select [(ngModel)]="selectedProductId">
-              <option [ngValue]="null" disabled>Select Product</option>
-              @for (product of products; track product.productId) {
-                <option [ngValue]="product.productId">{{ product.name }}</option>
-              }
-            </select>
+            <div class="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="priceFluctuationMode"
+                  value="selling"
+                  [(ngModel)]="priceFluctuationMode"
+                />
+                Selling
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="priceFluctuationMode"
+                  value="buying"
+                  [(ngModel)]="priceFluctuationMode"
+                />
+                Buying
+              </label>
+            </div>
+            @if (priceFluctuationMode === 'selling') {
+              <select [(ngModel)]="selectedProductId">
+                <option [ngValue]="null" disabled>Select Product</option>
+                @for (product of products; track product.productId) {
+                  <option [ngValue]="product.productId">{{ product.name }}</option>
+                }
+              </select>
+            } @else {
+              <select [(ngModel)]="selectedRawCashewId">
+                <option [ngValue]="null" disabled>Select Raw Cashew Type</option>
+                @for (rawCashew of rawCashews; track rawCashew.cashewTypeId) {
+                  <option [ngValue]="rawCashew.cashewTypeId">{{ rawCashew.cashewType }}</option>
+                }
+              </select>
+            }
             <select [(ngModel)]="priceFluctuationYear">
               <option [ngValue]="null">Current Year</option>
               @for (year of availableYears; track year) {
@@ -401,7 +430,13 @@
               <thead>
                 <tr>
                   <th>Month</th>
-                  <th class="text-right">Average Price</th>
+                  <th class="text-right">
+                    @if (priceFluctuationMode === 'selling') {
+                      Average Selling Price
+                    } @else {
+                      Average Buying Price
+                    }
+                  </th>
                   <th class="text-right">Highest Price</th>
                   <th class="text-right">Lowest Price</th>
                   <th class="text-right">Variance</th>
@@ -413,7 +448,7 @@
                     <td>
                       <strong>{{ getMonthName(item.month) }} {{ item.year }}</strong>
                     </td>
-                    <td class="text-right">{{ item.averageSellingPrice | number:'1.2-2' }}</td>
+                    <td class="text-right">{{ getAveragePrice(item) | number:'1.2-2' }}</td>
                     <td class="text-right success-text">{{ item.highestPrice | number:'1.2-2' }}</td>
                     <td class="text-right warning-text">{{ item.lowestPrice | number:'1.2-2' }}</td>
                     <td class="text-right">{{ (item.highestPrice - item.lowestPrice) | number:'1.2-2' }}</td>

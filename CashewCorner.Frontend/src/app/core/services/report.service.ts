@@ -7,6 +7,7 @@ import {
   ReportType,
   ReportParameters,
   SellingPriceFluctuation,
+  BuyingPriceFluctuation,
   TransactionSummary,
   CategoryFinancialSummary,
   CategoryVolumeReport,
@@ -124,6 +125,24 @@ export class ReportService {
     }
     return this.http.get<SellingPriceFluctuation[]>(
       `${this.apiUrl}/selling-price-fluctuation`,
+      { params }
+    );
+  }
+
+  /**
+   * Get Buying Price Fluctuation
+   * GET /api/reports/buying-price-fluctuation?cashewTypeId=X&year=Y
+   */
+  getBuyingPriceFluctuation(
+    cashewTypeId: number,
+    year?: number
+  ): Observable<BuyingPriceFluctuation[]> {
+    let params = new HttpParams().set('cashewTypeId', cashewTypeId.toString());
+    if (year) {
+      params = params.set('year', year.toString());
+    }
+    return this.http.get<BuyingPriceFluctuation[]>(
+      `${this.apiUrl}/buying-price-fluctuation`,
       { params }
     );
   }
